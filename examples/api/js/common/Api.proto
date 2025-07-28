@@ -1,0 +1,785 @@
+syntax = "proto2";
+
+package hudiy.app.api;
+
+enum Constants {
+    // option allow_alias = true;
+    API_MAJOR_VERSION = 1;
+    API_MINOR_VERSION = 0;
+}
+
+enum MessageType {
+    MESSAGE_INVALID_ID = 0;
+    MESSAGE_HELLO_REQUEST = 1;
+    MESSAGE_HELLO_RESPONSE = 2;
+    MESSAGE_SET_STATUS_SUBSCRIPTIONS = 3;
+    MESSAGE_SET_REVERSE_CAMERA_STATUS = 4;
+    MESSAGE_PROJECTION_STATUS = 5;
+    MESSAGE_MEDIA_STATUS = 6;
+    MESSAGE_MEDIA_METADATA = 7;
+    MESSAGE_NAVIGATION_STATUS = 8;
+    MESSAGE_NAVIGATION_MANEUVER_DETAILS = 9;
+    MESSAGE_NAVIGATION_MANEUVER_DISTANCE = 10;
+    MESSAGE_REGISTER_STATUS_ICON_REQUEST = 11;
+    MESSAGE_REGISTER_STATUS_ICON_RESPONSE = 12;
+    MESSAGE_UNREGISTER_STATUS_ICON = 13;
+    MESSAGE_CHANGE_STATUS_ICON_STATE = 14;
+    MESSAGE_REGISTER_NOTIFICATION_CHANNEL_REQUEST = 15;
+    MESSAGE_REGISTER_NOTIFICATION_CHANNEL_RESPONSE = 16;
+    MESSAGE_UNREGISTER_NOTIFICATION_CHANNEL = 17;
+    MESSAGE_SHOW_NOTIFICATION = 18;
+    MESSAGE_REGISTER_TOAST_CHANNEL_REQUEST = 19;
+    MESSAGE_REGISTER_TOAST_CHANNEL_RESPONSE = 20;
+    MESSAGE_UNREGISTER_TOAST_CHANNEL = 21;
+    MESSAGE_SHOW_TOAST = 22;
+    MESSAGE_OBD_CONNECTION_STATUS = 23;
+    MESSAGE_QUERY_OBD_DEVICE_REQUEST = 24;
+    MESSAGE_QUERY_OBD_DEVICE_RESPONSE = 25;
+    MESSAGE_REGISTER_AUDIO_FOCUS_RECEIVER_REQUEST = 26;
+    MESSAGE_REGISTER_AUDIO_FOCUS_RECEIVER_RESPONSE = 27;
+    MESSAGE_UNREGISTER_AUDIO_FOCUS_RECEIVER = 28;
+    MESSAGE_AUDIO_FOCUS_CHANGE_REQUEST = 29;
+    MESSAGE_AUDIO_FOCUS_CHANGE_RESPONSE = 30;
+    MESSAGE_AUDIO_FOCUS_ACTION = 31;
+    MESSAGE_AUDIO_FOCUS_MEDIA_KEY = 32;
+    MESSAGE_PHONE_CONNECTION_STATUS = 33;
+    MESSAGE_PHONE_VOICE_CALL_STATUS = 34;
+    MESSAGE_PHONE_LEVELS_STATUS = 35;
+    MESSAGE_KEY_EVENT = 36;
+    MESSAGE_SET_DARK_MODE = 37;
+    MESSAGE_SET_CUSTOM_OVERLAY_VISIBILITY = 38;
+    MESSAGE_SET_NAVIGATION_OVERLAY_VISIBILITY = 39;
+    MESSAGE_SET_VOLUME_OVERLAY_VISIBILITY = 40;
+    MESSAGE_REGISTER_ACTION_REQUEST = 41;
+    MESSAGE_REGISTER_ACTION_RESPONSE = 42;
+    MESSAGE_DISPATCH_ACTION = 43;
+    MESSAGE_SET_EQUALIZER_PRESET  = 44;
+    MESSAGE_COVERART_REQUEST = 45;
+    MESSAGE_COVERART_RESPONSE = 46;
+    MESSAGE_PING = 47;
+    MESSAGE_PONG = 48;
+    MESSAGE_BYEBYE = 49;
+}
+
+message Version {
+    required int32 major = 1;
+    required int32 minor = 2;
+}
+
+// Id: MESSAGE_HELLO_REQUEST
+// Receiver: Hudiy
+// Description: The Hello request/response pair is used for version negotiation.
+message HelloRequest {
+    // Name of the client used for identification
+    required string name = 1;
+
+    // Version of the protocol used by the client
+    required Version api_version = 2;
+}
+
+// Id: MESSAGE_HELLO_RESPONSE
+// Receiver: Client
+// Description: The Hello request/response pair is used for version negotiation.
+message HelloResponse {
+    enum HelloResponseResult {
+        HELLO_RESPONSE_RESULT_OK = 1;
+        HELLO_RESPONSE_RESULT_VERSION_MISMATCH = 2;
+        HELLO_RESPONSE_RESULT_UNKNOWN_ERROR = 3;
+    }
+
+    // Version of the application
+    required Version app_version = 1;
+
+    // Version of the api used by Hudiy
+    required Version api_version = 2;
+
+    // Result of the hello procedure
+    required HelloResponseResult result = 3;
+}
+
+// Id: MESSAGE_SET_STATUS_SUBSCRIPTIONS
+// Receiver: Hudiy
+// Description:
+//     Manages active subscriptions to update the status of related functionalities.
+//     Each subscription has dedicated messages for updating statuses related to its topic.
+//     Every time the client subscribes or unsubscribes, it must provide the full list of desired subscriptions.
+message SetStatusSubscriptions {
+    enum Subscription {
+        PROJECTION = 1;
+        MEDIA = 2;
+        NAVIGATION = 3;
+        OBD = 4;
+        PHONE = 5;
+        COVERARTS = 6;
+    }
+
+    // List of desired subscriptions
+    repeated Subscription subscriptions = 1;
+}
+
+// Id: MESSAGE_SET_REVERSE_CAMERA_STATUS
+// Receiver: Hudiy
+// Description: Toggle reverse camera feed visibility
+message SetReverseCameraStatus {
+    // true – the camera feed is visible on the screen; false – the camera feed is not visible
+    required bool visible = 1;
+}
+
+// Id: MESSAGE_PROJECTION_STATUS
+// Receiver: Client
+// Description:
+//     Updates the status of Android Auto or CarPlay projection visibility.
+//     The message will be sent only if Subscription::PROJECTION is present.
+message ProjectionStatus {
+    required bool active = 1;
+}
+
+enum MediaSource {
+    MEDIA_SOURCE_NONE = 0;
+    MEDIA_SOURCE_ANDROID_AUTO = 1;
+    MEDIA_SOURCE_AUTOBOX = 2;
+    MEDIA_SOURCE_A2DP = 3;
+    MEDIA_SOURCE_STORAGE = 4;
+    MEDIA_SOURCE_FM_RADIO = 5;
+    MEDIA_SOURCE_WEB = 6;
+}
+
+// Id: MESSAGE_MEDIA_STATUS
+// Receiver: Client
+// Description:
+//     Updates the playback status and source of the currently playing media.
+//     The message will be sent only if Subscription::MEDIA is present.
+message MediaStatus {
+    // Current track position, e.g. 01:23
+    required string position_label = 1;
+
+    // Playback status
+    required bool is_playing = 2;
+
+    // Source of the media
+    required MediaSource source = 3;
+}
+
+// Id: MESSAGE_MEDIA_METADATA
+// Receiver: Client
+// Description:
+//     Updates the metadata of the currently playing media.
+//     The message will be sent only if Subscription::MEDIA is present.
+message MediaMetadata {
+    required string album = 1;
+    required string artist = 2;
+    required string title = 3;
+
+    // Media duration label, e.g. 04:56
+    required string duration_label = 4;
+
+    // Buffer containing the cover art image if available.
+    // The image format depends on the cover art source.
+    required bytes coverart = 5;
+}
+
+
+// Id: MESSAGE_NAVIGATION_STATUS
+// Receiver: Client
+// Description:
+//     Updates the status of navigation.
+//     The message will be sent only if Subscription::NAVIGATION is present.
+message NavigationStatus {
+    enum NavigationSource {
+        NAVIGATION_SOURCE_NONE = 0;
+        NAVIGATION_SOURCE_ANDROID_AUTO = 1;
+    }
+   
+    enum NavigationState {
+        NAVIGATION_STATE_ACTIVE = 1;
+        NAVIGATION_STATE_INACTIVE = 2;
+    }
+
+    // Source of the navigation data
+    required NavigationSource source = 1;
+
+    // Current state of the navigation
+    required NavigationState state = 2;
+}
+
+// Id: MESSAGE_NAVIGATION_MANEUVER_DETAILS
+// Receiver: Client
+// Description:
+//     Updates the details of the current navigation maneuver.
+//     The message will be sent only if Subscription::NAVIGATION is present.
+message NavigationManeuverDetails {
+    enum NavigationManeuverType
+    {
+        UNKNOWN = 0;
+        DEPART = 1;
+        NAME_CHANGE = 2;
+        SLIGHT_TURN = 3;
+        TURN = 4;
+        SHARP_TURN = 5;
+        U_TURN = 6;
+        ON_RAMP = 7;
+        OFF_RAMP = 8;
+        FORK = 9;
+        MERGE = 10;
+        ROUNDABOUT_ENTER = 11;
+        ROUNDABOUT_EXIT = 12;
+        ROUNDABOUT_ENTER_AND_EXIT = 13;
+        STRAIGHT = 14;
+        FERRY_BOAT = 16;
+        FERRY_TRAIN = 17;
+        DESTINATION = 19;
+    }
+
+    enum NavigationManeuverSide
+    {
+        LEFT = 1;
+        RIGHT = 2;
+        UNSPECIFIED = 3;
+    }
+
+    // description of the maneuver (e. g. Turn left into 2nd Ave)
+    required string description = 1;
+
+    // Buffer containing the maneuver icon.
+    // The image format depends on the navigation source.
+    required bytes icon = 2;
+    optional NavigationManeuverSide maneuver_side = 3;
+    optional NavigationManeuverType maneuver_type = 4;
+    optional uint32 maneuver_angle = 5;
+}
+
+// Id: MESSAGE_NAVIGATION_MANEUVER_DISTANCE
+// Receiver: Client
+// Description:
+//     Updates the distance of current menauver.
+//     The message will be sent only if Subscription::NAVIGATION is present.
+message NavigationManeuverDistance {
+
+    // Label of the maneuver distance (e. g. 5 km)
+    required string label = 1;
+}
+
+// Id: MESSAGE_REGISTER_STATUS_ICON_REQUEST
+// Receiver: Hudiy
+// Description: Request to register custom status icon
+message RegisterStatusIconRequest {
+    // Description of the status icon. When the icon is visible, this description will be shown in the status menu.
+    required string description = 1;
+
+    // Font family used for the status icon. The font must be registered in Hudiy by adding it to main_configuration.json
+    required string icon_font_family = 2;
+
+    // Identifier of the icon within the font.
+    required string icon_name = 3;
+}
+
+// Id: MESSAGE_REGISTER_STATUS_ICON_RESPONSE
+// Receiver: Client
+// Description: Response for registering custom status icon
+message RegisterStatusIconResponse {
+    enum RegisterStatusIconResult {
+        REGISTER_STATUS_ICON_RESULT_OK = 1;
+        REGISTER_STATUS_ICON_RESULT_FAILED = 2;
+    }
+
+    required RegisterStatusIconResult result = 1;
+
+    // Unique identifier of the icon. It will be used later to show or hide the icon, or to unregister it.
+    optional int32 id = 2;
+}
+
+// Id: MESSAGE_UNREGISTER_STATUS_ICON
+// Receiver: Hudiy
+// Description: Unregister previously registered status icon
+message UnregisterStatusIcon {
+    // Unique identifier of the icon, provided in the MESSAGE_REGISTER_STATUS_ICON_RESPONSE message.
+    required int32 id = 1;
+}
+
+// Id: MESSAGE_CHANGE_STATUS_ICON_STATE
+// Receiver: Hudiy
+// Description: Shows or hides a previously registered status icon.
+message ChangeStatusIconState {
+    // Unique identifier of the icon, provided in the MESSAGE_REGISTER_STATUS_ICON_RESPONSE message.
+    required int32 id = 1;
+
+    // Visibility state of the icon.
+    required bool visible = 2;
+}
+
+// Id: MESSAGE_REGISTER_NOTIFICATION_CHANNEL_REQUEST
+// Receiver: Hudiy
+// Description: Registers a new channel for notifications.
+message RegisterNotificationChannelRequest {
+    // Name of the channel
+    required string name = 1;
+
+    // Description of the channel
+    required string description = 2;
+}
+
+// Id: MESSAGE_REGISTER_NOTIFICATION_CHANNEL_RESPONSE
+// Receiver: Client
+// Description: Response for registering notification channel
+message RegisterNotificationChannelResponse {
+    enum RegisterNotificationChannelResult {
+        REGISTER_NOTIFICATION_CHANNEL_RESULT_OK = 1;
+        REGISTER_NOTIFICATION_CHANNEL_RESULT_FAILED = 2;
+    }
+
+    required RegisterNotificationChannelResult result = 1;
+
+    // Unique identifier of the channel. It will be used later to show notifications or to deregister the channel.
+    optional int32 id = 2;
+}
+
+// Id: MESSAGE_UNREGISTER_NOTIFICATION_CHANNEL
+// Receiver: Hudiy
+// Description: Deregisters a previously registered notification channel.
+message UnregisterNotificationChannel {
+    // Unique identifier of the channel, provided in the MESSAGE_REGISTER_NOTIFICATION_CHANNEL_RESPONSE message.
+    required int32 id = 1;
+}
+
+// Id: MESSAGE_SHOW_NOTIFICATION
+// Receiver: Hudiy
+// Description: Displays a notification in a previously registered channel.
+message ShowNotification {
+    // Unique identifier of the channel, provided in the MESSAGE_REGISTER_NOTIFICATION_CHANNEL_RESPONSE message.
+    required int32 channel_id = 1;
+    required string title = 2;
+    required string description = 3;
+
+    // Font family used for the notification icon. The font must be registered in Hudiy by adding it to main_configuration.json
+    required string icon_font_family = 4;
+
+    // Identifier of the icon within the font.
+    required string icon_name = 5;
+
+    // The action to dispatch when the notification is clicked.
+    required string action = 6;
+
+    // Whether to play the configured sound when the notification is displayed.
+    required bool play_sound = 7;
+}
+
+// Id: MESSAGE_REGISTER_TOAST_CHANNEL_REQUEST
+// Receiver: Hudiy
+// Description: Registers a new channel for toast messages.
+message RegisterToastChannelRequest {
+    // Name of the channel
+    required string name = 1;
+
+    // Description of the channel
+    required string description = 2;
+}
+
+// Id: MESSAGE_REGISTER_TOAST_CHANNEL_RESPONSE
+// Receiver: Client
+// Description: Response for registering toast channel
+message RegisterToastChannelResponse {
+    enum RegisterToastChannelResult {
+        REGISTER_TOAST_CHANNEL_RESULT_OK = 1;
+        REGISTER_TOAST_CHANNEL_RESULT_FAILED = 2;
+    }
+
+    required RegisterToastChannelResult result = 1;
+
+    // Unique identifier of the channel. It will be used later to show toasts or to deregister the channel.
+    optional int32 id = 2;
+}
+
+// Id: MESSAGE_UNREGISTER_TOAST_CHANNEL
+// Receiver: Hudiy
+// Description: Deregisters a previously registered toast channel.
+message UnregisterToastChannel {
+    // Unique identifier of the channel, provided in the MESSAGE_REGISTER_TOAST_CHANNEL_RESPONSE message.
+    required int32 id = 1;
+}
+
+// Id: MESSAGE_SHOW_TOAST
+// Receiver: Hudiy
+// Description: Displays a toast message in a previously registered channel.
+message ShowToast {
+    // Unique identifier of the channel, provided in the MESSAGE_REGISTER_TOAST_CHANNEL_RESPONSE message.
+    required int32 channel_id = 1;
+    required string message = 2;
+
+    // Font family used for the toast message icon. The font must be registered in Hudiy by adding it to main_configuration.json
+    required string icon_font_family = 3;
+
+    // Identifier of the icon within the font.
+    required string icon_name = 4;
+}
+
+// Id: MESSAGE_OBD_CONNECTION_STATUS
+// Receiver: Client
+// Description:
+//     Updates the status of ELM327 device connection to the car.
+//     The message will be sent only if Subscription::OBD is present.
+message ObdConnectionStatus {
+    enum ObdConnectionState {
+        OBD_CONNECTION_STATE_CONNECTED = 1;
+        OBD_CONNECTION_STATE_DISCONNECTED = 2;
+    }
+
+    required ObdConnectionState state = 1;
+}
+
+// Id: MESSAGE_REGISTER_AUDIO_FOCUS_RECEIVER_REQUEST
+// Receiver: Hudiy
+// Description: Registers a receiver for controlling audio focus.
+message RegisterAudioFocusReceiverRequest {
+    // Name of the audio focus receiver
+    required string name = 1;
+
+    enum AudioStreamCategory {
+        AUDIO_STREAM_CATEGORY_ENTERTAINMENT = 1;
+        AUDIO_STREAM_CATEGORY_COMMUNICATION = 2;
+    }
+    
+    // Category of the audio stream
+    required AudioStreamCategory category = 2;
+
+    // Priority of the stream when audio focus is in ducking mode.
+    // Duck mode is a state where audio from other sources is not fully muted but temporarily lowered in volume ("ducked").
+    // Navigation instructions use priority 100 by default.
+    // If the stream is less important, set its priority below 100.
+    // If the priority is higher than that of the current stream, audio focus will be taken over, otherwise request will be rejected.
+    required int32 duck_priority = 3;
+}
+
+// Id: MESSAGE_REGISTER_AUDIO_FOCUS_RECEIVER_RESPONSE
+// Receiver: Client
+// Description: Response to the registration of a receiver for controlling audio focus.
+message RegisterAudioFocusReceiverResponse {
+    enum RegisterAudioFocusReceiverResult {
+        REGISTER_AUDIO_FOCUS_RECEIVER_RESULT_OK = 1;
+        REGISTER_AUDIO_FOCUS_RECEIVER_RESULT_FAILED = 2;
+    }
+
+    required RegisterAudioFocusReceiverResult result = 1;
+
+    // Unique identifier of the receiver. It will be used later to request audio focus or to deregister the receiver.
+    optional int32 id = 2;
+}
+
+
+// Id: MESSAGE_UNREGISTER_AUDIO_FOCUS_RECEIVER
+// Receiver: Hudiy
+// Description: Deregisters a previously registered audio focus receiver.
+message UnregisterAudioFocusReceiver {
+    // Unique identifier of the receiver, provided in the MESSAGE_REGISTER_AUDIO_FOCUS_RECEIVER_RESPONSE message.
+    required int32 id = 1;
+}
+
+// Id: MESSAGE_AUDIO_FOCUS_CHANGE_REQUEST
+// Receiver: Hudiy
+// Description: Request audio focus change.
+message AudioFocusChangeRequest {
+    enum AudioFocusType {
+        // Type of audio focus, e.g., for playing a media file.
+        AUDIO_FOCUS_TYPE_GAIN = 1;
+
+        // Type of audio focus, e.g., for a voice call.
+        AUDIO_FOCUS_TYPE_TRANSIENT = 2;
+
+        // Type of audio focus, e.g., for notifications or navigation instructions.
+        AUDIO_FOCUS_TYPE_DUCK = 3;
+
+        // Type used to release the currently granted audio focus.
+        AUDIO_FOCUS_TYPE_RELEASE = 4;
+    }
+
+    // Unique identifier of the receiver, provided in the MESSAGE_REGISTER_AUDIO_FOCUS_RECEIVER_RESPONSE message.
+    required int32 id = 1;
+
+    // Type of audio focus the receiver wants to gain.
+    required AudioFocusType type = 2;
+}
+
+// Id: MESSAGE_AUDIO_FOCUS_CHANGE_RESPONSE
+// Receiver: Client
+// Description: Response for the audio focus change.
+message AudioFocusChangeResponse {
+    // Unique identifier of the receiver, provided in the MESSAGE_REGISTER_AUDIO_FOCUS_RECEIVER_RESPONSE message.
+    required int32 id = 1;
+
+    // Indicates whether audio focus was granted.
+    required bool result = 2;
+}
+
+// Id: MESSAGE_AUDIO_FOCUS_ACTION
+// Receiver: Client
+// Description: Notifications about changes in audio focus within the system.
+message AudioFocusAction {
+    enum AudioFocusActionType {
+        // Audio played by the receiver should be suspended.
+        AUDIO_FOCUS_ACTION_TYPE_SUSPEND = 1;
+
+        // Audio played by the receiver can be restored.
+        AUDIO_FOCUS_ACTION_TYPE_RESTORE = 2;
+
+        // Audio focus was granted to another receiver.
+        AUDIO_FOCUS_ACTION_TYPE_LOSS = 3;
+
+        // The receiver should lower the volume of the currently playing audio.
+        AUDIO_FOCUS_ACTION_TYPE_DUCK_START = 4;
+
+        // The receiver can restore volume level of the currently playing audio.
+        AUDIO_FOCUS_ACTION_TYPE_DUCK_END = 5;
+    }
+
+    enum LostAudioFocusType {
+        LOST_AUDIO_FOCUS_TYPE_GAIN = 1;
+        LOST_AUDIO_FOCUS_TYPE_TRANSIENT = 2;
+        LOST_AUDIO_FOCUS_TYPE_DUCK = 3;
+    }
+
+    // Unique identifier of the receiver, provided in the MESSAGE_REGISTER_AUDIO_FOCUS_RECEIVER_RESPONSE message.
+    required int32 id = 1;
+    required AudioFocusActionType action = 2;
+
+    // Type of audio focus previously granted to the receiver that has now been lost.
+    optional LostAudioFocusType lost_type = 3;
+}
+
+// Id: MESSAGE_AUDIO_FOCUS_MEDIA_KEY
+// Receiver: Client
+// Description: Notifications about media key events.
+message AudioFocusMediaKey {
+    enum AudioFocusMediaKeyEventType
+    {
+        AUDIO_FOCUS_MEDIA_KEY_EVENT_TYPE_NONE = 0;
+        AUDIO_FOCUS_MEDIA_KEY_EVENT_TYPE_PRESS = 1;
+        AUDIO_FOCUS_MEDIA_KEY_EVENT_TYPE_RELEASE = 2;
+    }
+
+    enum AudioFocusMediaKeyType {
+        AUDIO_FOCUS_MEDIA_KEY_TYPE_NONE = 0;
+        AUDIO_FOCUS_MEDIA_KEY_TYPE_PLAY = 1;
+        AUDIO_FOCUS_MEDIA_KEY_TYPE_PAUSE = 2;
+        AUDIO_FOCUS_MEDIA_KEY_TYPE_PREVIOUS = 3;
+        AUDIO_FOCUS_MEDIA_KEY_TYPE_NEXT = 4;
+        AUDIO_FOCUS_MEDIA_KEY_TYPE_TOGGLE_PLAY = 5;
+    }
+
+    // Unique identifier of the receiver, provided in the MESSAGE_REGISTER_AUDIO_FOCUS_RECEIVER_RESPONSE message.
+    required int32 id = 1;
+    required AudioFocusMediaKeyEventType event_type = 2;
+    required AudioFocusMediaKeyType key_type = 3;
+}
+
+// Id: MESSAGE_PHONE_CONNECTION_STATUS
+// Receiver: Client
+// Description:
+//     Current status of the phone connection.
+//     The message will be sent only if Subscription::PHONE is present.
+message PhoneConnectionStatus {
+    enum PhoneConnectionState {
+        PHONE_CONNECTION_STATE_CONNECTED = 1;
+        PHONE_CONNECTION_STATE_DISCONNECTED = 2;
+    }
+
+    required PhoneConnectionState state = 1;
+    // Bluetooth name of the phone.
+    required string name = 2;
+}
+
+// Id: MESSAGE_PHONE_VOICE_CALL_STATUS
+// Receiver: Client
+// Description:
+//     Current status of the voice call.
+//     The message will be sent only if Subscription::PHONE is present.
+message PhoneVoiceCallStatus {
+    enum PhoneVoiceCallState {
+        PHONE_VOICE_CALL_STATE_NONE = 0;
+        PHONE_VOICE_CALL_STATE_INCOMING = 1;
+        PHONE_VOICE_CALL_STATE_ALERTING = 2;
+        PHONE_VOICE_CALL_STATE_ACTIVE = 3;
+    }
+
+    required PhoneVoiceCallState state = 1;
+
+    // Id (phone number) of the caller.
+    required string caller_id = 2;
+
+    // Name of the caller from contacts (if available).
+    required string caller_name = 3;
+}
+
+// Id: MESSAGE_PHONE_LEVELS_STATUS
+// Receiver: Client
+// Description:
+//     Current status of the battery and signal.
+//     The message will be sent only if Subscription::PHONE is present.
+message PhoneLevelsStatus {
+    // Battery level from 0 (almost empty) to 5 (full or nearly full).
+    required int32 bettery_level = 1;
+
+    // Signal strength as a percentage (0–100%).
+    required int32 signal_level = 2;
+}
+
+// Id: MESSAGE_KEY_EVENT
+// Receiver: Hudiy
+// Description: Inject key event.
+message KeyEvent {
+    enum KeyType {
+        KEY_TYPE_UP = 1;
+        KEY_TYPE_DOWN = 2;
+        KEY_TYPE_LEFT = 3;
+        KEY_TYPE_RIGHT = 4;        
+        KEY_TYPE_SCROLL_LEFT = 5;
+        KEY_TYPE_SCROLL_RIGHT = 6;
+        KEY_TYPE_ENTER = 7;
+        KEY_TYPE_BACK = 8;
+        KEY_TYPE_HOME = 9;
+        KEY_TYPE_ANSWER_CALL = 10;
+        KEY_TYPE_PHONE_MENU = 11;
+        KEY_TYPE_HANGUP_CALL = 12;
+        KEY_TYPE_PLAY = 13;
+        KEY_TYPE_TOGGLE_PLAY = 14;
+        KEY_TYPE_PAUSE = 15;
+        KEY_TYPE_STOP = 16;
+        KEY_TYPE_PREVIOUS_TRACK = 17;
+        KEY_TYPE_NEXT_TRACK = 18;
+        KEY_TYPE_MEDIA_MENU = 19;
+        KEY_TYPE_NAVIGATION_MENU = 20;
+        KEY_TYPE_VOICE_COMMAND = 21;
+        KEY_TYPE_TOGGLE_INPUT_FOCUS = 23;
+    }
+
+    enum EventType {
+        EVENT_TYPE_PRESS = 1;
+        EVENT_TYPE_RELEASE = 2;
+    }
+
+    required KeyType key_type = 1;
+    required EventType event_type = 2;
+}
+
+// Id: MESSAGE_QUERY_OBD_DEVICE_REQUEST
+// Receiver: Hudiy
+// Description: Executes the given commands on ELM327 devices.
+message QueryObdDeviceRequest {
+    // List of commands to execute, e.g., querying a PID.
+    repeated string commands = 1;
+
+    // Client-provided unique ID used to match the request with its response.
+    required int32 request_code = 2;
+}
+
+// Id: MESSAGE_QUERY_OBD_DEVICE_RESPONSE
+// Receiver: Client
+// Description: Result of executed commands on ELM327 devices.
+message QueryObdDeviceResponse {
+    required bool result = 1;
+
+    // Response data for each command, in the same order as in the request.
+    repeated string data = 2;
+
+    // unique ID provided in the request.
+    required int32 request_code = 3;
+}
+
+// Id: MESSAGE_SET_DARK_MODE
+// Receiver: Hudiy
+// Description: Controls dark and light themes.
+message SetDarkMode {
+    required bool enabled = 1;
+}
+
+enum OverlayVisibility {
+    OVERLAY_VISIBILITY_NONE = 0;
+    OVERLAY_VISIBILITY_ALWAYS = 1;
+    OVERLAY_VISIBILITY_NATIVE_UI_ONLY = 2;
+    OVERLAY_VISIBILITY_PROJECTION_ONLY = 3;
+}
+
+// Id: MESSAGE_SET_CUSTOM_OVERLAY_VISIBILITY
+// Receiver: Hudiy
+// Description: Controls visibility of a custom overlay.
+message SetCustomOverlayVisibility {
+    // Identifier from config file.
+    required string identifier = 1;
+    required OverlayVisibility visibility = 2;
+}
+
+// Id: MESSAGE_SET_NAVIGATION_OVERLAY_VISIBILITY
+// Receiver: Hudiy
+// Description: Controls visibility of the built-in navigation overlay.
+message SetNavigationOverlayVisibility {
+    required OverlayVisibility visibility = 2;
+}
+
+// Id: MESSAGE_SET_VOLUME_OVERLAY_VISIBILITY
+// Receiver: Hudiy
+// Description: Controls visibility of the built-in volume overlay.
+message SetVolumeOverlayVisibility {
+    required OverlayVisibility visibility = 2;
+}
+
+// Id: MESSAGE_DISPATCH_ACTION
+// Receiver: Hudiy/Client
+// Description:
+//     Triggers an action when sent to Hudiy.
+//     When received by the client, it indicates that a previously registered action was requested to be dispatched.
+message DispatchAction {
+    required string action = 1;
+}
+
+// Id: MESSAGE_REGISTER_ACTION_REQUEST
+// Receiver: Hudiy
+// Description: Registers an action with the given name.
+message RegisterActionRequest {
+    // Name of the action to register.
+    // Name must be unique across the entire application.
+    required string action = 1;
+}
+
+// Id: MESSAGE_REGISTER_ACTION_RESPONSE
+// Receiver: Client
+// Description: Response to an action registration request.
+message RegisterActionResponse {
+    // Name of the action that was requested for registration.
+    required string action = 1;
+    required bool result = 2;
+}
+
+// Id: MESSAGE_COVERART_REQUEST
+// Receiver: Client
+// Description:
+//     Requests cover art when it is not available from any other source.
+//     The message will be sent only if Subscription::COVERARTS is present.
+//     Best practice is to register only one Subscription::COVERARTS for the entire application
+//     to avoid race conditions between multiple Subscription::COVERARTS.
+message CoverartRequest {
+    // Id of the request. It must be used in response.
+    required int32 request_code = 1;
+    required string artist = 2;
+    required string album = 3;
+    required string title = 4;
+
+    // Source that requested the cover art.
+    required MediaSource source = 5;
+}
+
+// Id: MESSAGE_COVERART_RESPONSE
+// Receiver: Hudiy
+// Description: Response for previously requested cover art.
+message CoverartResponse {
+    // Id from the request.
+    required int32 request_code = 1;
+
+    // Buffer containing the cover art image if available, otherwise empty.
+    required bytes coverart = 2;
+}
+
+// Id: MESSAGE_SET_EQUALIZER_PRESET
+// Receiver: Hudiy
+// Description: Sets preset of the equalizer.
+message SetEqualizerPreset {
+    // Name of the preset from config file.
+    required string name = 1;
+}

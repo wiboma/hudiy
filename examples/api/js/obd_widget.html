@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>OBD-II widget</title>
+    <link rel="preload" href="Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin>
+    <style>
+        @font-face {
+            font-family: 'Roboto';
+            src: url('Roboto-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        body {
+            background-color: transparent;
+            color: #f0f0f0;
+            font-family: 'Roboto';
+            font-size: calc(100vw / 14);
+            padding: 1vw;
+        }
+
+        .label {
+            font-size: 1em;
+            color: var(--label-color);
+            font-weight: bold;
+            margin-top: 2vh;
+            margin-left: 2vh;
+        }
+
+        .value {
+            font-size: 1em;
+            color: var(--value-color);
+            margin-left: 2vh;
+            margin-top: 2vh;
+            margin-bottom: 4vh;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 1vh;
+            height: 100%;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="container"></div>
+
+    <script src="common/protobuf.min.js"></script>
+    <script>
+        hudiy = {
+            api: {}
+        }
+
+        const gauges = [
+            { label: 'Engine load', pid: '0104', unit: '%', parse: b => (b[2] * 100) / 255, precision: 0 },
+            { label: 'Engine temperature', pid: '0105', unit: '°C', parse: b => b[2] - 40, precision: 0 },
+            { label: 'Intake temperature', pid: '010F', unit: '°C', parse: b => b[2] - 40, precision: 0 },
+            { label: 'Speed', max: 255, pid: '010D', unit: 'km/h', parse: b => b[2], precision: 0 },
+        ];
+
+        const container = document.getElementById('container');
+
+        gauges.forEach((g, i) => {
+            const div = document.createElement('div');
+            div.className = 'param';
+            div.innerHTML = `
+                <div class="label">${g.label}</div>
+                <div class="value" id="pid_${i}">--${g.unit}</div>
+            `;
+            container.appendChild(div);
+        });
+
+        function updateGauge(value, index) {
+            const span = document.getElementById(`pid_${index}`);
+            const gauge = gauges[index];
+            if (span && gauge) {
+                span.textContent = `${value.toFixed(gauge.precision)}${gauge.unit}`;
+            }
+        }
+
+        function sendQueryObdDeviceRequest(command, code) {
+            const msg = hudiy.api.QueryObdDeviceRequest.create({
+                commands: [command],
+                requestCode: code
+            });
+            const payload = hudiy.api.QueryObdDeviceRequest.encode(msg).finish();
+            hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_QUERY_OBD_DEVICE_REQUEST, 0, payload);
+        }
+
+        hudiy.onAttached = function () {
+            hudiy.onInputFocusChanged();
+
+            document.documentElement.style.setProperty('--label-color', hudiy.colorScheme.onSurface);
+            document.documentElement.style.setProperty('--value-color', hudiy.colorScheme.primary);
+        }
+
+        hudiy.onColorSchemeChanged = function () {
+            document.documentElement.style.setProperty('--label-color', hudiy.colorScheme.onSurface);
+            document.documentElement.style.setProperty('--value-color', hudiy.colorScheme.primary);
+        }
+
+        hudiy.api.onConnected = function () {
+            gauges.forEach((gauge, i) => {
+                sendQueryObdDeviceRequest(gauge.pid, i)
+            });
+        }
+    </script>
+
+    <script type="module">
+        import { HudiyClient } from "./common/hudiy_client.js";
+
+        function loadProto() {
+            return new Promise((resolve, reject) => {
+                protobuf.load("common/Api.proto", (err, root) => {
+                    if (err) reject(err);
+                    else resolve(root);
+                });
+            });
+        }
+
+        hudiy.api.protoRoot = await loadProto();
+        hudiy.api.HelloRequest = hudiy.api.protoRoot.lookupType("hudiy.app.api.HelloRequest");
+        hudiy.api.HelloResponse = hudiy.api.protoRoot.lookupType("hudiy.app.api.HelloResponse");
+        hudiy.api.Version = hudiy.api.protoRoot.lookupType("hudiy.app.api.Version");
+        hudiy.api.QueryObdDeviceRequest = hudiy.api.protoRoot.lookupType("hudiy.app.api.QueryObdDeviceRequest");
+        hudiy.api.QueryObdDeviceResponse = hudiy.api.protoRoot.lookupType("hudiy.app.api.QueryObdDeviceResponse");
+        hudiy.api.MessageType = hudiy.api.protoRoot.lookup("hudiy.app.api.MessageType").values;
+
+        hudiy.api.client = new HudiyClient("ws://localhost:44406");
+
+        hudiy.api.client.onOpen = () => {
+            const versionObj = hudiy.api.Version.create({ major: 1, minor: 0 });
+            const hello = hudiy.api.HelloRequest.create({
+                name: "Obd Dashboard",
+                apiVersion: versionObj
+            });
+
+            const payload = hudiy.api.HelloRequest.encode(hello).finish();
+            hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_HELLO_REQUEST, 0, payload);
+            hudiy.api.onConnected()
+        };
+
+        hudiy.api.client.onMessage = ({ id, flags, payload }) => {
+            if (id === hudiy.api.MessageType.MESSAGE_HELLO_RESPONSE) {
+                const decoded = hudiy.api.HelloResponse.decode(payload);
+                console.log("HelloResponse:", decoded);
+            } else if (id === hudiy.api.MessageType.MESSAGE_PING) {
+                hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_PONG, 0, new Uint8Array(0));
+            } else if (id === hudiy.api.MessageType.MESSAGE_QUERY_OBD_DEVICE_RESPONSE) {
+                const msg = hudiy.api.QueryObdDeviceResponse.decode(payload);
+                if (gauges[msg.requestCode]) {
+                    const bytes = msg.result ? msg.data[0]?.match(/.{1,2}/g)?.map(h => parseInt(h, 16)) : null;
+                    const value = bytes ? gauges[msg.requestCode].parse(bytes) : 0;
+
+                    updateGauge(value, msg.requestCode);
+                    setTimeout(() => {
+                        sendQueryObdDeviceRequest(gauges[msg.requestCode].pid, msg.requestCode);
+                    }, 50);
+                }
+            }
+        };
+
+        hudiy.api.client.connect();
+    </script>
+</body>
+
+</html>

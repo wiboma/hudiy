@@ -1,0 +1,265 @@
+{
+    "application" : {
+        "handednessOfTraffic" : "LEFT",
+        "defaultAction" : "",
+        "showDashboardsIcon" : true,
+        "showMenuIcon" : true,
+        "touchscreen" : true,
+        "showCursor" : false,
+        "width" : 0,
+        "height" : 0,
+        "x" : 0,
+        "y" : 0,
+        "splitWithProjections" : false,
+        "windowWidth" : 0,
+        "windowHeight" : 0,
+        "handleKeyboardEvents" : true,
+        "translationFile" : ""
+    },
+    "appearance" : {
+        "timeFormat" : "24h",
+        "showClock" : true,
+        "fonts" : [
+
+        ]
+    },
+    "theme" : {
+        "darkThemeEnabled" : true,
+        "darkContrastLevel" : 0,
+        "darkSourceColor" : "#F78500",
+        "lightContrastLevel" : 0,
+        "lightSourceColor" : "#F78500",
+        "availableColors" : [
+            "#769CDF",
+            "#862272",
+            "#DADFBB",
+            "#F78500",
+            "#E1D648",
+            "#3AED6F",
+            "#E02129",
+            "#4AD155"
+        ],
+        "lightBackgroundsMap" : {
+
+        },
+        "darkBackgroundsMap" : {
+
+        },
+        "defaultDarkBackground" : "",
+        "defaultLightBackground" : "",
+        "darkBackgroundOpacity" : 100,
+        "lightBackgroundOpacity" : 100
+    },
+    "sound" : {
+        "startupSoundFile" : "",
+        "notificationSoundFile" : "",
+        "volumeSinkName" : "",
+        "playbackSinkName" : "hudiy_equalizer_sink",
+        "sourceName" : "",
+        "sourceMaxVolume" : 100,
+        "sinkMaxVolume" : 100,
+        "outputVolumeStep" : 5,
+        "inputVolumeStep" : 5,
+        "subwooferBalanceStep" : 5,
+        "balanceStep" : 5,
+        "fadeStep" : 5,
+        "subwooferBalance" : 0,
+        "fade" : 0,
+        "balance" : 0,
+        "storageMusicAutoplay" : false,
+        "fmRadioAutoplay" : false,
+        "ringtoneFile" : ""
+    },
+    "androidAuto" : {
+        "speechAudio" : true,
+        "mediaAudio" : true,
+        "resolution" : "480p",
+        "bluetoothAddress" : "",
+        "autostart" : true,
+        "dpi" : 160,
+        "widthMargin" : 0,
+        "heightMargin" : 0,
+        "width" : 0,
+        "height" : 0,
+        "x" : 0,
+        "y" : 0
+    },
+    "hotspot" : {
+        "enabled" : true,
+        "hardwareAddress" : "",
+        "ipAddress" : "192.168.12.1",
+        "passphrase" : "1234567890",
+        "ssid" : "Hudiy",
+        "bandwidth" : "A"
+    },
+    "equalizer" : {
+        "enabled" : true,
+        "step" : 0.25,
+        "minValue" : -10,
+        "maxValue" : 15,
+        "band25" : 0,
+        "band40" : 0,
+        "band63" : 0,
+        "band100" : 0,
+        "band160" : 0,
+        "band250" : 0,
+        "band400" : 0,
+        "band630" : 0,
+        "band1000" : 0,
+        "band1600" : 0,
+        "band2500" : 0,
+        "band4000" : 0,
+        "band6300" : 0,
+        "band10000" : 0,
+        "band16000" : 0,
+        "presets" : [
+            {
+                "name" : "Flat",
+                "band25" : 0,
+                "band40" : 0,
+                "band63" : 0,
+                "band100" : 0,
+                "band160" : 0,
+                "band250" : 0,
+                "band400" : 0,
+                "band630" : 0,
+                "band1000" : 0,
+                "band1600" : 0,
+                "band2500" : 0,
+                "band4000" : 0,
+                "band6300" : 0,
+                "band10000" : 0,
+                "band16000" : 0
+            },
+            {
+                "name" : "Rock",
+                "band25" : 3,
+                "band40" : 4,
+                "band63" : 5,
+                "band100" : 4,
+                "band160" : 1,
+                "band250" : -3,
+                "band400" : -2,
+                "band630" : 2,
+                "band1000" : 2,
+                "band1600" : 4,
+                "band2500" : 4,
+                "band4000" : 4,
+                "band6300" : 3,
+                "band10000" : 4,
+                "band16000" : 3
+            },
+            {
+                "name" : "Jazz",
+                "band25" : 2,
+                "band40" : 3,
+                "band63" : 4,
+                "band100" : 2,
+                "band160" : -2,
+                "band250" : 0,
+                "band400" : 2,
+                "band630" : 2,
+                "band1000" : 3,
+                "band1600" : 3,
+                "band2500" : 2,
+                "band4000" : 3,
+                "band6300" : 3,
+                "band10000" : 4,
+                "band16000" : 3
+            },
+            {
+                "name" : "Classical",
+                "band25" : 3,
+                "band40" : 3,
+                "band63" : 2,
+                "band100" : -2,
+                "band160" : 0,
+                "band250" : -3,
+                "band400" : -2,
+                "band630" : 0,
+                "band1000" : 2,
+                "band1600" : 3,
+                "band2500" : 3,
+                "band4000" : 2,
+                "band6300" : 4,
+                "band10000" : 4,
+                "band16000" : 4
+            },
+            {
+                "name" : "Pop",
+                "band25" : 3,
+                "band40" : 4,
+                "band63" : 5,
+                "band100" : 4,
+                "band160" : -2,
+                "band250" : -3,
+                "band400" : 0,
+                "band630" : 2,
+                "band1000" : 3,
+                "band1600" : 3,
+                "band2500" : 4,
+                "band4000" : 4,
+                "band6300" : 4,
+                "band10000" : 5,
+                "band16000" : 4
+            }
+        ]
+    },
+    "notificatons" : {
+        "outputVolumeToast" : true,
+        "inputVolumeToast" : true,
+        "nowPlaying" : true,
+        "notificationDuration" : 8000,
+        "toastDuration" : 2000
+    },
+    "fmRadio" : {
+        "bandwidth" : "EU",
+        "squelchLevel" : 350,
+        "squelchLimit" : 10,
+        "rdsEnabled" : true,
+        "autoGain" : true,
+        "gain" : 0,
+        "presets" : [
+
+        ]
+    },
+    "autobox" : {
+        "dpi" : 160,
+        "width" : 0,
+        "height" : 0,
+        "x" : 0,
+        "y" : 0,
+        "oemName" : "",
+        "autoWirelessConnection" : true,
+        "vendorId" : 4884,
+        "productId" : 5409,
+        "bandwidth" : "AUTO"
+    },
+    "obd" : {
+        "deviceType" : "NONE",
+        "serialDescriptor" : "",
+        "baudrate" : 115200,
+        "rfcommAddress" : "",
+        "rfcommChannel" : 1,
+        "maxInvalidResponseCount" : 20,
+        "startupSequence" : [
+            "ATZ",
+            "ATE0",
+            "ATS0",
+            "ATL0",
+            "ATH0",
+            "ATSP0"
+        ]
+    },
+    "api" : {
+        "tcpEndpointPort" : 44405,
+        "webSocketEndpointPort" : 44406
+    },
+    "reverseCamera" : {
+        "width" : 0,
+        "height" : 0,
+        "x" : 0,
+        "y" : 0,
+        "pipeline" : "v4l2src device=/dev/video0 ! videoconvert ! video/x-raw,format=RGBA,width=640,height=480 ! glupload ! qml6glsink name=video-sink"
+    }
+}

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Responsive Tachometer</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            height: 100%;
+            background: transparent;
+        }
+
+        #container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        canvas {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        @font-face {
+            font-family: 'Roboto';
+            src: url('Roboto-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <canvas id="backgroundCanvas"></canvas>
+        <canvas id="needleCanvas"></canvas>
+    </div>
+
+    <script src="common/protobuf.min.js"></script>
+    <script type="module">
+        import { HudiyClient } from './common/hudiy_client.js';
+
+        const bgCanvas = document.getElementById("backgroundCanvas");
+        const needleCanvas = document.getElementById("needleCanvas");
+        const bgCtx = bgCanvas.getContext("2d");
+        const needleCtx = needleCanvas.getContext("2d");
+
+        const minRpm = 0;
+        const maxRpm = 8;
+        const dangerZoneStart = 6.5;
+
+        let rpm = 0;
+        let targetRpm = 0;
+        let animating = false;
+        let cx = 0, cy = 0, radius = 0;
+
+        function drawArc(cx, cy, r, start, end, color, width = 1, context) {
+            context.beginPath();
+            context.arc(cx, cy, r, start, end);
+            context.strokeStyle = color;
+            context.lineWidth = width;
+            context.stroke();
+        }
+
+        function drawDangerArc(context) {
+            const a1 = Math.PI * (0.75 + 1.5 * (dangerZoneStart - minRpm) / (maxRpm - minRpm));
+            const a2 = Math.PI * 2.25;
+            drawArc(cx, cy, radius - 8, a1, a2, "#a30000", radius * 0.09, context);
+        }
+
+        function drawOuterGlassRing(context) {
+            const outer = radius * 1.1, inner = radius * 1.02;
+            const grad = context.createLinearGradient(cx, cy - outer, cx, cy + outer);
+            grad.addColorStop(0.0, "rgba(255,255,255,0.2)");
+            grad.addColorStop(0.4, "rgba(180,220,255,0.08)");
+            grad.addColorStop(0.7, "rgba(0,0,0,0.08)");
+            grad.addColorStop(1.0, "rgba(0,0,0,0.2)");
+
+            context.save();
+            context.beginPath();
+            context.arc(cx, cy, outer, 0, 2 * Math.PI);
+            context.arc(cx, cy, inner, 0, 2 * Math.PI, true);
+            context.closePath();
+            context.fillStyle = grad;
+            context.fill("evenodd");
+
+            drawArc(cx, cy, outer - 1, 0, Math.PI * 2, "rgba(255,255,255,0.25)", 1, context);
+            drawArc(cx, cy, inner + 0.5, 0, Math.PI * 2, "rgba(255,255,255,0.08)", 1, context);
+            context.restore();
+        }
+
+        function drawGlassReflection(context) {
+            const r = radius * 1.07;
+            const grad = context.createLinearGradient(cx, cy - r, cx, cy);
+            grad.addColorStop(0.0, "rgba(255,255,255,0.08)");
+            grad.addColorStop(0.5, "rgba(255,255,255,0.03)");
+            grad.addColorStop(1.0, "rgba(255,255,255,0)");
+
+            context.save();
+            context.beginPath();
+            context.arc(cx, cy, r, 0, 2 * Math.PI);
+            context.clip();
+            context.beginPath();
+            context.arc(cx, cy, r, Math.PI, 2 * Math.PI);
+            context.fillStyle = grad;
+            context.fill();
+            context.restore();
+        }
+
+        function drawDial(context) {
+            const grad = context.createRadialGradient(cx, cy, 0, cx, cy, radius + 10);
+            grad.addColorStop(0.6, "#001020");
+            grad.addColorStop(1.0, "#000000");
+            context.fillStyle = grad;
+            context.beginPath();
+            context.arc(cx, cy, radius + 10, 0, 2 * Math.PI);
+            context.fill();
+
+            drawDangerArc(context);
+
+            for (let i = minRpm; i <= maxRpm + 1e-6; i += 0.2) {
+                const angle = Math.PI * (0.75 + 1.5 * (i - minRpm) / (maxRpm - minRpm));
+                const isMajor = Math.abs(i - Math.round(i)) < 1e-6;
+                const len = isMajor ? radius * 0.1 : radius * 0.04;
+                const inner = radius - len, outer = radius - 2;
+                const x1 = cx + Math.cos(angle) * inner;
+                const y1 = cy + Math.sin(angle) * inner;
+                const x2 = cx + Math.cos(angle) * outer;
+                const y2 = cy + Math.sin(angle) * outer;
+
+                context.beginPath();
+                context.moveTo(x1, y1);
+                context.lineTo(x2, y2);
+                context.strokeStyle = "#ccc";
+                context.lineWidth = isMajor ? 2 : 1;
+                context.stroke();
+            }
+
+            context.fillStyle = "white";
+            context.font = `${radius * 0.12}px Roboto`;
+            context.textAlign = "center";
+            context.textBaseline = "middle";
+            for (let i = Math.ceil(minRpm); i <= maxRpm; i++) {
+                const angle = Math.PI * (0.75 + 1.5 * (i - minRpm) / (maxRpm - minRpm));
+                const x = cx + Math.cos(angle) * (radius - radius * 0.2);
+                const y = cy + Math.sin(angle) * (radius - radius * 0.2);
+                context.fillText(i.toString(), x, y);
+            }
+
+            context.fillStyle = "#aaa";
+            context.font = `${radius * 0.10}px Roboto`;
+            context.fillText("× 1000/min", cx, cy + radius * 0.3);
+        }
+
+        function drawNeedle(rpmValue, context) {
+            const clamped = Math.min(Math.max(rpmValue, minRpm), maxRpm);
+            const angle = Math.PI * (0.75 + 1.5 * (clamped - minRpm) / (maxRpm - minRpm));
+            const x = cx + Math.cos(angle) * (radius - 10);
+            const y = cy + Math.sin(angle) * (radius - 10);
+
+            context.clearRect(0, 0, needleCanvas.width, needleCanvas.height);
+
+            context.save();
+            context.beginPath();
+            context.moveTo(cx, cy);
+            context.lineTo(x, y);
+            context.strokeStyle = "rgba(0, 0, 0, 0.4)";
+            context.lineWidth = 4;
+            context.shadowColor = "rgba(0, 0, 0, 0.8)";
+            context.shadowBlur = 6;
+            context.stroke();
+            context.restore();
+
+            const grad = context.createLinearGradient(cx, cy, x, y);
+            grad.addColorStop(0, "rgba(255, 0, 0, 1)");
+            grad.addColorStop(1, "rgba(255, 0, 0, 0.3)");
+
+            context.save();
+            context.shadowColor = "rgba(255, 0, 0, 0.6)";
+            context.shadowBlur = 12;
+            context.beginPath();
+            context.moveTo(cx, cy);
+            context.lineTo(x, y);
+            context.strokeStyle = grad;
+            context.lineWidth = 3;
+            context.stroke();
+            context.restore();
+
+            context.beginPath();
+            context.arc(cx, cy, radius * 0.04, 0, 2 * Math.PI);
+            context.fillStyle = "black";
+            context.fill();
+            context.strokeStyle = "red";
+            context.lineWidth = 2;
+            context.stroke();
+        }
+
+        function animateNeedle() {
+            if (!animating) return;
+            rpm += (targetRpm - rpm) * 0.15;
+            if (Math.abs(targetRpm - rpm) < 0.01) {
+                rpm = targetRpm;
+                animating = false;
+            }
+            drawNeedle(rpm, needleCtx);
+            if (animating) requestAnimationFrame(animateNeedle);
+        }
+
+        function startAnimation() {
+            if (!animating) {
+                animating = true;
+                requestAnimationFrame(animateNeedle);
+            }
+        }
+
+        async function waitForFont(name) {
+            if (document.fonts?.load) {
+                await document.fonts.load(`12px '${name}'`);
+                await document.fonts.ready;
+            } else {
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+        }
+
+        function resizeAndRenderStatic() {
+            const rect = bgCanvas.getBoundingClientRect();
+            bgCanvas.width = rect.width;
+            bgCanvas.height = rect.height;
+            needleCanvas.width = rect.width;
+            needleCanvas.height = rect.height;
+
+            cx = rect.width / 2;
+            cy = rect.height / 2;
+            radius = Math.min(rect.width, rect.height) * 0.45;
+
+            drawDial(bgCtx);
+            drawOuterGlassRing(bgCtx);
+            drawGlassReflection(bgCtx);
+
+            drawNeedle(rpm, needleCtx);
+        }
+
+        const hudiy = { api: {} };
+        const root = await protobuf.load("common/Api.proto");
+
+        hudiy.api.protoRoot = root;
+        hudiy.api.HelloRequest = root.lookupType("hudiy.app.api.HelloRequest");
+        hudiy.api.HelloResponse = root.lookupType("hudiy.app.api.HelloResponse");
+        hudiy.api.HelloResponseResult = root.lookup("hudiy.app.api.HelloResponse.HelloResponseResult").values;
+        hudiy.api.QueryObdDeviceRequest = root.lookupType("hudiy.app.api.QueryObdDeviceRequest");
+        hudiy.api.QueryObdDeviceResponse = root.lookupType("hudiy.app.api.QueryObdDeviceResponse");
+        hudiy.api.MessageType = root.lookup("hudiy.app.api.MessageType").values;
+        hudiy.api.client = new HudiyClient("ws://localhost:44406");
+
+        function sendQueryObdRpmRequest() {
+            const msg = hudiy.api.QueryObdDeviceRequest.create({ commands: ["010C"], requestCode: 1 });
+            const payload = hudiy.api.QueryObdDeviceRequest.encode(msg).finish();
+            hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_QUERY_OBD_DEVICE_REQUEST, 0, payload);
+        }
+
+        hudiy.api.client.onOpen = () => {
+            const hello = hudiy.api.HelloRequest.create({ name: "Tachometer", apiVersion: { major: 1, minor: 0 } });
+            const payload = hudiy.api.HelloRequest.encode(hello).finish();
+            hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_HELLO_REQUEST, 0, payload);
+        };
+
+        hudiy.api.client.onMessage = ({ id, payload }) => {
+            if (id === hudiy.api.MessageType.MESSAGE_HELLO_RESPONSE) {
+                const msg = hudiy.api.HelloResponse.decode(payload);
+                if (msg.result === hudiy.api.HelloResponseResult.HELLO_RESPONSE_RESULT_OK) sendQueryObdRpmRequest();
+            } else if (id === hudiy.api.MessageType.MESSAGE_QUERY_OBD_DEVICE_RESPONSE) {
+                const msg = hudiy.api.QueryObdDeviceResponse.decode(payload);
+                if (msg.requestCode === 1 && msg.result) {
+                    const bytes = msg.data[0]?.match(/.{1,2}/g)?.map(h => parseInt(h, 16));
+                    const raw = bytes ? ((bytes[2] * 256 + bytes[3]) / 4) : 0;
+                    targetRpm = raw / 1000;
+                    startAnimation();
+                    setTimeout(sendQueryObdRpmRequest, 150);
+                }
+            } else if (id === hudiy.api.MessageType.MESSAGE_PING) {
+                hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_PONG, 0, new Uint8Array(0));
+            }
+        };
+
+        hudiy.api.client.connect();
+
+        await waitForFont("Roboto");
+        window.addEventListener("resize", resizeAndRenderStatic);
+        resizeAndRenderStatic();
+    </script>
+</body>
+
+</html>

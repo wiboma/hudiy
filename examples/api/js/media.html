@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Media</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+            height: 100%;
+            width: 100%;
+            background-color: transparent;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            max-width: 90vw;
+        }
+
+        #coverart {
+            width: 30vw;
+            height: 30vw;
+            max-height: 30vh;
+            object-fit: contain;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #coverart.visible {
+            opacity: 1;
+        }
+
+        #title {
+            font-size: 8vw;
+            margin-top: 2vh;
+            word-break: break-word;
+            min-height: 1em;
+        }
+
+        #artist {
+            font-size: 7vw;
+            margin-top: 2vh;
+            word-break: break-word;
+            min-height: 1em;
+        }
+
+        #album {
+            font-size: 7vw;
+            margin-top: 2vh;
+            word-break: break-word;
+            min-height: 1em;
+        }
+
+        #time {
+            font-size: 7vw;
+            margin-top: 2vh;
+            word-break: break-word;
+            min-height: 1em;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="common/protobuf.min.js"></script>
+    <script type="module">
+        import { HudiyClient } from './common/hudiy_client.js';
+
+        const hudiy = { api: {} };
+        const root = await protobuf.load("common/Api.proto");
+
+        hudiy.api.protoRoot = root;
+
+        hudiy.api.HelloRequest = root.lookupType("hudiy.app.api.HelloRequest");
+        hudiy.api.HelloResponse = root.lookupType("hudiy.app.api.HelloResponse");
+        hudiy.api.HelloResponseResult = root.lookup("hudiy.app.api.HelloResponse.HelloResponseResult").values;
+
+        hudiy.api.SetStatusSubscriptions = root.lookupType("hudiy.app.api.SetStatusSubscriptions");
+        hudiy.api.Subscription = root.lookup("hudiy.app.api.SetStatusSubscriptions.Subscription").values;
+
+        hudiy.api.MediaMetadata = root.lookupType("hudiy.app.api.MediaMetadata");
+        hudiy.api.MediaStatus = root.lookupType("hudiy.app.api.MediaStatus");
+
+        hudiy.api.MessageType = root.lookup("hudiy.app.api.MessageType").values;
+
+        hudiy.api.client = new HudiyClient("ws://localhost:44406");
+        hudiy.api.client.onOpen = () => {
+            const hello = hudiy.api.HelloRequest.create({
+                name: "Media",
+                apiVersion: { major: 1, minor: 0 }
+            });
+            const payload = hudiy.api.HelloRequest.encode(hello).finish();
+            hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_HELLO_REQUEST, 0, payload);
+        };
+
+        function sendSetStatusSubscriptions() {
+            const msg = hudiy.api.SetStatusSubscriptions.create({
+                subscriptions: [hudiy.api.Subscription.MEDIA]
+            });
+            const payload = hudiy.api.SetStatusSubscriptions.encode(msg).finish();
+            hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_SET_STATUS_SUBSCRIPTIONS, 0, payload);
+        }
+
+        hudiy.api.client.onMessage = ({ id, payload }) => {
+            if (id === hudiy.api.MessageType.MESSAGE_HELLO_RESPONSE) {
+                const msg = hudiy.api.HelloResponse.decode(payload);
+                if (msg.result === hudiy.api.HelloResponseResult.HELLO_RESPONSE_RESULT_OK) {
+                    sendSetStatusSubscriptions();
+                }
+            } else if (id === hudiy.api.MessageType.MESSAGE_PING) {
+                hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_PONG, 0, new Uint8Array(0));
+            } else if (id === hudiy.api.MessageType.MESSAGE_MEDIA_METADATA) {
+                const msg = hudiy.api.MediaMetadata.decode(payload);
+                document.getElementById("title").textContent = msg.title;
+                document.getElementById("artist").textContent = msg.artist;
+                document.getElementById("album").textContent = msg.album;
+
+                hudiy.durationLabel = msg.durationLabel;
+
+                document.getElementById("time").textContent = "00:00/" + hudiy.durationLabel;
+
+                const coverartImg = document.getElementById("coverart");
+
+                if (!msg.coverart || msg.coverart.length === 0) {
+                    coverartImg.src = "";
+                    coverartImg.classList.remove("visible");
+                    return;
+                }
+
+                const blob = new Blob([msg.coverart], { type: "image/png" });
+                const url = URL.createObjectURL(blob);
+
+                coverartImg.classList.remove("visible");
+
+                coverartImg.onload = () => {
+                    coverartImg.classList.add("visible");
+                };
+
+                coverartImg.onerror = () => {
+                    coverartImg.classList.remove("visible");
+                    coverartImg.src = "";
+                };
+
+                coverartImg.src = url;
+            } else if (id === hudiy.api.MessageType.MESSAGE_MEDIA_STATUS) {
+                const msg = hudiy.api.MediaStatus.decode(payload);
+                document.getElementById("time").textContent = msg.positionLabel + "/" + hudiy.durationLabel;
+            }
+        };
+
+        hudiy.api.client.connect();
+    </script>
+
+    <div id="container">
+        <img id="coverart" />
+        <div id="title"></div>
+        <div id="artist"></div>
+        <div id="album"></div>
+        <div id="time"></div>
+    </div>
+</body>
+
+</html>

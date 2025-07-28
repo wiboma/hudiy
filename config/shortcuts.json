@@ -1,0 +1,19 @@
+{
+    "shortcuts": [
+        {
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "volume_mute",
+            "action": "toggle_output_muted"
+        },
+        {
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "volume_down",
+            "action": "output_volume_down"
+        },
+        {
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "volume_up",
+            "action": "output_volume_up"
+        }
+    ]
+}

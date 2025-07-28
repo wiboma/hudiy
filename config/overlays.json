@@ -1,0 +1,17 @@
+{
+    "overlays" : [
+    ],
+    "navigationOverlayPosition" : {
+        "x" : 0,
+        "y" : 0
+    },
+    "volumeOverlayPosition" : {
+        "x" : 0,
+        "y" : 0
+    },
+    "navigationOverlayVisibility" : "NONE",
+    "volumeOverlayVisibility" : "NONE",
+    "navigationOverlayOpacity" : 100,
+    "xStep" : 20,
+    "yStep" : 10
+}

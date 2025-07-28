@@ -1,0 +1,26 @@
+{
+    "dashboards": [
+        {
+            "isDefault": true,
+            "action": "hudiy_dashboard",
+            "widgets": [
+                {
+                    "type": "date_time",
+                    "size": "small_narrow"
+                },
+                {
+                    "type": "navigation",
+                    "size": "medium_narrow"
+                },
+                {
+                    "type": "now_playing",
+                    "size": "large_narrow"
+                },
+                {
+                    "type": "phone",
+                    "size": "small_narrow"
+                }
+            ]
+        }
+    ]
+}

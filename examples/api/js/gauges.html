@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <link rel="preload" href="Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin>
+  <title>OBD-II gauges</title>
+  <style>
+    @font-face {
+      font-family: 'Roboto';
+      src: url('Roboto-Regular.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    html,
+    body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      font-family: 'Roboto', sans-serif;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .gauge-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      justify-content: center;
+      align-content: center;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      padding: 10px;
+      gap: 10px;
+    }
+
+    canvas {
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+      aspect-ratio: 1;
+      background: transparent;
+      border-radius: 50%;
+      box-shadow: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="gauge-grid">
+    <canvas id="gauge0" width="300" height="300"></canvas>
+    <canvas id="gauge1" width="300" height="300"></canvas>
+    <canvas id="gauge2" width="300" height="300"></canvas>
+    <canvas id="gauge3" width="300" height="300"></canvas>
+    <canvas id="gauge4" width="300" height="300"></canvas>
+    <canvas id="gauge5" width="300" height="300"></canvas>
+  </div>
+
+  <script src="common/protobuf.min.js"></script>
+  <script>
+    hudiy = {
+      api: {},
+      colorScheme: {
+        darkThemeEnabled: true,
+        primaryContainer: "#8888ff",
+        onPrimaryContainer: "#ffffff",
+        onSurface: "#ffffff"
+      }
+    }
+
+    const gauges = [
+      { label: 'Load [%]', min: 0, max: 100, pid: '0104', parse: b => (b[2] * 100) / 255 },
+      { label: 'Engine [°C]', min: -40, max: 200, pid: '0105', parse: b => b[2] - 40 },
+      { label: 'RPM', min: 0, max: 8000, pid: '010C', parse: b => ((b[2] * 256 + b[3]) / 4) },
+      { label: 'km/h', min: 0, max: 255, pid: '010D', parse: b => b[2] },
+      { label: 'Intake [°C]', min: -40, max: 215, pid: '010F', parse: b => b[2] - 40 },
+      { label: 'Throttle [%]', min: 0, max: 240, pid: '0111', parse: b => (b[2] * 100) / 255 }
+    ];
+
+    function drawGauge(canvas, value, label, minValue, maxValue) {
+      const ctx = canvas.getContext('2d');
+      const radius = canvas.width / 2;
+      ctx.save();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.translate(radius, radius);
+
+      const startAngle = 0.75 * Math.PI;
+      const angleRange = 1.5 * Math.PI;
+      const clampedValue = Math.min(Math.max(value, minValue), maxValue);
+      const normalizedValue = (clampedValue - minValue) / (maxValue - minValue);
+      const valueAngle = startAngle + normalizedValue * angleRange;
+
+      ctx.imageSmoothingEnabled = true;
+      ctx.beginPath();
+      ctx.arc(0, 0, radius - 10, startAngle, startAngle + angleRange, false);
+      ctx.strokeStyle = hudiy.colorScheme.darkThemeEnabled ? hudiy.colorScheme.onPrimaryContainer : hudiy.colorScheme.primaryContainer;
+      ctx.lineWidth = 20;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(0, 0, radius - 10, startAngle, valueAngle, false);
+      ctx.strokeStyle = hudiy.colorScheme.darkThemeEnabled ? hudiy.colorScheme.primaryContainer : hudiy.colorScheme.onPrimaryContainer;
+      ctx.lineWidth = 22;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+
+      ctx.font = 'bold 40px Roboto';
+      ctx.fillStyle = hudiy.colorScheme.onSurface;
+      ctx.textAlign = 'center';
+      ctx.fillText(`${value.toFixed(1)}`, 0, -30);
+      ctx.font = '28px Roboto';
+      ctx.fillText(label, 0, 16);
+
+      const labelRadius = radius - 48;
+      ctx.font = 'bold 28px Roboto';
+      ctx.fillText(`${minValue}`, Math.cos(startAngle) * (radius - 36), Math.sin(startAngle) * labelRadius);
+      const maxValueAngle = 28 + ((maxValue.toString().length - 1) * 10);
+      ctx.fillText(`${maxValue}`, Math.cos(startAngle + angleRange) * (radius - maxValueAngle), Math.sin(startAngle + angleRange) * labelRadius);
+
+      ctx.restore();
+    }
+
+    function updateGauges() {
+      gauges.forEach((g, i) => {
+        const canvas = document.getElementById(`gauge${i}`);
+        drawGauge(canvas, g.value ?? g.min, g.label, g.min, g.max);
+      });
+    }
+
+    function sendQueryObdDeviceRequest(command, code) {
+      const msg = hudiy.api.QueryObdDeviceRequest.create({
+        commands: [command],
+        requestCode: code
+      });
+      const payload = hudiy.api.QueryObdDeviceRequest.encode(msg).finish();
+      hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_QUERY_OBD_DEVICE_REQUEST, 0, payload);
+    }
+
+    hudiy.onAttached = function () {
+      hudiy.onInputFocusChanged();
+      updateGauges();
+    }
+
+    hudiy.onColorSchemeChanged = function () {
+      updateGauges();
+    }
+
+    hudiy.api.onConnected = function () {
+      gauges.forEach((gauge, i) => {
+        sendQueryObdDeviceRequest(gauge.pid, i);
+      });
+    }
+  </script>
+
+  <script type="module">
+    import { HudiyClient } from "./common/hudiy_client.js";
+
+    function loadProto() {
+      return new Promise((resolve, reject) => {
+        protobuf.load("common/Api.proto", (err, root) => {
+          if (err) reject(err);
+          else resolve(root);
+        });
+      });
+    }
+
+    hudiy.api.protoRoot = await loadProto();
+    hudiy.api.HelloRequest = hudiy.api.protoRoot.lookupType("hudiy.app.api.HelloRequest");
+    hudiy.api.HelloResponse = hudiy.api.protoRoot.lookupType("hudiy.app.api.HelloResponse");
+    hudiy.api.Version = hudiy.api.protoRoot.lookupType("hudiy.app.api.Version");
+    hudiy.api.QueryObdDeviceRequest = hudiy.api.protoRoot.lookupType("hudiy.app.api.QueryObdDeviceRequest");
+    hudiy.api.QueryObdDeviceResponse = hudiy.api.protoRoot.lookupType("hudiy.app.api.QueryObdDeviceResponse");
+    hudiy.api.MessageType = hudiy.api.protoRoot.lookup("hudiy.app.api.MessageType").values;
+
+    hudiy.api.client = new HudiyClient("ws://localhost:44406");
+
+    hudiy.api.client.onOpen = () => {
+      const versionObj = hudiy.api.Version.create({ major: 1, minor: 0 });
+      const hello = hudiy.api.HelloRequest.create({
+        name: "Obd Dashboard",
+        apiVersion: versionObj
+      });
+
+      const payload = hudiy.api.HelloRequest.encode(hello).finish();
+      hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_HELLO_REQUEST, 0, payload);
+      hudiy.api.onConnected();
+    };
+
+    hudiy.api.client.onMessage = ({ id, flags, payload }) => {
+      if (id === hudiy.api.MessageType.MESSAGE_HELLO_RESPONSE) {
+        const decoded = hudiy.api.HelloResponse.decode(payload);
+        console.log("HelloResponse:", decoded);
+      } else if (id === hudiy.api.MessageType.MESSAGE_PING) {
+        hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_PONG, 0, new Uint8Array(0));
+      } else if (id === hudiy.api.MessageType.MESSAGE_QUERY_OBD_DEVICE_RESPONSE) {
+        const msg = hudiy.api.QueryObdDeviceResponse.decode(payload);
+        if (gauges[msg.requestCode]) {
+          const bytes = msg.result ? msg.data[0]?.match(/.{1,2}/g)?.map(h => parseInt(h, 16)) : null;
+          gauges[msg.requestCode].value = bytes ? gauges[msg.requestCode].parse(bytes) : gauges[msg.requestCode].min;
+
+          updateGauges();
+          setTimeout(() => {
+            sendQueryObdDeviceRequest(gauges[msg.requestCode].pid, msg.requestCode);
+          }, 50);
+        }
+      }
+    };
+
+    hudiy.api.client.connect()
+  </script>
+</body>
+
+</html>

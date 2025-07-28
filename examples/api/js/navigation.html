@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Navigation</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+            height: 100%;
+            width: 100%;
+            background-color: transparent;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            max-width: 90vw;
+        }
+
+        #icon {
+            width: 30vw;
+            height: 30vw;
+            max-height: 30vh;
+            object-fit: contain;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #icon.visible {
+            opacity: 1;
+        }
+
+        #distance {
+            font-size: 8vw;
+            margin-top: 1vh;
+            min-height: 1em;
+        }
+
+        #description {
+            font-size: 7vw;
+            margin-top: 0.5vh;
+            word-break: break-word;
+            min-height: 1em;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="common/protobuf.min.js"></script>
+    <script type="module">
+        import { HudiyClient } from './common/hudiy_client.js';
+
+        const hudiy = { api: {} };
+        const root = await protobuf.load("common/Api.proto");
+
+        hudiy.api.protoRoot = root;
+
+        hudiy.api.HelloRequest = root.lookupType("hudiy.app.api.HelloRequest");
+        hudiy.api.HelloResponse = root.lookupType("hudiy.app.api.HelloResponse");
+        hudiy.api.HelloResponseResult = root.lookup("hudiy.app.api.HelloResponse.HelloResponseResult").values;
+
+        hudiy.api.SetStatusSubscriptions = root.lookupType("hudiy.app.api.SetStatusSubscriptions");
+        hudiy.api.Subscription = root.lookup("hudiy.app.api.SetStatusSubscriptions.Subscription").values;
+
+        hudiy.api.NavigationManeuverDetails = root.lookupType("hudiy.app.api.NavigationManeuverDetails");
+        hudiy.api.NavigationManeuverDistance = root.lookupType("hudiy.app.api.NavigationManeuverDistance");
+        hudiy.api.NavigationStatus = root.lookupType("hudiy.app.api.NavigationStatus");
+        hudiy.api.NavigationState = root.lookup("hudiy.app.api.NavigationStatus.NavigationState").values;
+
+        hudiy.api.MessageType = root.lookup("hudiy.app.api.MessageType").values;
+
+        hudiy.api.client = new HudiyClient("ws://localhost:44406");
+        hudiy.api.client.onOpen = () => {
+            const hello = hudiy.api.HelloRequest.create({
+                name: "Navigation",
+                apiVersion: { major: 1, minor: 0 }
+            });
+            const payload = hudiy.api.HelloRequest.encode(hello).finish();
+            hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_HELLO_REQUEST, 0, payload);
+        };
+
+        function sendSetStatusSubscriptions() {
+            const msg = hudiy.api.SetStatusSubscriptions.create({
+                subscriptions: [hudiy.api.Subscription.NAVIGATION]
+            });
+            const payload = hudiy.api.SetStatusSubscriptions.encode(msg).finish();
+            hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_SET_STATUS_SUBSCRIPTIONS, 0, payload);
+        }
+
+        hudiy.api.client.onMessage = ({ id, payload }) => {
+            if (id === hudiy.api.MessageType.MESSAGE_HELLO_RESPONSE) {
+                const msg = hudiy.api.HelloResponse.decode(payload);
+                if (msg.result === hudiy.api.HelloResponseResult.HELLO_RESPONSE_RESULT_OK) {
+                    sendSetStatusSubscriptions();
+                }
+            } else if (id === hudiy.api.MessageType.MESSAGE_PING) {
+                hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_PONG, 0, new Uint8Array(0));
+            } else if (id === hudiy.api.MessageType.MESSAGE_NAVIGATION_MANEUVER_DETAILS) {
+                const msg = hudiy.api.NavigationManeuverDetails.decode(payload);
+                document.getElementById("description").textContent = msg.description;
+
+                const iconImg = document.getElementById("icon");
+
+                if (!msg.icon || msg.icon.length === 0) {
+                    iconImg.src = "";
+                    iconImg.classList.remove("visible");
+                    return;
+                }
+
+                const blob = new Blob([msg.icon], { type: "image/png" });
+                const url = URL.createObjectURL(blob);
+
+                iconImg.onload = () => {
+                    iconImg.classList.add("visible");
+                };
+
+                iconImg.onerror = () => {
+                    iconImg.classList.remove("visible");
+                    iconImg.src = "";
+                };
+
+                iconImg.src = url;
+            } else if (id === hudiy.api.MessageType.MESSAGE_NAVIGATION_MANEUVER_DISTANCE) {
+                const msg = hudiy.api.NavigationManeuverDistance.decode(payload);
+                document.getElementById("distance").textContent = msg.label;
+            }
+        };
+
+        hudiy.api.client.connect();
+    </script>
+
+    <div id="container">
+        <img id="icon" />
+        <div id="distance"></div>
+        <div id="description"></div>
+    </div>
+</body>
+
+</html>

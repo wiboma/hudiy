@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Input scope</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            gap: 20px;
+            background-color: transparent;
+            margin: 0;
+        }
+
+        .square {
+            width: 100px;
+            height: 100px;
+            background-color: gray;
+            border: 4px solid black;
+            transition: border-color 0.01s;
+        }
+
+        .edge-highlight {
+            position: absolute;
+            top: 0;
+            width: 10px;
+            height: 100%;
+            background-color: red;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .left-edge {
+            left: 0;
+        }
+
+        .right-edge {
+            right: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="leftEdge" class="edge-highlight left-edge"></div>
+    <div id="rightEdge" class="edge-highlight right-edge"></div>
+    <div id="square0" class="square"></div>
+    <div id="square1" class="square"></div>
+    <div id="square2" class="square"></div>
+    <div id="square3" class="square"></div>
+
+    <script>
+        hudiy = {}
+        let highlightedIndex = 0;
+
+        function updateColors() {
+            for (let i = 0; i < 4; i++) {
+                const square = document.getElementById(`square${i}`);
+                square.style.backgroundColor = hudiy.colorScheme.surfaceContainer;
+
+                if (hudiy.inputFocus && hudiy.activated) {
+                    square.style.borderColor = (i === highlightedIndex) ? hudiy.colorScheme.outline : "transparent";
+                } else {
+                    square.style.borderColor = "transparent";
+                }
+            }
+
+            const rightEdge = document.getElementById("rightEdge");
+            rightEdge.style.backgroundColor = hudiy.colorScheme.outline;
+
+            const leftEdge = document.getElementById("leftEdge");
+            leftEdge.style.backgroundColor = hudiy.colorScheme.outline;
+        }
+
+        hudiy.onInputFocusChanged = function () {
+            updateColors();
+        }
+
+        hudiy.onActivatedChanged = function () {
+            const square = document.getElementById(`square${highlightedIndex}`);
+            square.style.borderColor = hudiy.activated ? hudiy.colorScheme.outline : "transparent";
+        }
+
+        hudiy.onMoveToNextControl = function () {
+            if (!hudiy.inputFocus || !hudiy.activated) {
+                return true;
+            }
+
+            if (highlightedIndex < 3) {
+                ++highlightedIndex;
+                updateColors();
+                return true;
+            }
+
+            return false;
+        }
+
+        hudiy.onMoveToPreviousControl = function () {
+            if (!hudiy.inputFocus || !hudiy.activated) {
+                return true;
+            }
+
+            if (highlightedIndex > 0) {
+                --highlightedIndex;
+                updateColors();
+                return true;
+            }
+
+            return false;
+        }
+
+        hudiy.onTriggered = function () {
+            const square = document.getElementById(`square${highlightedIndex}`);
+            square.style.borderColor = "transparent"
+
+            setTimeout(() => {
+                square.style.borderColor = hudiy.colorScheme.outline
+            }, 150);
+        }
+
+        hudiy.onAttached = function () {
+            hudiy.onInputFocusChanged();
+        }
+
+        hudiy.onColorSchemeChanged = function () {
+            updateColors()
+        }
+
+        hudiy.onGoLeft = function () {
+            const edge = document.getElementById("leftEdge");
+            edge.style.opacity = '1';
+
+            setTimeout(() => {
+                edge.style.opacity = '0';
+            }, 100);
+        }
+
+        hudiy.onGoRight = function () {
+            const edge = document.getElementById("rightEdge");
+            edge.style.opacity = '1';
+
+            setTimeout(() => {
+                edge.style.opacity = '0';
+            }, 100);
+        }
+
+        hudiy.onGoBack = function () {
+            document.body.style.backgroundColor = hudiy.colorScheme.outline;
+
+            setTimeout(() => {
+                document.body.style.backgroundColor = "transparent";
+            }, 100);
+        }
+    </script>
+</body>
+
+</html>

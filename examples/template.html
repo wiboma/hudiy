@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template</title>
+    <style>
+        body {
+            background-color: transparent;
+            border: 4px solid transparent;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        document.body.style.borderColor = "transparent"
+
+        hudiy = {}
+
+        function updateColors() {
+        }
+
+        hudiy.onInputFocusChanged = function() {
+            console.error("onInputFocusChanged " + hudiy.inputFocus)
+        }
+
+        hudiy.onActivatedChanged = function() {
+            console.error("onActivatedChanged " + hudiy.activated)
+        }
+
+        hudiy.onMoveToNextControl = function() {
+            console.error("onMoveToNextControl")
+        }
+
+        hudiy.onMoveToPreviousControl = function() {
+            console.error("onMoveToPreviousControl")
+        }
+
+        hudiy.onTriggered = function() {
+            console.error("onTriggered")
+        }
+
+        hudiy.onGoLeft = function() {
+            console.error("onGoLeft")
+        }
+
+        hudiy.onGoRight = function() {
+            console.error("onGoRight")
+        }
+
+        hudiy.onGoBack = function() {
+            console.error("onGoBack")
+        }
+
+        hudiy.onAttached = function() {
+            console.error("onAttached")
+            hudiy.onInputFocusChanged();
+        }
+
+        hudiy.onColorSchemeChanged = function() {
+            console.error("onColorSchemeChanged")
+        }
+    </script>
+</body>
+</html>
