@@ -68,6 +68,7 @@
         "balance" : 0,
         "storageMusicAutoplay" : false,
         "fmRadioAutoplay" : false,
+        "subwooferBalanceAsVolume" : false,
         "ringtoneFile" : ""
     },
     "androidAuto" : {
@@ -76,13 +77,15 @@
         "resolution" : "480p",
         "bluetoothAddress" : "",
         "autostart" : true,
+        "fps" : "30",
         "dpi" : 160,
         "widthMargin" : 0,
         "heightMargin" : 0,
         "width" : 0,
         "height" : 0,
         "x" : 0,
-        "y" : 0
+        "y" : 0,
+        "useRpiDrm" : false
     },
     "hotspot" : {
         "enabled" : true,
@@ -231,9 +234,18 @@
         "y" : 0,
         "oemName" : "",
         "autoWirelessConnection" : true,
-        "vendorId" : 4884,
-        "productId" : 5409,
-        "bandwidth" : "AUTO"
+        "allowedDevices" : [
+            {
+                "vendorId" : 4884,
+                "productId" : 5408
+            },
+            {
+                "vendorId" : 4884,
+                "productId" : 5409
+            }
+        ],
+        "bandwidth" : "AUTO",
+        "fps" : "30"
     },
     "obd" : {
         "deviceType" : "NONE",

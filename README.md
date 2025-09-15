@@ -22,6 +22,7 @@
 - [Updating](#updating)
 - [Multiple screens](#multiple-screens)
 - [Companion app](#companion-app)
+- [Splash](#splash)
 
 ## Introduction
 
@@ -326,6 +327,15 @@ Hudiy includes the following predefined actions:
 - **hide_reverse_camera**:  
   Hide the reverse camera feed
 
+- **quit_hudiy**:  
+  Quits Hudiy application
+
+- **go_back**:  
+  Triggers back action on native UI
+
+- **go_home**:  
+  Triggers home action (default dashboard or action configured in Application.defaultAction)
+
 ### Backgrounds
 
 Hudiy allows you to define a custom image file as the background for each menu in both dark and light themes.  
@@ -611,7 +621,7 @@ The input focus remains on the current input scope even after switching to touch
 *None*
 
 **Return value:**  
-*None*
+*Boolean. `true` when the application utilized the event (e.g., it navigated back internally), `false` when the application didn’t utilize the event (then Back in the native UI will be triggered).*
 
 #### `hudiy.inputFocus`
 
@@ -1133,3 +1143,18 @@ Permission is required to monitor Bluetooth device connections and automatically
 ![Main screen](images/screenshot30.png)
 
 ![Main screen](images/screenshot31.png)
+
+## Splash
+After the system loads, the splash application is responsible for starting Hudiy. By default, the splash application displays the "Hudiy" text during loading. Using splash application arguments, you can provide a path to an image (e.g., JPG/PNG) that will be displayed instead of the “Hudiy” text. The image will be shown in the center of the splash window while preserving its original dimensions (width and height).
+
+List of available arguments:  
+
+- `--delay`  
+  Sets the time in milliseconds for which the splash application will remain active after Hudiy starts.
+
+- `--logo`  
+  Absolute path to an image file that will be displayed instead of the “Hudiy” text.
+
+The script that launches Hudiy is located at `$HOME/.hudiy/share/hudiy_run.sh` and it is started from `/etc/xdg/labwc/autostart`.
+
+During the startup of the Raspberry Pi OS Bookworm, the splash screen is handled by [Plymouth](https://www.freedesktop.org/wiki/Software/Plymouth/).

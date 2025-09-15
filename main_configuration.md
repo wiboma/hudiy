@@ -251,6 +251,13 @@ The configuration is stored in JSON format.
 - `subwooferBalance`:  
     The last stored value of subwoofer (LFE) balance. It will be restored during Hudiy startup.
 
+- `subwooferBalanceAsVolume`:  
+    Controls the behavior of the Subwoofer Balance slider.
+
+    Possible values:
+    - true – the slider controls the volume of the LFE channel. 
+    - false – the slider controls the balance between the LFE and non-LFE channels.
+
 - `fade`:  
     The last stored value of fade. It will be restored during Hudiy startup.
 
@@ -336,6 +343,20 @@ The configuration is stored in JSON format.
 
 - `y`:  
     The y-coordinate (top-left corner, in pixels) of the rendering surface inside the application window.
+
+- `fps`:  
+    FPS (frames-per-second) of the video stream used for projection.
+
+    Possible values:
+    - "30"
+    - "60"
+
+- `useRpiDrm`:  
+    Enable/disable the use of the Android Auto codec that supports rendering via DRM (Direct Rendering Manager) and full zero-copy. Works only on Wayland.
+
+    Possible values:
+    - true – force to use the codec compatible with DRM
+    - false – use the codec preferred by the phone.
 
 ## hotspot
 
@@ -562,11 +583,22 @@ Each preset includes a name and values for each frequency band:
 - `autoWirelessConnection`:  
     Automatically triggers a wireless connection to CarPlay.
 
-- `vendorId`:  
-    USB Vendor ID (VID) of the autobox device.
+- `allowedDevices`:  
+    An array of objects containing vendorId/productId pairs that specify which USB devices will be detected as autobox dongles.
 
-- `productId`:  
-    USB Product ID (PID) of the autobox device.
+    Example values:
+    ```json
+    "allowedDevices": [
+        {
+            "vendorId" : 4884,
+            "productId" : 5408
+        },
+        {
+            "vendorId" : 4884,
+            "productId" : 5409
+        }
+    ]
+    ```
 
 - `bandwidth`:  
     Bandwidth of the wireless hotspot on the autobox device.
@@ -575,6 +607,13 @@ Each preset includes a name and values for each frequency band:
     - "AUTO"  
     - "2.4GHz"  
     - "5GHz"
+
+- `fps`:  
+    FPS (frames-per-second) of the video stream used for projection.
+
+    Possible values:
+    - "30"
+    - "60"
 
 ## obd
 
