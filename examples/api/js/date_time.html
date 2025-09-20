@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport">
+    <title>Date and Time</title>
+    <style>
+        body {
+            background-color: transparent;
+            font-family: "RobotoRegular";
+            color: var(--clock-color);
+            overflow: hidden;
+        }
+
+        .clock-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
+            height: 88vh;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: left;
+        }
+
+        .time-row {
+            display: flex;
+            align-items: center;
+            gap: 4vh;
+            font-size: 24vh;
+            fill: var(--clock-color);
+        }
+
+        .time-row svg {
+            width: 18vh;
+            height: 18vh;
+            fill: var(--clock-color);
+        }
+
+        .day,
+        .date {
+            font-size: 19vh;
+            margin-top: 2vh;
+        }
+
+        @font-face {
+            font-family: "RobotoRegular";
+            src: url("Roboto-Regular.ttf") format("truetype");
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --clock-color: #e3e3e3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="clock-box">
+        <div class="time-row">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+                <path
+                    d="M592-302 450-444v-196h60v171l124 124-42 43ZM450-730v-90h60v90h-60Zm280 280v-60h90v60h-90ZM450-140v-90h60v90h-60ZM140-450v-60h90v60h-90ZM480.27-80q-82.74 0-155.5-31.5Q252-143 197.5-197.5t-86-127.34Q80-397.68 80-480.5t31.5-155.66Q143-709 197.5-763t127.34-85.5Q397.68-880 480.5-880t155.66 31.5Q709-817 763-763t85.5 127Q880-563 880-480.27q0 82.74-31.5 155.5Q817-252 763-197.68q-54 54.31-127 86Q563-80 480.27-80Zm.23-60Q622-140 721-239.5t99-241Q820-622 721.19-721T480-820q-141 0-240.5 98.81T140-480q0 141 99.5 240.5t241 99.5Zm-.5-340Z" />
+            </svg>
+            <span id="time"></span>
+        </div>
+        <div>
+            <div class="day" id="day"></div>
+            <div class="date" id="date"></div>
+        </div>
+    </div>
+
+    <script>
+        document.body.style.borderColor = "transparent"
+
+        hudiy = {}
+
+        function updateColors() {
+            document.documentElement.style.setProperty('--clock-color', hudiy.colorScheme.onSurface);
+        }
+
+        hudiy.onInputFocusChanged = function () {
+        }
+
+        hudiy.onActivatedChanged = function () {
+        }
+
+        hudiy.onMoveToNextControl = function () {
+        }
+
+        hudiy.onMoveToPreviousControl = function () {
+        }
+
+        hudiy.onTriggered = function () {
+        }
+
+        hudiy.onGoLeft = function () {
+        }
+
+        hudiy.onGoRight = function () {
+        }
+
+        hudiy.onGoBack = function () {
+            return false;
+        }
+
+        hudiy.onAttached = function () {
+            updateColors();
+        }
+
+        hudiy.onColorSchemeChanged = function () {
+            updateColors()
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const lang = navigator.language;
+            document.getElementById('time').textContent =
+                new Intl.DateTimeFormat(lang, { hour: '2-digit', minute: '2-digit' }).format(now);
+            document.getElementById('day').textContent =
+                new Intl.DateTimeFormat(lang, { weekday: 'long' }).format(now);
+            document.getElementById('date').textContent =
+                new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'long', year: 'numeric' }).format(now);
+        }
+
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+
+</html>
