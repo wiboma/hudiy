@@ -59,6 +59,7 @@ The interface can be controlled using both touch and key events. Navigating via 
 - Move focus up
 - Move focus down
 - Go back
+- Trigger
 
 Supported Key Bindings:
 
@@ -69,6 +70,7 @@ Supported Key Bindings:
 - Back `escape`
 - Scroll left `1`
 - Scroll right `2`
+- Trigger `enter`
 - Home `h`
 - Toggle input focus (between projection, native UI and overlays) `t`
 - Voice assistant (for projections) `m`
