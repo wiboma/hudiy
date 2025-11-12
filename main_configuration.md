@@ -283,6 +283,9 @@ The configuration is stored in JSON format.
 - `ringtoneFile`:  
     The absolute path to the **.wav** file that will be played during an incoming call.
 
+- `defaultMediaPath`:  
+    Default path for the file explorer in Storage Music Player. If the path does not exist, **$HOME** will be used instead.
+
 ## androidAuto
 
 - `speechAudio`:  
@@ -306,6 +309,8 @@ The configuration is stored in JSON format.
     - "480p"
     - "720p"
     - "1080p"
+    - "2k" - **Experimental. Available only when `useRpiDrm` is set to true.**
+    - "4k" - **Experimental. Available only when `useRpiDrm` is set to true.**
 
 - `bluetoothAddress`:  
     The address of the Bluetooth adapter that will be sent to the Bluetooth endpoint as the head unit's address.  
@@ -394,6 +399,24 @@ The configuration is stored in JSON format.
     Possible values:
     - "A" – 5GHz network  
     - "BG" – 2.4GHz network
+
+- `channelConfigurationType`:  
+    Type of WiFi hotspot channel configuration. **Available from Raspberry Pi OS Trixie onwards.**
+
+    Possible values:
+    - "MANUAL" – Manually configure the WiFi hotspot channel
+    - "AUTO" – Use the OS default configuration (`channelBandwidth` and `channel` parameters are ignored)
+
+- `channelBandwidth`:  
+    WiFi hotspot channel width. **Available from Raspberry Pi OS Trixie onwards.**
+
+    Possible values:
+    - "20MHz"
+    - "40MHz"
+    - "80MHz"
+
+- `channel`:  
+    WiFi hotspot channel number. **Available from Raspberry Pi OS Trixie onwards.**
 
 ## equalizer
 
@@ -614,6 +637,13 @@ Each preset includes a name and values for each frequency band:
     Possible values:
     - "30"
     - "60"
+
+- `enumerateUsb`:  
+    Enable or disable searching for an autobox device among connected USB devices.
+
+    Possible values:
+    - true - Scan already connected USB devices
+    - false - React only to hotplug events. If the dongle is connected but not configured, it may periodically perform an autonomous reset and trigger a hotplug event.
 
 ## obd
 

@@ -103,7 +103,7 @@ Supported Key Bindings:
 
 **Mandatory:**
 
-- A clean, unmodified installation of the official Raspberry Pi OS Desktop 64 bit (Bookworm)
+- A clean, unmodified installation of the official Raspberry Pi OS Desktop 64 bit (Bookworm or Trixie)
 - Raspberry PI 4B or 5 with minimum 2GB of RAM
 - 8GB of free storage space
 - Display with resolution up to 1920x1080
@@ -1017,6 +1017,16 @@ Bluetooth audio, including A2DP for high-quality media playback and HFP for hand
 
 You can pair and unpair Bluetooth devices directly in Hudiy. It is recommended to disable other Bluetooth agents to avoid potential conflicts.
 
+### Cover art
+Starting from **Raspberry Pi OS Trixie**, the Bluetooth stack includes experimental support for fetching track cover art.
+To enable this functionality, experimental features must be activated in the BlueZ system configuration.
+
+The Bluetooth configuration is stored in the **/etc/bluetooth/main.conf** file. Enabling experimental Bluetooth stack features is done by setting the **Experimental = true** parameter in the **[General]** section of this file.
+
+Additionally, Android phones must have the AVRCP protocol version set to 1.6. The AVRCP version can be selected in the Developer settings (a reconnect may be required after change).
+
+*Note: Not all media players support sending cover art or proper metadata at all.*
+
 ## Audio
 
 Hudiy exposes configuration options for two types of sinks: the volume sink and the playback sink. Separate sinks can be configured for audio playback and volume control.
@@ -1111,6 +1121,8 @@ Hudiy can retrieve media metadata from CarlinKit CPC200-CCPA, and exposes this d
 Hudiy includes an embedded updater accessible via the command line.
 The updater application is located at `$HOME/.hudiy/share/updater`
 
+The updater performs an incremental update (version by version).
+
 ## Multiple screens
 
 Hudiy provides advanced multi-display support.
@@ -1159,4 +1171,4 @@ List of available arguments:
 
 The script that launches Hudiy is located at `$HOME/.hudiy/share/hudiy_run.sh` and it is started from `/etc/xdg/labwc/autostart`.
 
-During the startup of the Raspberry Pi OS Bookworm, the splash screen is handled by [Plymouth](https://www.freedesktop.org/wiki/Software/Plymouth/).
+During the startup of the Raspberry Pi OS, the splash screen is handled by [Plymouth](https://www.freedesktop.org/wiki/Software/Plymouth/).
