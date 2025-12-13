@@ -102,6 +102,15 @@ The configuration is stored in JSON format.
 - `translationFile`:  
     Absolute path to the *.qm translation file generated from hudiy.ts.
 
+- `framelessWindow`:  
+    Requests the compositor to draw the window frame when explicit window dimensions are set (i.e., when Hudiy is not in fullscreen mode).
+
+    *Note: The compositor may ignore this request; the frame may be always drawn or never drawn, depending on the compositor (e.g., in labwc).*
+
+    Possible values:
+    - true – request a frameless window
+    - false – request to draw a frame
+
 ## appearance
 
 - `timeFormat`:  
@@ -309,8 +318,8 @@ The configuration is stored in JSON format.
     - "480p"
     - "720p"
     - "1080p"
-    - "2k" - **Experimental. Available only when `useRpiDrm` is set to true.**
-    - "4k" - **Experimental. Available only when `useRpiDrm` is set to true.**
+    - "2k" - **Experimental. Available only when `useRpiDrm` or `useX86Drm` is set to true.**
+    - "4k" - **Experimental. Available only when `useRpiDrm` or `useX86Drm` is set to true.**
 
 - `bluetoothAddress`:  
     The address of the Bluetooth adapter that will be sent to the Bluetooth endpoint as the head unit's address.  
@@ -359,6 +368,17 @@ The configuration is stored in JSON format.
 - `useRpiDrm`:  
     Enable/disable the use of the Android Auto codec that supports rendering via DRM (Direct Rendering Manager) and full zero-copy. Works only on Wayland.
 
+    *Note: Available only on Raspberry Pi.*
+
+    Possible values:
+    - true – force to use the codec compatible with DRM
+    - false – use the codec preferred by the phone.
+
+- `useX86Drm`:  
+    Enable/disable the use of the Android Auto codec that supports rendering via DRM (Direct Rendering Manager).
+
+    *Note: Available only on x86.*
+
     Possible values:
     - true – force to use the codec compatible with DRM
     - false – use the codec preferred by the phone.
@@ -374,7 +394,7 @@ The configuration is stored in JSON format.
     - false – the hotspot is disabled
 
 - `hardwareAddress`:  
-    The hardware address of the wireless adapter that will be used to serve the hotspot.
+    The hardware address of the wireless adapter that will be used to serve the hotspot. If left blank, the system default wireless adapter will be used.
 
     If the hotspot is disabled, this address will be forwarded to Android Auto as the BSSID of the external wireless network.
 
@@ -401,14 +421,14 @@ The configuration is stored in JSON format.
     - "BG" – 2.4GHz network
 
 - `channelConfigurationType`:  
-    Type of WiFi hotspot channel configuration. **Available from Raspberry Pi OS Trixie onwards.**
+    Type of WiFi hotspot channel configuration. **Available from Raspberry Pi OS/Debian Trixie onwards.**
 
     Possible values:
     - "MANUAL" – Manually configure the WiFi hotspot channel
     - "AUTO" – Use the OS default configuration (`channelBandwidth` and `channel` parameters are ignored)
 
 - `channelBandwidth`:  
-    WiFi hotspot channel width. **Available from Raspberry Pi OS Trixie onwards.**
+    WiFi hotspot channel width. **Available from Raspberry Pi OS/Debian Trixie onwards.**
 
     Possible values:
     - "20MHz"
@@ -416,7 +436,7 @@ The configuration is stored in JSON format.
     - "80MHz"
 
 - `channel`:  
-    WiFi hotspot channel number. **Available from Raspberry Pi OS Trixie onwards.**
+    WiFi hotspot channel number. **Available from Raspberry Pi OS Trixie/Debian Trixie onwards.**
 
 ## equalizer
 
@@ -593,6 +613,12 @@ Each preset includes a name and values for each frequency band:
 - `height`:  
     Height of the rendering surface for the projection.
 
+- `videoWidth`:  
+    Sets the width of the video resolution requested from the autobox dongle. A value of 0 will request the rendering surface dimensions. The user is responsible for requesting a resolution that matches the aspect ratio, as Hudiy does not perform any scaling.
+
+- `videoHeight`:  
+    Sets the height of the video resolution requested from the autobox dongle. A value of 0 will request the rendering surface dimensions. The user is responsible for requesting a resolution that matches the aspect ratio, as Hudiy does not perform any scaling.
+
 - `x`:  
     The x-coordinate (top-left corner, in pixels) of the rendering surface inside the application window.
 
@@ -704,3 +730,13 @@ Each preset includes a name and values for each frequency band:
 
     *Note: The pipeline must always output to a `qml6glsink` named `video-sink`:*  
     `qml6glsink name=video-sink`
+
+## bluetooth
+
+- `adapterHardwareAddress`:  
+    The hardware address of the Bluetooth adapter that will be used by Agent (for pairing).
+
+    If left blank, the system default Bluetooth adapter will be used.
+
+    Example value:
+    - 00:01:02:03:04:05

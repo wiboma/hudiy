@@ -14,7 +14,8 @@
         "windowWidth" : 0,
         "windowHeight" : 0,
         "handleKeyboardEvents" : true,
-        "translationFile" : ""
+        "translationFile" : "",
+        "framelessWindow" : true
     },
     "appearance" : {
         "timeFormat" : "24h",
@@ -230,6 +231,8 @@
         "dpi" : 160,
         "width" : 0,
         "height" : 0,
+        "videoWidth" : 0,
+        "videoHeight" : 0,
         "x" : 0,
         "y" : 0,
         "oemName" : "",
@@ -245,7 +248,8 @@
             }
         ],
         "bandwidth" : "AUTO",
-        "fps" : "30"
+        "fps" : "30",
+        "enumerateUsb" : true
     },
     "obd" : {
         "deviceType" : "NONE",

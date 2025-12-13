@@ -23,6 +23,7 @@
 - [Multiple screens](#multiple-screens)
 - [Companion app](#companion-app)
 - [Splash](#splash)
+- [x86_64 compatibility](#x86_64-compatibility)
 
 ## Introduction
 
@@ -42,7 +43,7 @@ Hudiy supports extensive customization including:
 
 Hudiy exposes an API for external systems to retrieve data, perform actions, and integrate with application features. It also provides a special JavaScript object, `hudiy`, to user-created HTML/JavaScript elements to enable even deeper integration with the application.
 
-The Hudiy application is designed to work on **Raspberry Pi** hardware. Thanks to the extensive Raspberry Pi ecosystem, you can choose hardware such as audio devices, screens, or controllers that perfectly match your needs.
+The Hudiy application is designed to work on **Raspberry Pi** and **x86_64** hardware. Thanks to the extensive Raspberry Pi/Linux ecosystem, you can choose hardware such as audio devices, screens, or controllers that perfectly match your needs.
 
 ## Interface
 
@@ -101,20 +102,41 @@ Supported Key Bindings:
 
 ## Requirements
 
+### Raspberry Pi
+
 **Mandatory:**
 
+- Raspberry PI 4B or 5
 - A clean, unmodified installation of the official Raspberry Pi OS Desktop 64 bit (Bookworm or Trixie)
-- Raspberry PI 4B or 5 with minimum 2GB of RAM
 - 8GB of free storage space
 - Display with resolution up to 1920x1080
-<br><br>
 
 **Optional:**
 
 - RTL-SDR dongle for FM Radio
-- CarlinKit CPC-200 CCPA dongle for CarPlay
+- CarlinKit CPC-200 CCPA or Autokit dongle for CarPlay
 - Microphone for Hands-Free calling and voice assistants
 - USB or Bluetooth ELM327 adapter for OBD-II communication
+
+### x86_64
+
+**Mandatory:**
+
+- CPU compatible with x86 64-bit architecture
+- A clean, unmodified installation of the Debian Trixie 64 bit with Desktop (e. g. labwc or Gnome)
+- Access to sudo (pasword-less root)
+- 8GB of free storage space
+- Display with resolution up to 1920x1080
+
+**Optional:**
+
+- RTL-SDR dongle for FM Radio
+- CarlinKit CPC-200 CCPA or Autokit dongle for CarPlay
+- Microphone for Hands-Free calling and voice assistants
+- USB or Bluetooth ELM327 adapter for OBD-II communication
+- Hardware compatible with VA-API for hardware acceleration
+- Bluetooth module for wireless Android Auto, Hands-Free calling and A2DP
+- WiFi module for wireless Android Auto
 
 ## Theming
 
@@ -1018,7 +1040,7 @@ Bluetooth audio, including A2DP for high-quality media playback and HFP for hand
 You can pair and unpair Bluetooth devices directly in Hudiy. It is recommended to disable other Bluetooth agents to avoid potential conflicts.
 
 ### Cover art
-Starting from **Raspberry Pi OS Trixie**, the Bluetooth stack includes experimental support for fetching track cover art.
+Starting from **Raspberry Pi OS/Debian Trixie**, the Bluetooth stack includes experimental support for fetching track cover art.
 To enable this functionality, experimental features must be activated in the BlueZ system configuration.
 
 The Bluetooth configuration is stored in the **/etc/bluetooth/main.conf** file. Enabling experimental Bluetooth stack features is done by setting the **Experimental = true** parameter in the **[General]** section of this file.
@@ -1159,6 +1181,7 @@ Permission is required to monitor Bluetooth device connections and automatically
 ![Main screen](images/screenshot31.png)
 
 ## Splash
+
 After the system loads, the splash application is responsible for starting Hudiy. By default, the splash application displays the "Hudiy" text during loading. Using splash application arguments, you can provide a path to an image (e.g., JPG/PNG) that will be displayed instead of the “Hudiy” text. The image will be shown in the center of the splash window while preserving its original dimensions (width and height).
 
 List of available arguments:  
@@ -1169,6 +1192,16 @@ List of available arguments:
 - `--logo`  
   Absolute path to an image file that will be displayed instead of the “Hudiy” text.
 
-The script that launches Hudiy is located at `$HOME/.hudiy/share/hudiy_run.sh` and it is started from `/etc/xdg/labwc/autostart`.
+The script that launches Hudiy is located at `$HOME/.hudiy/share/hudiy_run.sh` and it is started from `$HOME/.config/labwc/autostart`.
 
-During the startup of the Raspberry Pi OS, the splash screen is handled by [Plymouth](https://www.freedesktop.org/wiki/Software/Plymouth/).
+During the startup of the Operating System, the splash screen is handled by [Plymouth](https://www.freedesktop.org/wiki/Software/Plymouth/).
+
+## x86_64 compatibility
+
+As of version 2.2, Hudiy also supports the x86 64-bit architecture. The currently supported Operating System is Debian Trixie 64-bit with a graphical environment (e.g., Gnome or labwc).
+
+Since the installation, configuration and updating process for Hudiy requires root privileges, access to sudo is necessary. In Debian, sudo access is automatically provided when a password is not set for the root user. Please keep that in mind during OS installation and do not set the root password.
+
+Hudiy utilizes the VA-API (Video Acceleration API) for hardware acceleration. Therefore, for a better user experience, we recommend running Hudiy on platforms that support VA-API (https://www.intel.com/content/www/us/en/developer/articles/technical/linuxmedia-vaapi.html).
+
+**We do not recommend and officially do not support** running Hudiy on Virtual Machines (e.g., QEMU, VirtualBox, or VMWare). Virtual Machines do not provide sufficient hardware support for handling UI (OpenGL) and video rendering, and may also cause issues with PipeWire. Any additional system configuration required on a Virtual Machine is the responsibility of the user.

@@ -147,6 +147,15 @@
         },
         {
             "categories": [
+                "Hudiy"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "cancel_presentation",
+            "action": "quit_hudiy",
+            "label": "Quit"
+        },
+        {
+            "categories": [
                 "Android Auto"
             ],
             "iconFontFamily": "Material Symbols Rounded",
