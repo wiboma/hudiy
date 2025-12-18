@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBD Chart</title>
+    <style>
+        @font-face {
+            font-family: 'Roboto';
+            src: url('/static/Roboto-Regular.ttf') format('truetype');
+            font-display: swap;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: transparent;
+            overflow: hidden;
+            font-family: 'Roboto', sans-serif;
+            user-select: none;
+        }
+
+        .page-top-left {
+            position: fixed;
+            top: 5vh;
+            left: 6vh;
+        }
+
+        .page-top-left p {
+            margin: 0;
+            font-size: 16vmin;
+            color: var(--title-color, #efdfd6);
+        }
+
+        .page-bottom-left {
+            position: fixed;
+            bottom: 6vh;
+            left: 6vh;
+        }
+
+        .main-value {
+            position: fixed;
+            font-size: 27vmin;
+            line-height: 1;
+            bottom: 32vh;
+            color: var(--primary-color, #ffb77f);
+        }
+
+        .value-unit {
+            font-size: 14vmin;
+            line-height: 1;
+            color: var(--primary-color, #ffb77f);
+        }
+
+        .chart-wrapper {
+            position: fixed;
+            right: 6vh;
+            bottom: 6vh;
+            width: 65%;
+            height: 60%;
+            z-index: 1;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-top-left">
+        <p>Throttle position</p>
+    </div>
+
+    <div class="page-bottom-left">
+        <div class="main-value" id="textValue">--</div>
+        <div class="value-unit">%</div>
+    </div>
+
+    <div class="chart-wrapper">
+        <canvas id="canvasChart"></canvas>
+    </div>
+
+    <script>
+        const CONFIG = {
+            apiUrl: "http://127.0.0.1:44411",
+            pid: "0111",
+            minVal: 0,
+            maxVal: 100,
+            maxCapacity: 60,
+            interval: 5000
+        };
+
+        const state = {
+            data: [],
+            primaryColor: "#ffb77f",
+            onSurfaceColor: "#efdfd6"
+        };
+
+        const els = {
+            value: document.getElementById('textValue'),
+            canvas: document.getElementById('canvasChart'),
+            ctx: document.getElementById('canvasChart').getContext('2d')
+        };
+
+        const hudiy = {
+            colorScheme: { primary: "#ffb77f", onSurface: "#efdfd6" },
+            onColorSchemeChanged: updateColors,
+            onAttached: updateColors,
+            onMoveToNextControl: () => false,
+            onMoveToPreviousControl: () => false,
+            onGoBack: () => false
+        };
+
+        function parsePidValue(data) {
+            const bytes = data.match(/.{1,2}/g)?.map(h => parseInt(h, 16));
+            if (!bytes || bytes.length < 3) return 0;
+            return (bytes[2] * 100) / 255;
+        }
+
+        function hexToRgba(hex, alpha) {
+            if (!/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) return hex;
+            let c = hex.substring(1).split('');
+            if (c.length === 3) c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+            c = parseInt(c.join(''), 16);
+            return `rgba(${(c >> 16) & 255}, ${(c >> 8) & 255}, ${c & 255}, ${alpha})`;
+        }
+
+        function updateColors() {
+            state.primaryColor = hudiy.colorScheme.darkThemeEnabled ? "#d2bcfd" : "#67558e";
+            state.onSurfaceColor = hudiy.colorScheme.onSurface || state.onSurfaceColor;
+
+            document.body.style.setProperty('--primary-color', state.primaryColor);
+            document.body.style.setProperty('--title-color', state.onSurfaceColor);
+
+            drawChart();
+        }
+
+        function drawChart() {
+            const { ctx, canvas } = els;
+            const width = canvas.width = canvas.clientWidth;
+            const height = canvas.height = canvas.clientHeight;
+
+            const chartW = width;
+            const chartH = height;
+            const baseY = height;
+
+            ctx.clearRect(0, 0, width, height);
+
+            if (state.data.length > 0) {
+                const stepX = state.data.length > 1 ? chartW / (state.data.length - 1) : 0;
+
+                const getX = i => (i * stepX);
+                const getY = v => baseY - ((v - CONFIG.minVal) / (CONFIG.maxVal - CONFIG.minVal) * chartH);
+
+                const gradient = ctx.createLinearGradient(0, 0, 0, baseY);
+                gradient.addColorStop(0, hexToRgba(state.primaryColor, 0.5));
+                gradient.addColorStop(1, hexToRgba(state.primaryColor, 0.0));
+
+                ctx.beginPath();
+                ctx.moveTo(getX(0), baseY);
+                state.data.forEach((val, i) => ctx.lineTo(getX(i), getY(val)));
+                ctx.lineTo(getX(state.data.length - 1), baseY);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+
+                ctx.beginPath();
+                state.data.forEach((val, i) => {
+                    const x = getX(i), y = getY(val);
+                    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+                });
+
+                ctx.strokeStyle = state.primaryColor;
+                ctx.lineWidth = Math.max(1, width * 0.005);
+                ctx.lineJoin = 'round';
+                ctx.stroke();
+            }
+
+            ctx.beginPath();
+            ctx.strokeStyle = hexToRgba(state.onSurfaceColor, 0.5);
+            ctx.lineWidth = Math.max(1, width * 0.003);
+
+            ctx.moveTo(0, 0);
+            ctx.lineTo(width, 0);
+
+            ctx.moveTo(0, baseY);
+            ctx.lineTo(width, baseY);
+
+            ctx.stroke();
+        }
+
+        async function fetchData(endpoint) {
+            try {
+                const res = await fetch(`${CONFIG.apiUrl}/${endpoint}?pid=${CONFIG.pid}`);
+                if (!res.ok) throw new Error(endpoint);
+                return await res.json();
+            } catch (e) {
+                return null;
+            }
+        }
+
+        async function init() {
+            const data = await fetchData('history');
+            if (data) {
+                CONFIG.maxCapacity = data.maxCapacity;
+                state.data = data.data.map(h => parsePidValue(h));
+                if (state.data.length) els.value.innerText = Math.round(state.data.at(-1));
+                drawChart();
+            }
+            setInterval(updateLoop, CONFIG.interval);
+        }
+
+        async function updateLoop() {
+            const data = await fetchData('value');
+            if (!data || !data.value) {
+                els.value.innerText = "--";
+                state.data = [];
+                drawChart();
+                return;
+            }
+
+            const val = parsePidValue(data.value);
+            els.value.innerText = Math.round(val);
+
+            state.data.push(val);
+            if (state.data.length > CONFIG.maxCapacity) state.data.shift();
+
+            drawChart();
+        }
+
+        window.addEventListener('resize', () => drawChart());
+        init();
+    </script>
+</body>
+
+</html>

@@ -90,7 +90,17 @@ Supported Key Bindings:
 
 ![Main screen](images/screenshot1.png)
 
+![Main screen](images/screenshot35.png)
+
 ![Main screen](images/screenshot10.png)
+
+![Main screen](images/screenshot37.png)
+
+![Main screen](images/screenshot38.png)
+
+![Main screen](images/screenshot39.png)
+
+![Main screen](images/screenshot40.png)
 
 ![Main screen](images/screenshot14.png)
 
