@@ -71,12 +71,12 @@
 
 <body>
     <div class="page-top-left">
-        <p>Intake temperature</p>
+        <p>Vehicle speed</p>
     </div>
 
     <div class="page-bottom-left">
         <div class="main-value" id="textValue">--</div>
-        <div class="value-unit">°C</div>
+        <div class="value-unit">km/h</div>
     </div>
 
     <div class="chart-wrapper">
@@ -86,9 +86,9 @@
     <script>
         const CONFIG = {
             apiUrl: "http://127.0.0.1:44411",
-            pid: "010F",
-            minVal: -40,
-            maxVal: 90,
+            pid: "010D",
+            minVal: 0,
+            maxVal: 255,
             maxCapacity: 60,
             interval: 5000
         };
@@ -116,7 +116,7 @@
 
         function parsePidValue(data) {
             const bytes = data.match(/.{1,2}/g)?.map(h => parseInt(h, 16));
-            return bytes ? (bytes[2] - 40) : -40;
+            return bytes ? bytes[2] : CONFIG.minVal;
         }
 
         function hexToRgba(hex, alpha) {
@@ -128,7 +128,7 @@
         }
 
         function updateColors() {
-            state.primaryColor = hudiy.colorScheme.tertiary || state.primaryColor;
+            state.primaryColor = hudiy.colorScheme.darkThemeEnabled ? "#ffb3b5" : "#8f4a4d";
             state.onSurfaceColor = hudiy.colorScheme.onSurface || state.onSurfaceColor;
 
             document.body.style.setProperty('--primary-color', state.primaryColor);

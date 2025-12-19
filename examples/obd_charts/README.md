@@ -1,11 +1,11 @@
 # Description
 
-This repository contains a set of widgets for displaying OBD-II data retrieved from ELM327. Communication with the ELM327 is handled via the Hudiy API.
+This directory contains a set of widgets for displaying OBD-II data retrieved from ELM327. Communication with the ELM327 is handled via the Hudiy API.
 
 OBD Charts consist of two components:
 
 - Python backend
-- HTML/JavaScript widgets
+- HTML/JavaScript widgets of various style
 
 <br>
 
@@ -24,6 +24,18 @@ OBD Charts consist of two components:
 ![Screenshot](../../images/screenshot39.png)
 
 ![Screenshot](../../images/screenshot40.png)
+
+![Screenshot](../../images/screenshot41.png)
+
+![Screenshot](../../images/screenshot42.png)
+
+![Screenshot](../../images/screenshot43.png)
+
+![Screenshot](../../images/screenshot44.png)
+
+![Screenshot](../../images/screenshot45.png)
+
+![Screenshot](../../images/screenshot46.png)
 
 ## HTML/JavaScript
 
@@ -69,74 +81,4 @@ python3 /home/pi/hudiy/examples/obd_charts/charts.py &
 
 ## Example configuration
 
-### $HOME/.hudiy/share/config/dashboards.json
-
-```json
-{
-    "dashboards": [
-        {
-            "isDefault": true,
-            "action": "hudiy_dashboard",
-            "widgets": [
-                {
-                    "type": "date_time",
-                    "size": "small_narrow"
-                },
-                {
-                    "type": "navigation",
-                    "size": "medium_narrow"
-                },
-                {
-                    "type": "now_playing",
-                    "size": "large_narrow"
-                },
-                {
-                    "type": "phone",
-                    "size": "small_narrow"
-                },
-                {
-                    "type": "web_static",
-                    "size": "small_narrow",
-                    "url": "http://127.0.0.1:44411/engine_temp"
-                },
-                {
-                    "type": "web_static",
-                    "size": "small_narrow",
-                    "url": "http://127.0.0.1:44411/intake_temp"
-                }
-            ]
-        },
-        {
-            "isDefault": true,
-            "action": "obd_charts",
-            "widgets": [
-                {
-                    "type": "web",
-                    "size": "medium_wide",
-                    "url": "http://127.0.0.1:44411/engine_temp"
-                },
-                {
-                    "type": "web_static",
-                    "size": "small_wide",
-                    "url": "http://127.0.0.1:44411/speed"
-                },
-                {
-                    "type": "web_static",
-                    "size": "small_narrow",
-                    "url": "http://127.0.0.1:44411/rpm"
-                },
-                {
-                    "type": "web_static",
-                    "size": "small_narrow",
-                    "url": "http://127.0.0.1:44411/throttle_position"
-                },
-                {
-                    "type": "web_static",
-                    "size": "small_narrow",
-                    "url": "http://127.0.0.1:44411/engine_load"
-                }
-            ]
-        }
-    ]
-}
-```
+Example configuration of dashboards and applications menu is available in config directory.

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OBD Chart</title>
+    <title>OBD Blocks</title>
     <style>
         @font-face {
             font-family: 'Roboto';
@@ -33,33 +33,44 @@
             color: var(--title-color, #efdfd6);
         }
 
-        .page-bottom-left {
+        .center-container {
             position: fixed;
-            bottom: 6vh;
-            left: 6vh;
+            top: 48%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .value-row {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
         }
 
         .main-value {
-            position: fixed;
-            font-size: 27vmin;
-            line-height: 1;
-            bottom: 32vh;
+            font-size: 26vmin;
             color: var(--primary-color, #ffb77f);
+            margin: 0;
         }
 
         .value-unit {
-            font-size: 14vmin;
-            line-height: 1;
+            font-size: 16vmin;
             color: var(--primary-color, #ffb77f);
+            margin: 0;
+            margin-left: 4vmin;
         }
 
         .chart-wrapper {
             position: fixed;
-            right: 6vh;
-            bottom: 6vh;
-            width: 65%;
-            height: 60%;
-            z-index: 1;
+            bottom: 8vh;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            height: 20vh;
         }
 
         canvas {
@@ -71,12 +82,14 @@
 
 <body>
     <div class="page-top-left">
-        <p>Throttle position</p>
+        <p>Vehicle speed</p>
     </div>
 
-    <div class="page-bottom-left">
-        <div class="main-value" id="textValue">--</div>
-        <div class="value-unit">%</div>
+    <div class="center-container">
+        <div class="value-row">
+            <div class="main-value" id="textValue">--</div>
+            <div class="value-unit">km/h</div>
+        </div>
     </div>
 
     <div class="chart-wrapper">
@@ -86,16 +99,17 @@
     <script>
         const CONFIG = {
             apiUrl: "http://127.0.0.1:44411",
-            pid: "0111",
+            pid: "010D",
             minVal: 0,
-            maxVal: 100,
-            maxCapacity: 60,
-            interval: 5000
+            maxVal: 255,
+            interval: 5000,
+            segments: 24
         };
 
         const state = {
-            data: [],
-            primaryColor: "#ffb77f",
+            currentValue: CONFIG.minVal,
+            primaryColor: "#ffb77e",
+            primaryContainerColor: "#6c3a07",
             onSurfaceColor: "#efdfd6"
         };
 
@@ -106,18 +120,14 @@
         };
 
         const hudiy = {
-            colorScheme: { primary: "#ffb77f", onSurface: "#efdfd6" },
+            colorScheme: { primary: state.primaryColor, onSurface: state.onSurfaceColor, primaryContainer: state.primaryContainerColor },
             onColorSchemeChanged: updateColors,
-            onAttached: updateColors,
-            onMoveToNextControl: () => false,
-            onMoveToPreviousControl: () => false,
-            onGoBack: () => false
+            onAttached: updateColors
         };
 
         function parsePidValue(data) {
             const bytes = data.match(/.{1,2}/g)?.map(h => parseInt(h, 16));
-            if (!bytes || bytes.length < 3) return 0;
-            return (bytes[2] * 100) / 255;
+            return bytes ? bytes[2] : CONFIG.minVal;
         }
 
         function hexToRgba(hex, alpha) {
@@ -129,8 +139,9 @@
         }
 
         function updateColors() {
-            state.primaryColor = hudiy.colorScheme.darkThemeEnabled ? "#d2bcfd" : "#67558e";
+            state.primaryColor = hudiy.colorScheme.primary || state.primaryColor;
             state.onSurfaceColor = hudiy.colorScheme.onSurface || state.onSurfaceColor;
+            state.primaryContainerColor = hudiy.colorScheme.onPrimaryContainer || state.primaryContainerColor;
 
             document.body.style.setProperty('--primary-color', state.primaryColor);
             document.body.style.setProperty('--title-color', state.onSurfaceColor);
@@ -140,55 +151,51 @@
 
         function drawChart() {
             const { ctx, canvas } = els;
-            const width = canvas.width = canvas.clientWidth;
-            const height = canvas.height = canvas.clientHeight;
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
 
-            const chartW = width;
-            const chartH = height;
-            const baseY = height;
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+
+            const width = rect.width;
+            const height = rect.height;
 
             ctx.clearRect(0, 0, width, height);
 
-            if (state.data.length > 0) {
-                const stepX = state.data.length > 1 ? chartW / (state.data.length - 1) : 0;
+            const totalSegments = CONFIG.segments;
+            const gap = width * 0.008;
+            const segmentWidth = (width - ((totalSegments - 1) * gap)) / totalSegments;
 
-                const getX = i => (i * stepX);
-                const getY = v => baseY - ((v - CONFIG.minVal) / (CONFIG.maxVal - CONFIG.minVal) * chartH);
+            let percent = (state.currentValue - CONFIG.minVal) / (CONFIG.maxVal - CONFIG.minVal);
+            percent = Math.max(0, Math.min(1, percent));
 
-                const gradient = ctx.createLinearGradient(0, 0, 0, baseY);
-                gradient.addColorStop(0, hexToRgba(state.primaryColor, 0.5));
-                gradient.addColorStop(1, hexToRgba(state.primaryColor, 0.0));
+            const activeIndex = Math.floor(percent * totalSegments);
 
-                ctx.beginPath();
-                ctx.moveTo(getX(0), baseY);
-                state.data.forEach((val, i) => ctx.lineTo(getX(i), getY(val)));
-                ctx.lineTo(getX(state.data.length - 1), baseY);
-                ctx.fillStyle = gradient;
+            for (let i = 0; i < totalSegments; i++) {
+                const x = i * (segmentWidth + gap);
+
+                if (i < activeIndex) {
+                    ctx.fillStyle = state.primaryColor;
+                } else {
+                    ctx.fillStyle = hexToRgba(state.primaryContainerColor, 0.15);
+                }
+
+                roundRect(ctx, x, 0, segmentWidth, height, 2);
                 ctx.fill();
-
-                ctx.beginPath();
-                state.data.forEach((val, i) => {
-                    const x = getX(i), y = getY(val);
-                    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-                });
-
-                ctx.strokeStyle = state.primaryColor;
-                ctx.lineWidth = Math.max(1, width * 0.005);
-                ctx.lineJoin = 'round';
-                ctx.stroke();
             }
+        }
 
+        function roundRect(ctx, x, y, w, h, r) {
+            if (w < 2 * r) r = w / 2;
+            if (h < 2 * r) r = h / 2;
             ctx.beginPath();
-            ctx.strokeStyle = hexToRgba(state.onSurfaceColor, 0.5);
-            ctx.lineWidth = Math.max(1, width * 0.003);
-
-            ctx.moveTo(0, 0);
-            ctx.lineTo(width, 0);
-
-            ctx.moveTo(0, baseY);
-            ctx.lineTo(width, baseY);
-
-            ctx.stroke();
+            ctx.moveTo(x + r, y);
+            ctx.arcTo(x + w, y, x + w, y + h, r);
+            ctx.arcTo(x + w, y + h, x, y + h, r);
+            ctx.arcTo(x, y + h, x, y, r);
+            ctx.arcTo(x, y, x + w, y, r);
+            ctx.closePath();
         }
 
         async function fetchData(endpoint) {
@@ -202,30 +209,17 @@
         }
 
         async function init() {
-            const data = await fetchData('history');
-            if (data) {
-                CONFIG.maxCapacity = data.maxCapacity;
-                state.data = data.data.map(h => parsePidValue(h));
-                if (state.data.length) els.value.innerText = Math.round(state.data.at(-1));
-                drawChart();
-            }
+            updateLoop();
             setInterval(updateLoop, CONFIG.interval);
         }
 
         async function updateLoop() {
             const data = await fetchData('value');
-            if (!data || !data.value) {
-                els.value.innerText = "--";
-                state.data = [];
-                drawChart();
-                return;
-            }
+            if (!data || !data.value) return;
 
             const val = parsePidValue(data.value);
             els.value.innerText = Math.round(val);
-
-            state.data.push(val);
-            if (state.data.length > CONFIG.maxCapacity) state.data.shift();
+            state.currentValue = val;
 
             drawChart();
         }

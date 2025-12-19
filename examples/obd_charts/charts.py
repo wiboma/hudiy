@@ -37,7 +37,7 @@ def send_obd_query(pid):
         return None
 
 
-@app.route('/<page_name>')
+@app.route('/<path:page_name>')
 def render_page(page_name):
     try:
         return render_template(f'{page_name}.html')
@@ -74,9 +74,6 @@ def get_value():
 
 class EventHandler(ClientEventHandler):
 
-    def __init__(self):
-        self._timer = None
-
     def on_hello_response(self, client, message):
         subs = hudiy_api.SetStatusSubscriptions()
         subs.subscriptions.append(
@@ -107,9 +104,6 @@ class EventHandler(ClientEventHandler):
     def on_obd_connection_status(self, client, message):
         if message.state == hudiy_api.ObdConnectionStatus.OBD_CONNECTION_STATE_DISCONNECTED:
             database.clear()
-
-    def get_timer(self):
-        return self._timer
 
 
 def run_api():

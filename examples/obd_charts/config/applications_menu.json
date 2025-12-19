@@ -1,0 +1,239 @@
+{
+    "categories": [
+        {
+            "isDefault": true,
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "call",
+            "label": "Phone"
+        },
+        {
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "library_music",
+            "label": "Music"
+        },
+        {
+            "iconFontFamily": "Hudiy Symbols",
+            "iconName": "\ue900",
+            "label": "Android Auto"
+        },
+        {
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "general_device",
+            "label": "Autobox"
+        },
+        {
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "apps",
+            "label": "Hudiy"
+        }
+    ],
+    "items": [
+        {
+            "categories": [
+                "Phone"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "contacts",
+            "action": "contacts",
+            "label": "Contacts"
+        },
+        {
+            "categories": [
+                "Phone"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "contacts",
+            "action": "favorite_contacts",
+            "label": "Favorites"
+        },
+        {
+            "categories": [
+                "Phone"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "dialpad",
+            "action": "dialpad",
+            "label": "Dialpad"
+        },
+        {
+            "categories": [
+                "Phone"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "call_log",
+            "action": "calls_history",
+            "label": "Call log"
+        },
+        {
+            "categories": [
+                "Phone"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "phone_in_talk",
+            "action": "active_call",
+            "label": "Active call"
+        },
+        {
+            "categories": [
+                "Phone"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "notifications",
+            "action": "phone_notifications",
+            "label": "Notifications"
+        },
+        {
+            "categories": [
+                "Music"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "audio_file",
+            "action": "storage_music_player",
+            "label": "Storage Music"
+        },
+        {
+            "categories": [
+                "Music"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "cell_tower",
+            "action": "fm_radio_player",
+            "label": "FM Radio"
+        },
+        {
+            "categories": [
+                "Music"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "media_bluetooth_on",
+            "action": "a2dp_music_player",
+            "label": "A2DP"
+        },
+        {
+            "categories": [
+                "Music"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "general_device",
+            "action": "autobox_player",
+            "label": "Autobox Music"
+        },
+        {
+            "categories": [
+                "Music"
+            ],
+            "iconFontFamily": "Hudiy Symbols",
+            "iconName": "\ue900",
+            "action": "android_auto_player",
+            "label": "Android Auto"
+        },
+        {
+            "categories": [
+                "Hudiy"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "web_asset",
+            "action": "background_applications",
+            "label": "Active apps"
+        },
+        {
+            "categories": [
+                "Hudiy"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "settings",
+            "action": "settings_menu",
+            "label": "Settings"
+        },
+        {
+            "categories": [
+                "Hudiy"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "cancel_presentation",
+            "action": "quit_hudiy",
+            "label": "Quit"
+        },
+        {
+            "categories": [
+                "Hudiy"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "show_chart",
+            "action": "obd_charts",
+            "label": "OBD Charts"
+        },
+        {
+            "categories": [
+                "Hudiy"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "unknown_med",
+            "action": "obd_blocks",
+            "label": "OBD Blocks"
+        },
+        {
+            "categories": [
+                "Hudiy"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "speed",
+            "action": "obd_combined",
+            "label": "Combined"
+        },
+        {
+            "categories": [
+                "Android Auto"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "usb",
+            "action": "connect_android_auto_usb",
+            "label": "Connect USB"
+        },
+        {
+            "categories": [
+                "Android Auto"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "wifi",
+            "action": "connect_android_auto_wifi",
+            "label": "Connect WiFi"
+        },
+        {
+            "categories": [
+                "Android Auto"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "redo",
+            "action": "resume_android_auto_projection",
+            "label": "Resume"
+        },
+        {
+            "categories": [
+                "Android Auto"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "cancel_presentation",
+            "action": "quit_android_auto",
+            "label": "Quit"
+        },
+        {
+            "categories": [
+                "Autobox"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "wifi",
+            "action": "connect_autobox_wifi",
+            "label": "Connect WiFi"
+        },
+        {
+            "categories": [
+                "Autobox"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "redo",
+            "action": "resume_autobox_projection",
+            "label": "Resume"
+        }
+    ]
+}

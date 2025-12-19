@@ -1,0 +1,196 @@
+{
+    "dashboards": [
+        {
+            "isDefault": true,
+            "action": "hudiy_dashboard",
+            "widgets": [
+                {
+                    "type": "date_time",
+                    "size": "small_narrow"
+                },
+                {
+                    "type": "navigation",
+                    "size": "medium_narrow"
+                },
+                {
+                    "type": "now_playing",
+                    "size": "large_narrow"
+                },
+                {
+                    "type": "phone",
+                    "size": "small_narrow"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_narrow",
+                    "url": "http://127.0.0.1:44411/charts/engine_load"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_narrow",
+                    "url": "http://127.0.0.1:44411/charts/intake_temp"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_narrow",
+                    "url": "http://127.0.0.1:44411/blocks/engine_temp"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_wide",
+                    "url": "http://127.0.0.1:44411/charts/rpm"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_wide",
+                    "url": "http://127.0.0.1:44411/charts/speed"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_narrow",
+                    "url": "http://127.0.0.1:44411/charts/throttle_position"
+                }
+            ]
+        },
+        {
+            "action": "obd_charts",
+            "widgets": [
+                {
+                    "type": "web",
+                    "size": "medium_wide",
+                    "url": "http://127.0.0.1:44411/charts/engine_temp"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_wide",
+                    "url": "http://127.0.0.1:44411/charts/speed"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_wide",
+                    "url": "http://127.0.0.1:44411/charts/engine_temp"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_wide",
+                    "url": "http://127.0.0.1:44411/charts/throttle_position"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_narrow",
+                    "url": "http://127.0.0.1:44411/charts/engine_load"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_narrow",
+                    "url": "http://127.0.0.1:44411/charts/intake_temp"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_narrow",
+                    "url": "http://127.0.0.1:44411/charts/speed"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_narrow",
+                    "url": "http://127.0.0.1:44411/charts/engine_temp"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_narrow",
+                    "url": "http://127.0.0.1:44411/charts/speed"
+                }
+            ]
+        },
+        {
+            "action": "obd_blocks",
+            "widgets": [
+                {
+                    "type": "web",
+                    "size": "medium_wide",
+                    "url": "http://127.0.0.1:44411/blocks/engine_temp"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_wide",
+                    "url": "http://127.0.0.1:44411/blocks/speed"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_wide",
+                    "url": "http://127.0.0.1:44411/blocks/rpm"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_wide",
+                    "url": "http://127.0.0.1:44411/blocks/throttle_position"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_narrow",
+                    "url": "http://127.0.0.1:44411/blocks/engine_load"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_narrow",
+                    "url": "http://127.0.0.1:44411/blocks/intake_temp"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_narrow",
+                    "url": "http://127.0.0.1:44411/blocks/speed"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_narrow",
+                    "url": "http://127.0.0.1:44411/blocks/engine_temp"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_narrow",
+                    "url": "http://127.0.0.1:44411/blocks/speed"
+                }
+            ]
+        },
+        {
+            "action": "obd_combined",
+            "widgets": [
+                {
+                    "type": "web",
+                    "size": "medium_wide",
+                    "url": "http://127.0.0.1:44411/charts/engine_temp"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_wide",
+                    "url": "http://127.0.0.1:44411/charts/speed"
+                },
+                {
+                    "type": "web_static",
+                    "size": "medium_wide",
+                    "url": "http://127.0.0.1:44411/blocks/speed"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_wide",
+                    "url": "http://127.0.0.1:44411/blocks/rpm"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_narrow",
+                    "url": "http://127.0.0.1:44411/blocks/engine_load"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_narrow",
+                    "url": "http://127.0.0.1:44411/charts/intake_temp"
+                },
+                {
+                    "type": "web_static",
+                    "size": "small_narrow",
+                    "url": "http://127.0.0.1:44411/blocks/throttle_position"
+                }
+            ]
+        }
+    ]
+}

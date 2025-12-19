@@ -102,6 +102,18 @@ Supported Key Bindings:
 
 ![Main screen](images/screenshot40.png)
 
+![Main screen](images/screenshot41.png)
+
+![Main screen](images/screenshot42.png)
+
+![Main screen](images/screenshot43.png)
+
+![Main screen](images/screenshot44.png)
+
+![Main screen](images/screenshot45.png)
+
+![Main screen](images/screenshot46.png)
+
 ![Main screen](images/screenshot14.png)
 
 ![Main screen](images/screenshot11.png)
