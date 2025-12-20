@@ -21,20 +21,21 @@ request_counter = itertools.count(1)
 pid_history_capacity = 300
 pending_requests = {}
 database = {}
+obd_lock = threading.Lock()
 
 
-def send_obd_query(pid):
-    req_id = next(request_counter)
+def send_obd_query(pid, req_id):
     query = hudiy_api.QueryObdDeviceRequest()
     query.commands[:] = [pid]
     query.request_code = req_id
 
     try:
-        client.send(hudiy_api.MESSAGE_QUERY_OBD_DEVICE_REQUEST, 0,
-                    query.SerializeToString())
-        return req_id
+        with obd_lock:
+            client.send(hudiy_api.MESSAGE_QUERY_OBD_DEVICE_REQUEST, 0,
+                        query.SerializeToString())
+        return True
     except (OSError, BrokenPipeError):
-        return None
+        return False
 
 
 @app.route('/<path:page_name>')
@@ -56,14 +57,14 @@ def get_history():
 def get_value():
     pid = request.args.get('pid')
     response_queue = Queue()
-    req_id = send_obd_query(pid)
-
-    if req_id is None:
-        return jsonify({"error": "Hudiy is disconnected"}), 503
+    req_id = next(request_counter)
 
     pending_requests[req_id] = response_queue
 
     try:
+        if not send_obd_query(pid, req_id):
+            return jsonify({"error": "Hudiy is disconnected"}), 503
+
         result = response_queue.get(timeout=10)
         return jsonify({"pid": pid, "value": result})
     except Empty:
@@ -83,8 +84,6 @@ class EventHandler(ClientEventHandler):
 
     def on_query_obd_device_response(self, client, message):
         queue = pending_requests.get(message.request_code)
-        if not queue:
-            return
 
         parsed_value = None
         if message.result and message.data:
@@ -99,7 +98,8 @@ class EventHandler(ClientEventHandler):
             except Exception:
                 pass
 
-        queue.put(parsed_value)
+        if queue:
+            queue.put(parsed_value)
 
     def on_obd_connection_status(self, client, message):
         if message.state == hudiy_api.ObdConnectionStatus.OBD_CONNECTION_STATE_DISCONNECTED:
