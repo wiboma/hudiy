@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @font-face {
+            font-family: 'Roboto';
+            src: url('/static/Roboto-Regular.ttf') format('truetype');
+            font-display: swap;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #000;
+            color: #fff;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 8vw;
+            width: 90%;
+            height: 90vh;
+        }
+
+        .clock-wrapper {
+            flex: 0 0 auto;
+        }
+
+        .clock-face {
+            width: 45vmin;
+            height: 45vmin;
+            border: 0.4vmin solid #fff;
+            border-radius: 15%;
+            position: relative;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .marker {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            height: 50%;
+            width: 0;
+            transform-origin: bottom center;
+        }
+
+        .marker::after {
+            content: '';
+            position: absolute;
+            top: 12%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #fff;
+        }
+
+        .marker.hour-marker::after {
+            width: 0.6vmin;
+            height: 3vmin;
+        }
+
+        .marker.minute-dot::after {
+            width: 0.6vmin;
+            height: 0.6vmin;
+            border-radius: 50%;
+            background-color: #fff;
+            top: 12%;
+        }
+
+        .hand-container {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 0;
+            height: 50%;
+            transform-origin: bottom center;
+            z-index: 10;
+        }
+
+        .hand-body {
+            background-color: #fff;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-top-left-radius: 1vmin;
+            border-top-right-radius: 1vmin;
+        }
+
+        .hour-wrapper .hand-body {
+            width: 1.5vmin;
+            height: 45%;
+            background-color: #fff;
+        }
+
+        .min-wrapper .hand-body {
+            width: 0.8vmin;
+            height: 65%;
+            background-color: #fff;
+        }
+
+        .sec-wrapper .hand-body {
+            width: 0.25vmin;
+            height: 75%;
+            background-color: #fff;
+        }
+
+        .center-dot {
+            width: 2vmin;
+            height: 2vmin;
+            background-color: #fff;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 12;
+            border: 0.4vmin solid #000;
+        }
+
+        .digital-container {
+            text-align: left;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .digital-time {
+            font-size: 12vmin;
+            font-weight: 300;
+            color: #fff;
+        }
+
+        .digital-date {
+            font-size: 4vmin;
+            color: #fff;
+            margin-top: 2vmin;
+            text-transform: uppercase;
+            letter-spacing: 0.5vmin;
+            font-weight: 400;
+        }
+
+        .bottom-icon {
+            position: absolute;
+            bottom: 4vmin;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12vmin;
+            height: 12vmin;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            box-sizing: border-box;
+            border: var(--border-width, 4px) solid var(--border-color, transparent);
+        }
+
+        .bottom-icon svg {
+            width: 70%;
+            height: 70%;
+            fill: #fff;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="clock-wrapper">
+            <div class="clock-face">
+                <div id="markers-container"></div>
+                <div class="hand-container hour-wrapper" id="hour">
+                    <div class="hand-body"></div>
+                </div>
+                <div class="hand-container min-wrapper" id="min">
+                    <div class="hand-body"></div>
+                </div>
+                <div class="hand-container sec-wrapper" id="sec">
+                    <div class="hand-body"></div>
+                </div>
+                <div class="center-dot"></div>
+            </div>
+        </div>
+
+        <div class="digital-container">
+            <div class="digital-time" id="digital-time">--</div>
+            <div class="digital-date" id="digital-date">--</div>
+        </div>
+    </div>
+
+    <div class="bottom-icon" id="hide-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#e3e3e3">
+            <path
+                d="m249-207-42-42 231-231-231-231 42-42 231 231 231-231 42 42-231 231 231 231-42 42-231-231-231 231Z" />
+        </svg>
+    </div>
+
+    <script>
+        const hudiy = {};
+
+        const CONFIG = {
+            apiUrl: "http://127.0.0.1:44412",
+            locale: "en-US"
+        };
+
+        const hideBtn = document.getElementById('hide-btn');
+        const borderWidth = hideBtn.offsetWidth * 0.065;
+        hideBtn.style.setProperty('--border-width', `${borderWidth}px`);
+
+        hideBtn.addEventListener("pointerdown", () => {
+            hideBtn.style.setProperty("--border-color", hudiy.colorScheme.outline);
+        });
+
+        hideBtn.addEventListener("pointerup", () => {
+            hideBtn.style.setProperty("--border-color", "transparent");
+        });
+
+        hideBtn.addEventListener('click', function () {
+            fetch(`${CONFIG.apiUrl}/hide`).catch(e => console.error(e));
+        });
+
+        hudiy.onInputFocusChanged = function () {
+            if (hudiy.inputFocus && hudiy.activated) {
+                hideBtn.style.setProperty("--border-color", hudiy.colorScheme.outline);
+            } else {
+                hideBtn.style.setProperty("--border-color", "transparent");
+            }
+        }
+
+        hudiy.onActivatedChanged = function () {
+            hideBtn.style.setProperty("--border-color", hudiy.activated ? hudiy.colorScheme.outline : "transparent");
+        }
+
+        hudiy.onTriggered = function () {
+            hideBtn.style.setProperty("--border-color", "transparent");
+
+            setTimeout(() => {
+                hideBtn.style.setProperty("--border-color", hudiy.colorScheme.outline);
+                hideBtn.click();
+            }, 150);
+        }
+
+        function createMarkers() {
+            const markersContainer = document.getElementById('markers-container');
+            const fragment = document.createDocumentFragment();
+
+            for (let i = 0; i < 60; i++) {
+                const marker = document.createElement('div');
+                marker.className = `marker ${i % 5 === 0 ? 'hour-marker' : 'minute-dot'}`;
+                marker.style.transform = `rotate(${i * 6}deg)`;
+                fragment.appendChild(marker);
+            }
+            markersContainer.appendChild(fragment);
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const seconds = now.getSeconds();
+            const minutes = now.getMinutes();
+            const hours = now.getHours();
+
+            const secondDeg = seconds * 6;
+            const minDeg = (minutes * 6) + (seconds * 0.1);
+            const hourDeg = (hours * 30) + (minutes * 0.5);
+
+            document.getElementById('sec').style.transform = `rotate(${secondDeg}deg)`;
+            document.getElementById('min').style.transform = `rotate(${minDeg}deg)`;
+            document.getElementById('hour').style.transform = `rotate(${hourDeg}deg)`;
+
+            document.getElementById('digital-time').textContent = now.toLocaleTimeString(CONFIG.locale, {
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+
+            document.getElementById('digital-date').textContent = now.toLocaleDateString(CONFIG.locale, {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            });
+        }
+
+        createMarkers();
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+</body>
+
+</html>

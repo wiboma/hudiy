@@ -1,0 +1,33 @@
+{
+    "overlays" : [
+        {
+            "identifier" : "idle_overlay",
+            "action" : "",
+            "width" : 1024,
+            "height" : 600,
+            "x" : 0,
+            "y" : 0,
+            "visibility" : "NONE",
+            "url" : "http://127.0.0.1:44412/idle",
+            "controlAudioFocus" : false,
+            "audioStreamCategory" : "NONE",
+            "visibleOnActions" : [
+
+            ],
+            "staticPosition" : true
+        }
+    ],
+    "navigationOverlayPosition" : {
+        "x" : 0,
+        "y" : 0
+    },
+    "volumeOverlayPosition" : {
+        "x" : 0,
+        "y" : 0
+    },
+    "navigationOverlayVisibility" : "NONE",
+    "volumeOverlayVisibility" : "NONE",
+    "navigationOverlayOpacity" : 100,
+    "xStep" : 20,
+    "yStep" : 10
+}
