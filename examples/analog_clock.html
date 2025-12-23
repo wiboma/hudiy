@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --color-hands-main: #ffffff;
+            --color-hand-sec: #ff4444;
+            --color-date: #dddddd;
+            --color-time: #dddddd;
+            --color-markers-hours: #ffffff;
+            --color-markers-minutes: #ffffff;
+            --color-center-dot-border: #000000;
+        }
+
+        @font-face {
+            font-family: 'Roboto';
+            src: 'api/js/Roboto-Regular.ttf' format('truetype');
+            font-display: swap;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: transparent;
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .clock-face {
+            width: 95vmin;
+            height: 95vmin;
+            position: relative;
+        }
+
+        .date-display {
+            position: absolute;
+            top: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--color-date);
+            font-size: 8vmin;
+            font-weight: bold;
+            letter-spacing: 0.1vmin;
+            z-index: 5;
+            text-transform: uppercase;
+        }
+
+        .time-display {
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--color-time);
+            font-size: 8vmin;
+            font-weight: bold;
+            letter-spacing: 0.1vmin;
+            z-index: 5;
+            text-transform: uppercase;
+        }
+
+        .marker,
+        .hand-container {
+            position: absolute;
+            left: 50%;
+            bottom: 50%;
+            transform-origin: bottom center;
+        }
+
+        .marker {
+            height: 50%;
+            width: 0;
+        }
+
+        .marker::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .marker.hour-marker::after {
+            top: 2%;
+            width: 1.5vmin;
+            height: 6vmin;
+            background-color: var(--color-markers-hours);
+        }
+
+        .marker.minute-dot::after {
+            top: 2%;
+            width: 1.1vmin;
+            height: 1.1vmin;
+            border-radius: 50%;
+            background-color: var(--color-markers-minutes);
+        }
+
+        .hand-container {
+            width: 0;
+            height: 50%;
+            z-index: 10;
+        }
+
+        .hand-body {
+            background-color: var(--color-hands-main);
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 50px 50px 0 0;
+        }
+
+        .hour-wrapper .hand-body {
+            width: 3vmin;
+            height: 55%;
+        }
+
+        .min-wrapper .hand-body {
+            width: 1.5vmin;
+            height: 80%;
+        }
+
+        .sec-wrapper .hand-body {
+            width: 0.5vmin;
+            height: 90%;
+            background-color: var(--color-hand-sec);
+        }
+
+        .center-dot {
+            width: 3vmin;
+            height: 3vmin;
+            background-color: var(--color-hands-main);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 20;
+            border: 0.6vmin solid var(--color-center-dot-border);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="clock-face">
+        <div class="date-display" id="date"></div>
+        <div class="time-display" id="time"></div>
+
+        <div id="markers-container"></div>
+
+        <div class="hand-container hour-wrapper" id="hour">
+            <div class="hand-body"></div>
+        </div>
+        <div class="hand-container min-wrapper" id="min">
+            <div class="hand-body"></div>
+        </div>
+        <div class="hand-container sec-wrapper" id="sec">
+            <div class="hand-body"></div>
+        </div>
+
+        <div class="center-dot"></div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            locale: 'en-US'
+        };
+
+        const hudiy = {
+            onColorSchemeChanged: updateColors,
+            onAttached: updateColors
+        };
+
+        const markersContainer = document.getElementById('markers-container');
+        for (let i = 0; i < 60; i++) {
+            const marker = document.createElement('div');
+            marker.className = `marker ${i % 5 === 0 ? 'hour-marker' : 'minute-dot'}`;
+            marker.style.transform = `rotate(${i * 6}deg)`;
+            markersContainer.appendChild(marker);
+        }
+
+        const handHour = document.getElementById('hour');
+        const handMin = document.getElementById('min');
+        const handSec = document.getElementById('sec');
+        const dateDisplay = document.getElementById('date');
+        const timeDisplay = document.getElementById('time');
+
+        function updateClock() {
+            const now = new Date();
+            const s = now.getSeconds();
+            const m = now.getMinutes();
+            const h = now.getHours();
+
+            const sDeg = s * 6;
+            const mDeg = (m * 6) + (s * 0.1);
+            const hDeg = (h * 30) + (m * 0.5);
+
+            handSec.style.transform = `rotate(${sDeg}deg)`;
+            handMin.style.transform = `rotate(${mDeg}deg)`;
+            handHour.style.transform = `rotate(${hDeg}deg)`;
+
+            dateDisplay.textContent = now.toLocaleDateString(CONFIG.locale, { month: 'short', day: 'numeric' });
+
+            timeDisplay.textContent = now.toLocaleTimeString(CONFIG.locale, {
+                hour: 'numeric',
+                minute: '2-digit',
+            });
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        function updateColors() {
+            document.documentElement.style.setProperty('--color-markers-minutes', hudiy.colorScheme.secondary);
+            document.documentElement.style.setProperty('--color-markers-hours', hudiy.colorScheme.primary);
+            document.documentElement.style.setProperty('--color-hands-main', hudiy.colorScheme.primary);
+            document.documentElement.style.setProperty('--color-hand-sec', hudiy.colorScheme.outline);
+            document.documentElement.style.setProperty('--color-date', hudiy.colorScheme.onSurface);
+            document.documentElement.style.setProperty('--color-time', hudiy.colorScheme.onSurface);
+            document.documentElement.style.setProperty('--color-center-dot-border', hudiy.colorScheme.surface);
+
+            updateClock();
+        }
+    </script>
+</body>
+
+</html>

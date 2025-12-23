@@ -90,6 +90,8 @@ Supported Key Bindings:
 
 ![Main screen](images/screenshot1.png)
 
+![Main screen](images/screenshot48.png)
+
 ![Main screen](images/screenshot35.png)
 
 ![Main screen](images/screenshot10.png)
