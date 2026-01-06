@@ -383,6 +383,14 @@ The configuration is stored in JSON format.
     - true – force to use the codec compatible with DRM
     - false – use the codec preferred by the phone.
 
+- `dayNightMode`:  
+    Determines day/night mode control.
+
+    Possible values:
+    - "common" - Sync with dark theme settings of Native UI
+    - "day" - Force day mode  
+    - "night" - Force night mode
+
 ## hotspot
 
 - `enabled`:  

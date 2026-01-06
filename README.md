@@ -858,6 +858,7 @@ Boolean value. A value of `true` indicates that the HTML content loaded in the w
 
 - `audioStreamCategory`  
 Type of audio played from the loaded HTML content. The audio type determines how audio focus will be controlled. The category can be one of the following:
+  - `"NONE"`
   - `"ENTERTAINMENT"`
   - `"COMMUNICATION"`
   - `"NOTIFICATION"`
@@ -965,6 +966,7 @@ Array of objects that define the widgets displayed on the dashboard. The widgets
 
   - `audioStreamCategory`  
   Applicable to `WEB` and `WEB_STATIC` widgets. Type of audio played from the loaded HTML content. The audio type determines how audio focus will be controlled. The category can be one of the following:
+    - `"NONE"`
     - `"ENTERTAINMENT"`
     - `"COMMUNICATION"`
     - `"NOTIFICATION"`
@@ -989,7 +991,7 @@ Overlays have four visibility modes:
 
 Custom overlays can be created in HTML/JavaScript and displayed in web views.
 
-Each overlay can have a custom width, height, and screen position (x, y). It can be repositioned using drag-and-drop gestures, the Left, Right, Up, and Down key strokes.
+Each overlay can have a custom width, height, and screen position (x, y). It can be repositioned using drag-and-drop gestures, the Left, Right, Up, and Down key strokes. To prevent interference with HTML content, drag-and-drop for custom overlays is activated after a long press.
 
 Hudiy includes two built-in overlays: volume controls and navigation.
 
@@ -1045,6 +1047,7 @@ Boolean value. A value of `true` indicates that the HTML content loaded in the w
 
 - `audioStreamCategory`  
 Type of audio played from the loaded HTML content. The audio type determines how audio focus will be controlled. The category can be one of the following:
+  - `"NONE"`
   - `"ENTERTAINMENT"`
   - `"COMMUNICATION"`
   - `"NOTIFICATION"`
@@ -1055,6 +1058,31 @@ Array of actions on which the overlay will be displayed, based on its visibility
 - `staticPosition`  
 Boolean value. A value of `true` disables Drag & Drop and keystrokes (Left, Right, Up, Down) for positioning the overlay on the screen. A value of `false` enables them.
 
+#### Built-in overlays configuration
+
+- `navigationOverlayPosition`  
+Object with `x` and `y` coordinates of the navigation overlay position.
+
+- `volumeOverlayPosition`  
+Object with `x` and `y` coordinates of the volume overlay position.
+
+- `navigationOverlayVisibility`  
+Navigation overlay visibility.
+
+- `navigationOverlayOpacity`  
+Navigation overlay opacity [%].
+
+- `volumeOverlayVisibility`  
+Volume overlay visibility.
+
+#### Positioning configuration
+
+- `xStep`  
+The value added to or subtracted from the X-coordinate when moving the overlay via keystrokes.
+
+- `yStep`  
+The value added to or subtracted from the Y-coordinate when moving the overlay via keystrokes.
+
 ## Bluetooth
 
 Hudiy supports Bluetooth with A2DP and AVRCP for media playback and HFP for hands-free calling. The application can also access contacts and call history on a connected phone.
@@ -1064,6 +1092,7 @@ Bluetooth audio, including A2DP for high-quality media playback and HFP for hand
 You can pair and unpair Bluetooth devices directly in Hudiy. It is recommended to disable other Bluetooth agents to avoid potential conflicts.
 
 ### Cover art
+
 Starting from **Raspberry Pi OS/Debian Trixie**, the Bluetooth stack includes experimental support for fetching track cover art.
 To enable this functionality, experimental features must be activated in the BlueZ system configuration.
 
@@ -1169,6 +1198,14 @@ The updater application is located at `$HOME/.hudiy/share/updater`
 
 The updater performs an incremental update (version by version).
 
+The current version can be found in Settings (Menu -> Hudiy -> Settings -> About).
+
+To distinguish between Hudiy versions for different Raspberry Pi OS/Debian releases, we introduced the following versioning scheme:  
+
+- 1.x - Hudiy for Bookworm
+- 2.x - Hudiy for Trixie
+- 3.x - Hudiy for the next Raspberry Pi OS/Debian release in the future
+
 ## Multiple screens
 
 Hudiy provides advanced multi-display support.
@@ -1206,7 +1243,7 @@ Permission is required to monitor Bluetooth device connections and automatically
 
 ## Splash
 
-After the system loads, the splash application is responsible for starting Hudiy. By default, the splash application displays the "Hudiy" text during loading. Using splash application arguments, you can provide a path to an image (e.g., JPG/PNG) that will be displayed instead of the “Hudiy” text. The image will be shown in the center of the splash window while preserving its original dimensions (width and height).
+After the system loads, the splash application is responsible for starting Hudiy. By default, the splash application displays the "Hudiy" text during loading. Using splash application arguments, you can provide a path to an image (e.g., JPG/PNG/GIF) that will be displayed instead of the “Hudiy” text. The image will be shown in the center of the splash window while preserving its original dimensions (width and height).
 
 List of available arguments:  
 
@@ -1216,7 +1253,7 @@ List of available arguments:
 - `--logo`  
   Absolute path to an image file that will be displayed instead of the “Hudiy” text.
 
-The script that launches Hudiy is located at `$HOME/.hudiy/share/hudiy_run.sh` and it is started from `$HOME/.config/labwc/autostart`.
+The Hudiy launch script is located at `$HOME/.hudiy/share/hudiy_run.sh`. Depending on the window compositor, the script is triggered from `$HOME/.config/labwc/autostart` or `$HOME/.config/autostart/hudiy.desktop`.
 
 During the startup of the Operating System, the splash screen is handled by [Plymouth](https://www.freedesktop.org/wiki/Software/Plymouth/).
 
@@ -1226,6 +1263,6 @@ As of version 2.2, Hudiy also supports the x86 64-bit architecture. The currentl
 
 Since the installation, configuration and updating process for Hudiy requires root privileges, access to sudo is necessary. In Debian, sudo access is automatically provided when a password is not set for the root user. Please keep that in mind during OS installation and do not set the root password.
 
-Hudiy utilizes the VA-API (Video Acceleration API) for hardware acceleration. Therefore, for a better user experience, we recommend running Hudiy on platforms that support VA-API (https://www.intel.com/content/www/us/en/developer/articles/technical/linuxmedia-vaapi.html).
+Hudiy utilizes the VA-API (Video Acceleration API) for hardware acceleration. Therefore, for a better user experience, we recommend running Hudiy on platforms that support VA-API (<https://www.intel.com/content/www/us/en/developer/articles/technical/linuxmedia-vaapi.html>).
 
 **We do not recommend and officially do not support** running Hudiy on Virtual Machines (e.g., QEMU, VirtualBox, or VMWare). Virtual Machines do not provide sufficient hardware support for handling UI (OpenGL) and video rendering, and may also cause issues with PipeWire. Any additional system configuration required on a Virtual Machine is the responsibility of the user.
