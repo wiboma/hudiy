@@ -1125,6 +1125,22 @@ Depending on the detected setup, it is possible to control balance, fade, and su
 
 For more details about audio configuration see [Main Configuration](main_configuration.md)
 
+### Audio focus
+
+Hudiy implements an audio focus mechanism to consistently manage all playing audio streams (Storage Music, Web, Android Auto, Autobox, FM Radio, voice calls, navigation, etc.). When you play music from one source (e.g., Storage Music Player) and then start playback from another source (e.g., Android Auto), Hudiy automatically pauses the previous source and grants audio focus to the new one.
+
+Another feature of Audio Focus is the automatic ducking (lowering) and restoring of the audio stream volume when, for example, navigation prompts or notification sounds are played.
+
+Hudiy also handles audio focus for voice calls and voice assistants. If a voice call starts or a voice assistant is activated during audio playback, Hudiy automatically pauses the music and resumes it after the voice session ends.
+
+Using the API, you can integrate your applications with the audio focus mechanism in Hudiy. For HTML/JavaScript, audio focus is automatically integrated via the Media Session API.
+
+The audio focus mechanism distinguishes 3 basic audio stream categories:
+
+- `ENTERTAINMENT` - for streams like music players (indefinite)
+- `COMMUNICATION` - for streams like voice calls/voice assistants (transient)
+- `NOTIFICATION` - for streams like navigation/notifications (ducking)
+
 ### Equalizer
 
 The equalizer is implemented as a PipeWire plugin.
