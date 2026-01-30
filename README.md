@@ -384,6 +384,12 @@ Hudiy includes the following predefined actions:
 - **go_home**:  
   Triggers home action (default dashboard or action configured in Application.defaultAction)
 
+- **go_back_on_web_view_application**:  
+  Triggers a browser-like back navigation on the currently visible web application
+
+- **go_forward_on_web_view_application**:  
+  Triggers a browser-like forward navigation on the currently visible web application
+
 ### Backgrounds
 
 Hudiy allows you to define a custom image file as the background for each menu in both dark and light themes.  
@@ -862,6 +868,9 @@ Type of audio played from the loaded HTML content. The audio type determines how
   - `"ENTERTAINMENT"`
   - `"COMMUNICATION"`
   - `"NOTIFICATION"`
+
+- `zoomFactor`
+Zoom factor for the web view. Accepted values are within the range from 0.25 to 5.0. The default factor is 1.0 (no zoom). This can be useful to enlarge interface elements on the displayed page.
 
 ### Widgets
 

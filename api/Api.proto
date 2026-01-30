@@ -3,9 +3,9 @@ syntax = "proto2";
 package hudiy.app.api;
 
 enum Constants {
-    option allow_alias = true;
+    // option allow_alias = true;
     API_MAJOR_VERSION = 1;
-    API_MINOR_VERSION = 1;
+    API_MINOR_VERSION = 2;
 }
 
 enum MessageType {
@@ -60,6 +60,7 @@ enum MessageType {
     MESSAGE_PONG = 48;
     MESSAGE_BYEBYE = 49;
     MESSAGE_SET_ANDROID_AUTO_DAY_NIGHT_MODE = 50;
+    MESSAGE_SET_AUTOBOX_DAY_NIGHT_MODE = 51;
 }
 
 message Version {
@@ -789,6 +790,25 @@ message SetEqualizerPreset {
 // Receiver: Hudiy
 // Description: Sets day/night mode for Android Auto projection.
 message SetAndroidAutoDayNightMode {
+    enum DayNightMode {
+        // Sync with dark theme settings of Native UI
+        COMMON = 1;
+
+        // Force day mode
+        DAY = 2;
+
+        // Force night mode
+        NIGHT = 3;
+    }
+
+    // Desired mode
+    required DayNightMode mode = 1;
+}
+
+// Id: MESSAGE_SET_AUTOBOX_DAY_NIGHT_MODE
+// Receiver: Hudiy
+// Description: Sets day/night mode for Autobox projection.
+message SetAutoboxDayNightMode {
     enum DayNightMode {
         // Sync with dark theme settings of Native UI
         COMMON = 1;

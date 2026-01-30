@@ -108,6 +108,22 @@
         <source>About device</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Day/Night</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Common</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Day</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Night</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AvailableColors</name>
@@ -357,6 +373,10 @@
     </message>
     <message>
         <source>Contrast</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opacity</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

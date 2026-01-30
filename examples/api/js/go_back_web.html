@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        .circle {
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            border: var(--border-width, 4px) solid var(--border-color, transparent);
+        }
+
+        .circle svg {
+            width: 70%;
+            height: 70%;
+            fill: white;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="circle">
+        <svg id="backIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+            <path d="M640-80 240-480l400-400 71 71-329 329 329 329-71 71Z" />
+        </svg>
+    </div>
+
+    <script src="common/protobuf.min.js"></script>
+    <script>
+        hudiy = {
+            api: {}
+        }
+
+        const circle = document.querySelector('.circle');
+        const borderWidth = circle.offsetWidth * 0.065;
+        circle.style.setProperty('--border-width', `${borderWidth}px`);
+
+        circle.addEventListener("pointerdown", () => {
+            circle.style.setProperty("--border-color", hudiy.colorScheme.outline);
+        });
+
+        ["pointerup", "pointermove"].forEach(ev =>
+            circle.addEventListener(ev, () => circle.style.setProperty("--border-color", "transparent"))
+        );
+
+        circle.addEventListener("click", () => {
+            const msg = hudiy.api.DispatchAction.create({
+                action: "go_back_on_web_view_application"
+            });
+            const payload = hudiy.api.DispatchAction.encode(msg).finish();
+            hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_DISPATCH_ACTION, 0, payload);
+        });
+
+        function updateColors() {
+            document.querySelector(".circle").style.backgroundColor = hudiy.colorScheme.tertiaryContainer;
+            const icon = document.getElementById("backIcon");
+            icon.style.fill = hudiy.colorScheme.onTertiaryContainer;
+        }
+
+        hudiy.onColorSchemeChanged = function () {
+            updateColors();
+        }
+
+        hudiy.onAttached = function () {
+            updateColors();
+        }
+    </script>
+
+    <script type="module">
+        import { HudiyClient } from "./common/hudiy_client.js";
+
+        function loadProto() {
+            return new Promise((resolve, reject) => {
+                protobuf.load("common/Api.proto", (err, root) => {
+                    if (err) reject(err);
+                    else resolve(root);
+                });
+            });
+        }
+
+        hudiy.api.protoRoot = await loadProto();
+        hudiy.api.HelloRequest = hudiy.api.protoRoot.lookupType("hudiy.app.api.HelloRequest");
+        hudiy.api.HelloResponse = hudiy.api.protoRoot.lookupType("hudiy.app.api.HelloResponse");
+        hudiy.api.Version = hudiy.api.protoRoot.lookupType("hudiy.app.api.Version");
+        hudiy.api.DispatchAction = hudiy.api.protoRoot.lookupType("hudiy.app.api.DispatchAction");
+        hudiy.api.MessageType = hudiy.api.protoRoot.lookup("hudiy.app.api.MessageType").values;
+
+        hudiy.api.client = new HudiyClient("ws://localhost:44406");
+
+        hudiy.api.client.onOpen = () => {
+            const versionObj = hudiy.api.Version.create({ major: 1, minor: 0 });
+            const hello = hudiy.api.HelloRequest.create({
+                name: "OSK Icon",
+                apiVersion: versionObj
+            });
+
+            const payload = hudiy.api.HelloRequest.encode(hello).finish();
+            hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_HELLO_REQUEST, 0, payload);
+        };
+
+        hudiy.api.client.onMessage = ({ id, flags, payload }) => {
+            if (id === hudiy.api.MessageType.MESSAGE_HELLO_RESPONSE) {
+                const decoded = hudiy.api.HelloResponse.decode(payload);
+                console.log("HelloResponse:", decoded);
+            } else if (id === hudiy.api.MessageType.MESSAGE_PING) {
+                hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_PONG, 0, new Uint8Array(0));
+            }
+        };
+
+        hudiy.api.client.connect();
+    </script>
+</body>
+
+</html>

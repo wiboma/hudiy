@@ -208,6 +208,16 @@ The configuration is stored in JSON format.
 - `lightBackgroundOpacity`:  
     The opacity level of background images in the light theme. Applies to both `lightBackgroundsMap` and `defaultLightBackground`.
 
+- `darkOpacity`:  
+    Opacity for widgets background and bottom bar in dark mode.
+
+    *Note: Applies only to built-in widgets. HTML/JavaScript widgets handle background in their code.*
+
+- `lightOpacity`:  
+    Opacity for widgets background and bottom bar in light mode.
+
+    *Note: Applies only to built-in widgets. HTML/JavaScript widgets handle background in their code.*
+
 ## sound
 
 - `startupSoundFile`:  
@@ -390,6 +400,13 @@ The configuration is stored in JSON format.
     - "common" - Sync with dark theme settings of Native UI
     - "day" - Force day mode  
     - "night" - Force night mode
+
+- `gpsDataSource`:  
+    Select GPS data source. Android Auto uses the phone's GPS alongside external data.
+
+    Possible values:
+    - "NONE" - Does not forward GPS data.
+    - "GPSD" - Forwards GPSD data (if available).
 
 ## hotspot
 
@@ -679,13 +696,29 @@ Each preset includes a name and values for each frequency band:
     - true - Scan already connected USB devices
     - false - React only to hotplug events. If the dongle is connected but not configured, it may periodically perform an autonomous reset and trigger a hotplug event.
 
+- `captureAudioOutput`:  
+    Enable or disable capturing the audio (music, navigation guidance, voice assistant) from the phone.
+
+    Possible values:
+    - true – capture audio
+    - false – let the phone decide how to route the audio (e.g., via A2DP, Jack)
+
+- `dayNightMode`:  
+    Determines day/night mode control.
+
+    Possible values:
+    - "common" - Sync with dark theme settings of Native UI
+    - "day" - Request day mode  
+    - "night" - Request night mode
+
 ## obd
 
 - `deviceType`:  
     Type of the ELM327 device.
 
     Possible values:
-    - "SERIAL"  
+    - "NONE"
+    - "SERIAL"
     - "RFCOMM"
 
 - `serialDescriptor`:  
