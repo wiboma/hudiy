@@ -3,8 +3,9 @@
 ## Table of Contents
 
 - [Introduction](#introduction)
-- [Interface](#interface)
+- [Supported platforms](#supported-platforms)
 - [Requirements](#requirements)
+- [Interface](#interface)
 - [Theming](#theming)
 - [Actions](#actions)
 - [API](#api)
@@ -23,7 +24,6 @@
 - [Multiple screens](#multiple-screens)
 - [Companion app](#companion-app)
 - [Splash](#splash)
-- [x86_64 compatibility](#x86_64-compatibility)
 
 ## Introduction
 
@@ -44,6 +44,20 @@ Hudiy supports extensive customization including:
 Hudiy exposes an API for external systems to retrieve data, perform actions, and integrate with application features. It also provides a special JavaScript object, `hudiy`, to user-created HTML/JavaScript elements to enable even deeper integration with the application.
 
 The Hudiy application is designed to work on **Raspberry Pi** and **x86_64** hardware. Thanks to the extensive Raspberry Pi/Linux ecosystem, you can choose hardware such as audio devices, screens, or controllers that perfectly match your needs.
+
+## Supported platforms
+
+Currently, Hudiy supports the **x86_64** platform and **selected Raspberry Pi models**. For each of these platforms, we have prepared detailed descriptions in dedicated documents:
+
+- [x86_64](x86_64.md)
+- [Raspberry Pi](raspberry_pi.md)
+
+## Requirements
+
+Detailed requirements are provided in the document dedicated to a specific platform:
+
+- [x86_64](x86_64.md)
+- [Raspberry Pi](raspberry_pi.md)
 
 ## Interface
 
@@ -123,44 +137,6 @@ Supported Key Bindings:
 ![Main screen](images/screenshot23.png)
 
 ![Main screen](images/screenshot32.png)
-
-## Requirements
-
-### Raspberry Pi
-
-**Mandatory:**
-
-- Raspberry PI 4B or 5
-- A clean, unmodified installation of the official Raspberry Pi OS Desktop 64 bit (Bookworm or Trixie)
-- 8GB of free storage space
-- Display with resolution up to 1920x1080
-
-**Optional:**
-
-- RTL-SDR dongle for FM Radio
-- CarlinKit CPC-200 CCPA or Autokit dongle for CarPlay
-- Microphone for Hands-Free calling and voice assistants
-- USB or Bluetooth ELM327 adapter for OBD-II communication
-
-### x86_64
-
-**Mandatory:**
-
-- CPU compatible with x86 64-bit architecture
-- A clean, unmodified installation of the Debian Trixie 64 bit with Desktop (e. g. labwc or Gnome)
-- Access to sudo (pasword-less root)
-- 8GB of free storage space
-- Display with resolution up to 1920x1080
-
-**Optional:**
-
-- RTL-SDR dongle for FM Radio
-- CarlinKit CPC-200 CCPA or Autokit dongle for CarPlay
-- Microphone for Hands-Free calling and voice assistants
-- USB or Bluetooth ELM327 adapter for OBD-II communication
-- Hardware compatible with VA-API for hardware acceleration
-- Bluetooth module for wireless Android Auto, Hands-Free calling and A2DP
-- WiFi module for wireless Android Auto
 
 ## Theming
 
@@ -1281,13 +1257,3 @@ List of available arguments:
 The Hudiy launch script is located at `$HOME/.hudiy/share/hudiy_run.sh`. Depending on the window compositor, the script is triggered from `$HOME/.config/labwc/autostart` or `$HOME/.config/autostart/hudiy.desktop`.
 
 During the startup of the Operating System, the splash screen is handled by [Plymouth](https://www.freedesktop.org/wiki/Software/Plymouth/).
-
-## x86_64 compatibility
-
-As of version 2.2, Hudiy also supports the x86 64-bit architecture. The currently supported Operating System is Debian Trixie 64-bit with a graphical environment (e.g., Gnome or labwc).
-
-Since the installation, configuration and updating process for Hudiy requires root privileges, access to sudo is necessary. In Debian, sudo access is automatically provided when a password is not set for the root user. Please keep that in mind during OS installation and do not set the root password.
-
-Hudiy utilizes the VA-API (Video Acceleration API) for hardware acceleration. Therefore, for a better user experience, we recommend running Hudiy on platforms that support VA-API (<https://www.intel.com/content/www/us/en/developer/articles/technical/linuxmedia-vaapi.html>).
-
-**We do not recommend and officially do not support** running Hudiy on Virtual Machines (e.g., QEMU, VirtualBox, or VMWare). Virtual Machines do not provide sufficient hardware support for handling UI (OpenGL) and video rendering, and may also cause issues with PipeWire. Any additional system configuration required on a Virtual Machine is the responsibility of the user.

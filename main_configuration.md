@@ -131,6 +131,9 @@ The configuration is stored in JSON format.
     A list of absolute paths to font files that will be loaded by the Hudiy application.  
     The loaded fonts can later be used for rendering custom icons defined for menus, shortcuts, and other elements.
 
+- `bottomBarHeight`:  
+    Height of the bottom bar [%].
+
 ## theme
 
 - `darkThemeEnabled`:  
@@ -378,7 +381,7 @@ The configuration is stored in JSON format.
 - `useRpiDrm`:  
     Enable/disable the use of the Android Auto codec that supports rendering via DRM (Direct Rendering Manager) and full zero-copy. Works only on Wayland.
 
-    *Note: Available only on Raspberry Pi.*
+    *Note: Available only on Raspberry Pi 4 and 5.*
 
     Possible values:
     - true – force to use the codec compatible with DRM

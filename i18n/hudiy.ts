@@ -79,6 +79,10 @@
         <source>Show clock</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Bottom bar height</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ApplicationSettings</name>
