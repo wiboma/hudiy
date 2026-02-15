@@ -117,11 +117,9 @@ class Client:
         self._connected = True
         self._send_hello(self._name)
 
-    def disconnect(self):
+    def close(self):
         if not self._connected:
             return
-
-        self.send(hudiy_api.MESSAGE_BYEBYE, 0, bytes())
 
         if self._use_websocket and self._websocket:
             self._websocket.close()
@@ -129,6 +127,17 @@ class Client:
             self._socket.close()
 
         self._connected = False
+
+    def disconnect(self):
+        if not self._connected:
+            return
+
+        try:
+            self.send(hudiy_api.MESSAGE_BYEBYE, 0, bytes())
+        except Exception:
+            pass
+        finally:
+            self.close()
 
     def send(self, id, flags, payload):
         with self._send_lock:
