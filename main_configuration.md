@@ -111,6 +111,24 @@ The configuration is stored in JSON format.
     - true – request a frameless window
     - false – request to draw a frame
 
+- `activeBoundaries`:  
+    Enable or disable active boundaries of input scopes (scrolling on the outermost controls jumps to the next/previous input scope).
+
+    *Enabling this option reduces the need to use the D-pad for controlling Hudiy UI (left, right, up, down).*
+
+    Possible values:
+    - true – active boundaries are enabled
+    - false – active boundaries are disabled
+
+- `rotation`:  
+    Specifies the rotation of the application window.
+
+   Possible values:
+   - "NORMAL" - 0 degrees (no rotation)
+   - "RIGHT" - 90 degrees
+   - "INVERTED" - 180 degrees
+   - "LEFT" - 270 degrees
+
 ## appearance
 
 - `timeFormat`:  
@@ -629,6 +647,15 @@ Each preset includes a name and values for each frequency band:
 
     - `frequency`:  
         Frequency of the radio station.
+
+- `wideband`:  
+    Enables/disables wideband mode.
+
+- `compensation`:  
+    Size of the FIR filter.
+
+- `volumeMultiplier`:  
+    Multiply volume level of decoded audio stream. Result value will be clipped within 16-bit audio limits.
 
 ## autobox
 
