@@ -397,7 +397,7 @@ The configuration is stored in JSON format.
     - "60"
 
 - `useRpiDrm`:  
-    Enable/disable the use of the Android Auto codec that supports rendering via DRM (Direct Rendering Manager) and full zero-copy. Works only on Wayland.
+    Enable/disable the use of the Android Auto codec that supports rendering via DRM (Direct Rendering Manager).
 
     *Note: Available only on Raspberry Pi 4 and 5.*
 
@@ -408,7 +408,7 @@ The configuration is stored in JSON format.
 - `useX86Drm`:  
     Enable/disable the use of the Android Auto codec that supports rendering via DRM (Direct Rendering Manager).
 
-    *Note: Available only on x86.*
+    *Note: Available only on x86_64.*
 
     Possible values:
     - true – force to use the codec compatible with DRM
@@ -740,6 +740,16 @@ Each preset includes a name and values for each frequency band:
     - "common" - Sync with dark theme settings of Native UI
     - "day" - Request day mode  
     - "night" - Request night mode
+
+- `navigationUnits`:  
+    Units for navigation maneuvers reported by the dongle.
+
+    Possible values:
+    - "metric" - Metric units (m, km)
+    - "imperial" - Imperial units (ft, mi)
+
+- `maneuverMininalDisplayTimeMs`:  
+    Minimum validity time of a reported maneuver. All maneuvers reported faster than this interval will be queued.
 
 ## obd
 

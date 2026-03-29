@@ -190,6 +190,7 @@ message NavigationStatus {
     enum NavigationSource {
         NAVIGATION_SOURCE_NONE = 0;
         NAVIGATION_SOURCE_ANDROID_AUTO = 1;
+        NAVIGATION_SOURCE_AUTOBOX = 2;
     }
    
     enum NavigationState {

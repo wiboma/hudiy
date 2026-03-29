@@ -15,14 +15,17 @@
         "windowHeight" : 0,
         "handleKeyboardEvents" : true,
         "translationFile" : "",
-        "framelessWindow" : true
+        "framelessWindow" : true,
+        "rotation" : "NORMAL",
+        "activeBoundaries" : true
     },
     "appearance" : {
         "timeFormat" : "24h",
         "showClock" : true,
         "fonts" : [
 
-        ]
+        ],
+        "bottomBarHeight" : 100
     },
     "theme" : {
         "darkThemeEnabled" : true,
@@ -49,13 +52,15 @@
         "defaultDarkBackground" : "",
         "defaultLightBackground" : "",
         "darkBackgroundOpacity" : 100,
-        "lightBackgroundOpacity" : 100
+        "lightBackgroundOpacity" : 100,
+        "darkOpacity" : 100,
+        "lightOpacity" : 100
     },
     "sound" : {
         "startupSoundFile" : "",
         "notificationSoundFile" : "",
         "volumeSinkName" : "",
-        "playbackSinkName" : "hudiy_equalizer_sink",
+        "playbackSinkName" : "",
         "sourceName" : "",
         "sourceMaxVolume" : 100,
         "sinkMaxVolume" : 100,
@@ -70,7 +75,8 @@
         "storageMusicAutoplay" : false,
         "fmRadioAutoplay" : false,
         "subwooferBalanceAsVolume" : false,
-        "ringtoneFile" : ""
+        "ringtoneFile" : "",
+        "defaultMediaPath" : ""
     },
     "androidAuto" : {
         "speechAudio" : true,
@@ -86,7 +92,9 @@
         "height" : 0,
         "x" : 0,
         "y" : 0,
-        "useRpiDrm" : false
+        "gpsDataSource" : "GPSD",
+        "useRpiDrm" : false,
+        "dayNightMode" : "COMMON"
     },
     "hotspot" : {
         "enabled" : true,
@@ -94,7 +102,11 @@
         "ipAddress" : "192.168.12.1",
         "passphrase" : "1234567890",
         "ssid" : "Hudiy",
-        "bandwidth" : "A"
+        "bandwidth" : "A",
+        "channelConfigurationType" : "AUTO",
+        "channelBandwidth" : "40MHz",
+        "channel" : 36
+
     },
     "equalizer" : {
         "enabled" : true,
@@ -223,6 +235,9 @@
         "rdsEnabled" : true,
         "autoGain" : true,
         "gain" : 0,
+        "compensation" : 0,
+        "wideband" : false,
+        "volumeMultiplier" : 3,
         "presets" : [
 
         ]
@@ -249,7 +264,11 @@
         ],
         "bandwidth" : "AUTO",
         "fps" : "30",
-        "enumerateUsb" : true
+        "enumerateUsb" : true,
+        "captureAudioOutput" : true,
+        "dayNightMode" : "COMMON",
+        "navigationUnits" : "METRIC",
+        "maneuverMininalDisplayTimeMs" : 500
     },
     "obd" : {
         "deviceType" : "NONE",
@@ -277,5 +296,8 @@
         "x" : 0,
         "y" : 0,
         "pipeline" : "v4l2src device=/dev/video0 ! videoconvert ! video/x-raw,format=RGBA,width=640,height=480 ! glupload ! qml6glsink name=video-sink"
+    },
+    "bluetooth" : {
+        "adapterHardwareAddress" : ""
     }
 }
