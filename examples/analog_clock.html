@@ -64,6 +64,19 @@
             text-transform: uppercase;
         }
 
+        .day-display {
+            position: absolute;
+            top: 50%;
+            right: 17%;
+            transform: translateY(-50%);
+            color: var(--color-date);
+            font-size: 6vmin;
+            font-weight: bold;
+            letter-spacing: 0.1vmin;
+            z-index: 5;
+            text-transform: uppercase;
+        }
+
         .marker,
         .hand-container {
             position: absolute;
@@ -150,6 +163,7 @@
     <div class="clock-face">
         <div class="date-display" id="date"></div>
         <div class="time-display" id="time"></div>
+        <div class="day-display" id="day"></div>
 
         <div id="markers-container"></div>
 
@@ -189,6 +203,7 @@
         const handSec = document.getElementById('sec');
         const dateDisplay = document.getElementById('date');
         const timeDisplay = document.getElementById('time');
+        const dayDisplay = document.getElementById('day');
 
         function updateClock() {
             const now = new Date();
@@ -205,7 +220,7 @@
             handHour.style.transform = `rotate(${hDeg}deg)`;
 
             dateDisplay.textContent = now.toLocaleDateString(CONFIG.locale, { month: 'short', day: 'numeric' });
-
+            dayDisplay.textContent = now.toLocaleDateString(CONFIG.locale, { weekday: 'short' });
             timeDisplay.textContent = now.toLocaleTimeString(CONFIG.locale, {
                 hour: 'numeric',
                 minute: '2-digit',

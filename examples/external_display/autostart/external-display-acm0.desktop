@@ -1,0 +1,4 @@
+[Desktop Entry]
+Type=Application
+Name=External Display ACM0
+Exec=/usr/bin/bash -c "$HOME/external-display-acm0.sh"

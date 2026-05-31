@@ -8,7 +8,7 @@ Examples are provided in both **Python** and **HTML/JavaScript**.
 
 **HTML/JavaScript** examples located in the `api/js` directory must be accessed via an HTTP server.
 
-The easiest way to start an HTTP server on a Raspberry Pi is by using `node-http-server`. To install it, run:
+The easiest way to start an HTTP server on a Raspberry Pi OS/Debian is by using `node-http-server`. To install it, run:
 
 ```bash
 sudo apt install -y node-opener node-http-server

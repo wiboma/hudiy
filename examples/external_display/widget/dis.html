@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Driver Information System</title>
+    <style>
+        :root {
+            --color-markers-minutes: #e4c0a6;
+            --color-markers-hours: #ffb77f;
+            --color-hands-main: #ffb77f;
+            --color-hand-sec: #9e8d82;
+            --color-date: #efdfd6;
+            --color-time: #efdfd6;
+            --color-center-dot-border: #19120d;
+        }
+
+        @font-face {
+            font-family: 'Roboto';
+            src: url('/Roboto-Regular.ttf') format('truetype');
+            font-display: swap;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #19120d;
+            color: white;
+            font-family: 'Roboto', sans-serif;
+            overflow: hidden;
+        }
+
+        #dis-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .view {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            text-align: center;
+        }
+
+        .view.active {
+            opacity: 1;
+            visibility: visible;
+            z-index: 10;
+        }
+
+        .marquee-container {
+            width: 97vw;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .marquee-content {
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        .scrolling {
+            animation: scrollText var(--scroll-duration, 16s) linear infinite alternate;
+        }
+
+        @keyframes scrollText {
+
+            0%,
+            30% {
+                transform: translateX(0);
+            }
+
+            70%,
+            100% {
+                transform: translateX(var(--scroll-dist));
+            }
+        }
+
+        .clock-face {
+            width: 95vmin;
+            height: 95vmin;
+            position: relative;
+        }
+
+        .date-display,
+        .time-display,
+        .day-display {
+            position: absolute;
+            font-weight: bold;
+            letter-spacing: 0.1vmin;
+            z-index: 5;
+            text-transform: uppercase;
+        }
+
+        .date-display {
+            top: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--color-date);
+            font-size: 8vmin;
+        }
+
+        .time-display {
+            top: 70%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--color-time);
+            font-size: 8vmin;
+        }
+
+        .day-display {
+            top: 50%;
+            right: 17%;
+            transform: translateY(-50%);
+            color: var(--color-date);
+            font-size: 6vmin;
+        }
+
+        .marker,
+        .hand-container {
+            position: absolute;
+            left: 50%;
+            bottom: 50%;
+            transform-origin: bottom center;
+        }
+
+        .marker {
+            height: 50%;
+            width: 0;
+        }
+
+        .marker::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .marker.hour-marker::after {
+            top: 2%;
+            width: 1.5vmin;
+            height: 6vmin;
+            background-color: var(--color-markers-hours);
+        }
+
+        .marker.minute-dot::after {
+            top: 2%;
+            width: 1.1vmin;
+            height: 1.1vmin;
+            border-radius: 50%;
+            background-color: var(--color-markers-minutes);
+        }
+
+        .hand-container {
+            width: 0;
+            height: 50%;
+            z-index: 10;
+        }
+
+        .hand-body {
+            background-color: var(--color-hands-main);
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 50px 50px 0 0;
+        }
+
+        .hour-wrapper .hand-body {
+            width: 3vmin;
+            height: 55%;
+        }
+
+        .min-wrapper .hand-body {
+            width: 1.5vmin;
+            height: 80%;
+        }
+
+        .sec-wrapper .hand-body {
+            width: 0.5vmin;
+            height: 90%;
+            background-color: var(--color-hand-sec);
+        }
+
+        .center-dot {
+            width: 3vmin;
+            height: 3vmin;
+            background-color: var(--color-hands-main);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 20;
+            border: 0.6vmin solid var(--color-center-dot-border);
+        }
+
+        .icon-large {
+            width: 45vmin;
+            height: 45vmin;
+            object-fit: contain;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            margin-bottom: 7vmin;
+        }
+
+        .icon-large.visible {
+            opacity: 1;
+        }
+
+        .text-primary {
+            font-size: 8vmin;
+            color: #efdfd6;
+            font-weight: bold;
+            margin-bottom: 3vmin;
+            min-height: 1.2em;
+        }
+
+        .text-secondary {
+            font-size: 7vmin;
+            color: #d6c3b7;
+            margin-bottom: 3vmin;
+            min-height: 1.2em;
+        }
+
+        .text-tertiary {
+            font-size: 6vmin;
+            color: #9e8d82;
+            margin-bottom: 2vmin;
+            min-height: 1.2em;
+        }
+
+        #media-cover {
+            border-radius: 3vmin;
+            box-shadow: 0 1vmin 3vmin rgba(0, 0, 0, 0.5);
+        }
+
+        @media (orientation: portrait) {
+            .icon-large {
+                width: 55vmin;
+                height: 55vmin;
+                margin-bottom: 10vmin;
+            }
+
+            .text-primary {
+                font-size: 8vmin;
+                margin-bottom: 4vmin;
+            }
+
+            .text-secondary {
+                font-size: 8vmin;
+                margin-bottom: 4vmin;
+            }
+
+            .text-tertiary {
+                font-size: 8vmin;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="dis-container">
+        <div id="view-clock" class="view">
+            <div class="clock-face">
+                <div class="date-display" id="date"></div>
+                <div class="time-display" id="time"></div>
+                <div class="day-display" id="day"></div>
+                <div id="markers-container"></div>
+                <div class="hand-container hour-wrapper" id="hour">
+                    <div class="hand-body"></div>
+                </div>
+                <div class="hand-container min-wrapper" id="min">
+                    <div class="hand-body"></div>
+                </div>
+                <div class="hand-container sec-wrapper" id="sec">
+                    <div class="hand-body"></div>
+                </div>
+                <div class="center-dot"></div>
+            </div>
+        </div>
+
+        <div id="view-navi" class="view active">
+            <svg id="navi-default-icon" class="icon-large visible" style="display: block;"
+                xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#e3e3e3">
+                <path
+                    d="m190-120-30-30 320-730 320 730-30 30-290-132-290 132Zm68-98 222-98 222 98-222-514-222 514Zm222-98Z" />
+            </svg>
+            <img id="navi-icon" class="icon-large" style="display: none;" />
+            <div class="marquee-container text-primary" id="navi-distance"><span class="marquee-content">Waiting for
+                    destination</span></div>
+            <div class="marquee-container text-secondary" id="navi-description"><span class="marquee-content"></span>
+            </div>
+        </div>
+
+        <div id="view-media" class="view">
+            <svg id="media-default-icon" class="icon-large visible" style="display: block;"
+                xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#e3e3e3">
+                <path
+                    d="M286.5-163.5Q243-207 243-270t43.5-106.5Q330-420 393-420q28 0 50.5 8t39.5 22v-450h234v135H543v435q0 63-43.5 106.5T393-120q-63 0-106.5-43.5Z" />
+            </svg>
+            <img id="media-cover" class="icon-large" style="display: none;" />
+            <div class="marquee-container text-primary" id="media-title"><span class="marquee-content">-</span></div>
+            <div class="marquee-container text-secondary" id="media-artist"><span class="marquee-content">-</span></div>
+            <div class="marquee-container text-secondary" id="media-album">-</div>
+            <div class="text-tertiary" id="media-time">00:00 / 00:00</div>
+        </div>
+    </div>
+
+    <script src="common/protobuf.min.js"></script>
+    <script type="module">
+        import { HudiyClient } from './common/hudiy_client.js';
+
+        const views = ['view-navi', 'view-media', 'view-clock'];
+        let currentViewIndex = 0;
+
+        function showView(index) {
+            views.forEach((viewId, i) => {
+                const el = document.getElementById(viewId);
+                if (i === index) el.classList.add('active');
+                else el.classList.remove('active');
+            });
+        }
+
+        document.body.addEventListener('click', () => {
+            currentViewIndex = (currentViewIndex + 1) % views.length;
+            showView(currentViewIndex);
+        });
+
+        function updateTextWithScroll(containerId, text) {
+            const container = document.getElementById(containerId);
+            if (!container || container.innerText === text) return;
+
+            container.innerHTML = `<span class="marquee-content">${text || ''}</span>`;
+            const content = container.querySelector('.marquee-content');
+
+            content.getAnimations().forEach(anim => anim.cancel());
+
+            const diff = content.scrollWidth - container.clientWidth;
+            if (diff <= 0) return;
+
+            const fontSize = parseFloat(getComputedStyle(content).fontSize);
+            const speed = fontSize * 1.5;
+
+            const moveTime = (diff / speed) * 1000;
+            const totalTime = moveTime + 4000;
+
+            content.animate([
+                { transform: 'translateX(0)', offset: 0 },
+                { transform: 'translateX(0)', offset: 2000 / totalTime },
+                { transform: `translateX(-${diff}px)`, offset: (2000 + moveTime) / totalTime },
+                { transform: `translateX(-${diff}px)`, offset: 1 }
+            ], { duration: totalTime, iterations: Infinity, direction: 'alternate', easing: 'linear' });
+        }
+
+        const CONFIG = {
+            locale: 'en-US',
+            pingTimeoutMs: 15000,
+            reconnectIntervalMs: 3000
+        };
+        const markersContainer = document.getElementById('markers-container');
+        for (let i = 0; i < 60; i++) {
+            const marker = document.createElement('div');
+            marker.className = `marker ${i % 5 === 0 ? 'hour-marker' : 'minute-dot'}`;
+            marker.style.transform = `rotate(${i * 6}deg)`;
+            markersContainer.appendChild(marker);
+        }
+
+        const handHour = document.getElementById('hour');
+        const handMin = document.getElementById('min');
+        const handSec = document.getElementById('sec');
+        const dateDisplay = document.getElementById('date');
+        const timeDisplay = document.getElementById('time');
+        const dayDisplay = document.getElementById('day');
+
+        function updateClock() {
+            const now = new Date();
+            const s = now.getSeconds();
+            const m = now.getMinutes();
+            const h = now.getHours();
+
+            handSec.style.transform = `rotate(${s * 6}deg)`;
+            handMin.style.transform = `rotate(${(m * 6) + (s * 0.1)}deg)`;
+            handHour.style.transform = `rotate(${(h * 30) + (m * 0.5)}deg)`;
+
+            dateDisplay.textContent = now.toLocaleDateString(CONFIG.locale, { month: 'short', day: 'numeric' });
+            dayDisplay.textContent = now.toLocaleDateString(CONFIG.locale, { weekday: 'short' });
+            timeDisplay.textContent = now.toLocaleTimeString(CONFIG.locale, { hour: 'numeric', minute: '2-digit' });
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        const hudiy = { api: {}, durationLabel: "00:00", positionLabel: "00:00", isNaviActive: false };
+
+        function updateMediaTimeDisplay() {
+            document.getElementById("media-time").textContent = `${hudiy.positionLabel} / ${hudiy.durationLabel}`;
+        }
+
+        const root = await protobuf.load("common/Api.proto");
+
+        hudiy.api.protoRoot = root;
+        hudiy.api.HelloRequest = root.lookupType("hudiy.app.api.HelloRequest");
+        hudiy.api.HelloResponse = root.lookupType("hudiy.app.api.HelloResponse");
+        hudiy.api.HelloResponseResult = root.lookup("hudiy.app.api.HelloResponse.HelloResponseResult").values;
+        hudiy.api.SetStatusSubscriptions = root.lookupType("hudiy.app.api.SetStatusSubscriptions");
+        hudiy.api.Subscription = root.lookup("hudiy.app.api.SetStatusSubscriptions.Subscription").values;
+        hudiy.api.NavigationManeuverDetails = root.lookupType("hudiy.app.api.NavigationManeuverDetails");
+        hudiy.api.NavigationManeuverDistance = root.lookupType("hudiy.app.api.NavigationManeuverDistance");
+        hudiy.api.NavigationStatus = root.lookupType("hudiy.app.api.NavigationStatus");
+        hudiy.api.NavigationState = root.lookup("hudiy.app.api.NavigationStatus.NavigationState").values;
+        hudiy.api.MediaMetadata = root.lookupType("hudiy.app.api.MediaMetadata");
+        hudiy.api.MediaStatus = root.lookupType("hudiy.app.api.MediaStatus");
+        hudiy.api.MessageType = root.lookup("hudiy.app.api.MessageType").values;
+        hudiy.api.RegisterActionRequest = root.lookupType("hudiy.app.api.RegisterActionRequest");
+        hudiy.api.DispatchAction = root.lookupType("hudiy.app.api.DispatchAction");
+
+        hudiy.api.client = new HudiyClient("ws://localhost:44406");
+
+        let reconnectTimeout;
+        let pingWatchdog;
+
+        function resetNaviWidget() {
+            const naviImg = document.getElementById("navi-icon");
+            const naviDefault = document.getElementById("navi-default-icon");
+            naviImg.style.display = "none";
+            naviImg.src = "";
+            naviImg.classList.remove("visible");
+            naviDefault.style.display = "block";
+            updateTextWithScroll("navi-distance", "Waiting for destination");
+            updateTextWithScroll("navi-description", "");
+        }
+
+        function resetMediaWidget() {
+            const mediaImg = document.getElementById("media-cover");
+            const mediaDefault = document.getElementById("media-default-icon");
+            mediaImg.style.display = "none";
+            mediaImg.src = "";
+            mediaImg.classList.remove("visible");
+            mediaDefault.style.display = "block";
+            updateTextWithScroll("media-title", "-");
+            updateTextWithScroll("media-artist", "-");
+            updateTextWithScroll("media-album", "-");
+            hudiy.positionLabel = "00:00";
+            hudiy.durationLabel = "00:00";
+            updateMediaTimeDisplay();
+        }
+
+        function resetPingWatchdog() {
+            clearTimeout(pingWatchdog);
+            pingWatchdog = setTimeout(() => {
+                resetNaviWidget();
+                resetMediaWidget();
+                hudiy.api.client.connect().catch(() => console.warn("watchdog: reconnect failed"));
+            }, CONFIG.pingTimeoutMs);
+        }
+
+        hudiy.api.client.onClose = () => {
+            clearTimeout(pingWatchdog);
+            clearTimeout(reconnectTimeout);
+            resetNaviWidget();
+            resetMediaWidget();
+            reconnectTimeout = setTimeout(() => {
+                hudiy.api.client.connect().catch(() => console.warn("reconnect: reconnect failed"));
+            }, CONFIG.reconnectIntervalMs);
+        };
+
+        hudiy.api.client.onOpen = () => {
+            clearTimeout(reconnectTimeout);
+            resetPingWatchdog();
+
+            const hello = hudiy.api.HelloRequest.create({
+                name: "DIS Widget",
+                apiVersion: { major: 1, minor: 0 }
+            });
+            const payload = hudiy.api.HelloRequest.encode(hello).finish();
+            hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_HELLO_REQUEST, 0, payload);
+        };
+
+        function sendSetStatusSubscriptions() {
+            const msg = hudiy.api.SetStatusSubscriptions.create({
+                subscriptions: [
+                    hudiy.api.Subscription.NAVIGATION,
+                    hudiy.api.Subscription.MEDIA
+                ]
+            });
+            const payload = hudiy.api.SetStatusSubscriptions.encode(msg).finish();
+            hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_SET_STATUS_SUBSCRIPTIONS, 0, payload);
+        }
+
+        function handleImageStream(imgElementId, imageData) {
+            const imgElement = document.getElementById(imgElementId);
+
+            if (imgElement.dataset.currentUrl) {
+                URL.revokeObjectURL(imgElement.dataset.currentUrl);
+                delete imgElement.dataset.currentUrl;
+            }
+
+            if (!imageData || imageData.length === 0) {
+                imgElement.src = "";
+                imgElement.classList.remove("visible");
+                return;
+            }
+            const blob = new Blob([imageData], { type: "image/png" });
+            const url = URL.createObjectURL(blob);
+
+            imgElement.dataset.currentUrl = url;
+            imgElement.onload = () => imgElement.classList.add("visible");
+            imgElement.onerror = () => { imgElement.classList.remove("visible"); imgElement.src = ""; };
+            imgElement.src = url;
+        }
+
+        function registerSwitchAction() {
+            const msg = hudiy.api.RegisterActionRequest.create({
+                action: "switch_view"
+            });
+            const payload = hudiy.api.RegisterActionRequest.encode(msg).finish();
+            hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_REGISTER_ACTION_REQUEST, 0, payload);
+        }
+
+        hudiy.api.client.onMessage = ({ id, payload }) => {
+            if (id === hudiy.api.MessageType.MESSAGE_HELLO_RESPONSE) {
+                const msg = hudiy.api.HelloResponse.decode(payload);
+                if (msg.result === hudiy.api.HelloResponseResult.HELLO_RESPONSE_RESULT_OK) {
+                    sendSetStatusSubscriptions();
+                    registerSwitchAction();
+                }
+            } else if (id === hudiy.api.MessageType.MESSAGE_PING) {
+                hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_PONG, 0, new Uint8Array(0));
+                resetPingWatchdog();
+            } else if (id === hudiy.api.MessageType.MESSAGE_NAVIGATION_MANEUVER_DETAILS) {
+                const msg = hudiy.api.NavigationManeuverDetails.decode(payload);
+
+                if (!hudiy.isNaviActive) return;
+
+                const naviDefault = document.getElementById("navi-default-icon");
+                const naviImg = document.getElementById("navi-icon");
+
+                if (!msg.icon || msg.icon.length === 0) {
+                    naviImg.style.display = "none";
+                    naviDefault.style.display = "block";
+                } else {
+                    naviDefault.style.display = "none";
+                    naviImg.style.display = "block";
+                    handleImageStream("navi-icon", msg.icon);
+                }
+
+                updateTextWithScroll("navi-description", msg.description || "");
+            } else if (id === hudiy.api.MessageType.MESSAGE_NAVIGATION_MANEUVER_DISTANCE) {
+                const msg = hudiy.api.NavigationManeuverDistance.decode(payload);
+
+                if (!hudiy.isNaviActive) return;
+
+                updateTextWithScroll("navi-distance", msg.label || "");
+            } else if (id === hudiy.api.MessageType.MESSAGE_NAVIGATION_STATUS) {
+                const msg = hudiy.api.NavigationStatus.decode(payload);
+
+                if (msg.state === hudiy.api.NavigationState.NAVIGATION_STATE_INACTIVE) {
+                    hudiy.isNaviActive = false;
+                    resetNaviWidget();
+                } else {
+                    hudiy.isNaviActive = true;
+                }
+            } else if (id === hudiy.api.MessageType.MESSAGE_MEDIA_METADATA) {
+                const msg = hudiy.api.MediaMetadata.decode(payload);
+                const mediaDefault = document.getElementById("media-default-icon");
+                const mediaImg = document.getElementById("media-cover");
+
+                if (!msg.coverart || msg.coverart.length === 0) {
+                    if (mediaDefault) mediaDefault.style.display = "block";
+                    if (mediaImg) {
+                        mediaImg.style.display = "none";
+                        mediaImg.src = "";
+                    }
+                } else {
+                    if (mediaDefault) mediaDefault.style.display = "none";
+                    if (mediaImg) {
+                        mediaImg.style.display = "block";
+                        handleImageStream("media-cover", msg.coverart);
+                    }
+                }
+
+                updateTextWithScroll("media-title", msg.title || "-");
+                updateTextWithScroll("media-artist", msg.artist || "-");
+                updateTextWithScroll("media-album", msg.album || "-");
+                hudiy.durationLabel = msg.durationLabel || "00:00";
+                updateMediaTimeDisplay();
+            } else if (id === hudiy.api.MessageType.MESSAGE_MEDIA_STATUS) {
+                const msg = hudiy.api.MediaStatus.decode(payload);
+                hudiy.positionLabel = msg.positionLabel || "00:00";
+                updateMediaTimeDisplay();
+            } else if (id === hudiy.api.MessageType.MESSAGE_DISPATCH_ACTION) {
+                const msg = hudiy.api.DispatchAction.decode(payload);
+                if (msg.action === "switch_view") {
+                    currentViewIndex = (currentViewIndex + 1) % views.length;
+                    showView(currentViewIndex);
+                }
+            }
+        };
+
+        hudiy.api.client.connect().catch(() => console.warn("init: connect failed"));
+    </script>
+</body>
+
+</html>

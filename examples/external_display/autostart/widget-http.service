@@ -1,0 +1,11 @@
+[Unit]
+Description=HTTP Server for External Widget
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/http-server -p 12345 %h/public/examples/external_display/widget
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=default.target

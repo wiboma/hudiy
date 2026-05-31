@@ -1,0 +1,5 @@
+add_subdirectory(lcd_480x320)
+add_subdirectory(lcd_320x240)
+add_subdirectory(lcd_240x240)
+add_subdirectory(lcd_128x160)
+add_subdirectory(jpegdec)

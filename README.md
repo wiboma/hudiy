@@ -24,6 +24,7 @@
 - [Multiple screens](#multiple-screens)
 - [Companion app](#companion-app)
 - [Splash](#splash)
+- [Web Viewer](#web-viewer)
 
 ## Introduction
 
@@ -44,6 +45,27 @@ Hudiy supports extensive customization including:
 Hudiy exposes an API for external systems to retrieve data, perform actions, and integrate with application features. It also provides a special JavaScript object, `hudiy`, to user-created HTML/JavaScript elements to enable even deeper integration with the application.
 
 The Hudiy application is designed to work on **Raspberry Pi** and **x86_64** hardware. Thanks to the extensive Raspberry Pi/Linux ecosystem, you can choose hardware such as audio devices, screens, or controllers that perfectly match your needs.
+
+<table style="width:100%">
+  <tr>
+    <td><img src="images/photo1.jpg" width="100%" /></td>
+    <td><img src="images/photo2.jpg" width="100%" /></td>
+    <td><img src="images/photo3.jpg" width="100%" /></td>
+    <td><img src="images/photo4.jpg" width="100%" /></td>
+    <td><img src="images/photo5.jpg" width="100%" /></td>
+    <td><img src="images/photo6.jpg" width="100%" /></td>
+    <td><img src="images/photo7.jpg" width="100%" /></td>
+  </tr>
+  <tr>
+  <td><img src="images/photo8.jpg" width="100%" /></td>
+    <td><img src="examples/external_display/images/demo1.jpg" width="100%" /></td>
+    <td><img src="examples/external_display/images/demo2.jpg" width="100%" /></td>
+    <td><img src="examples/external_display/images/demo3.jpg" width="100%" /></td>
+    <td><img src="examples/external_display/images/demo4.jpg" width="100%" /></td>
+    <td><img src="examples/external_display/images/demo5.jpg" width="100%" /></td>
+    <td><img src="examples/external_display/images/demo6.jpg" width="100%" /></td>
+  </tr>
+</table>
 
 ## Supported platforms
 
@@ -389,7 +411,7 @@ Both endpoints use [Protocol Buffers](https://protobuf.dev/) for communication p
 |               | Field 1                                  | Field 2                                  | Field 3                                  | Field 4                      |
 |---------------|------------------------------------------|------------------------------------------|------------------------------------------|------------------------------|
 |**Description**| Size of the Protocol Buffers byte stream | Message ID                               | Reserved                                 | Protocol Buffers byte stream |
-|**Size**       | 32-bit unsigned integer (little endian)  | 32-bit unsigned integer (little endian)  | 32-bit unsigned integer (little endian)  | n bytes                      |
+|**Size**       | 32-bit unsigned integer (little endian)  | 32-bit unsigned integer (little endian)  | 32-bit unsigned integer (little endian)  | `n` bytes                      |
 
 ### Features
 
@@ -932,7 +954,8 @@ Array of objects that define the widgets displayed on the dashboard. The widgets
     - `"DATE_TIME"` - Built-in widget that displays the date and time.
     - `"NOW_PLAYING"` - Built-in widget that displays the metadata of the currently playing media.
     - `"PHONE"` - Built-in widget that displays the name of the connected phone and provides quick access to the dial pad, contact list, and call history.
-    - `"NAVIGATION"` - Built-in widget that displays details of the current navigation maneuver from Android Auto.
+    - `"NAVIGATION"` - Built-in widget that displays details of the current navigation maneuver from Android Auto or Autobox.
+    - `"ANALOG_CLOCK"` - Built-in widget that displays analog clock.
 
   - `size`  
   One of the following widget's size:
@@ -1257,3 +1280,85 @@ List of available arguments:
 The Hudiy launch script is located at `$HOME/.hudiy/share/hudiy_run.sh`. Depending on the window compositor, the script is triggered from `$HOME/.config/labwc/autostart` or `$HOME/.config/autostart/hudiy.desktop`.
 
 During the startup of the Operating System, the splash screen is handled by [Plymouth](https://www.freedesktop.org/wiki/Software/Plymouth/).
+
+## Web Viewer
+
+Web Viewer is a standalone application that displays the provided URL using the Chromium engine. It is located at `$HOME/.hudiy/share/web_viewer`.
+
+The provided URL can be displayed in the following three modes:
+
+### Window
+
+In this mode, a standard window with the specified dimensions is created. The entire window area is used to display the provided URL.
+
+### Frameless window
+
+In this mode, a frameless window with the specified dimensions is created. The entire window area is used to display the provided URL.
+
+### Offscreen
+
+A special mode used to stream the display of the provided URL. The image is streamed to a device (e.g., Raspberry Pi Pico 2) via USB CDC in a compressed JPEG format. To save bandwidth and improve the smoothness of the stream, Web Viewer calculates a bounding box within which the image has changed.
+
+If a communication error occurs (e.g., cable disconnection or device reset), Web Viewer terminates with an error. This can be used for an automatic restart (e.g., in a systemd **user** service).
+
+A usage example in the form of a simple Driver Information System (DIS) can be found in the [External Display](examples/external_display/README.md) directory.
+
+The communication protocol for offscreen mode is described below:
+
+#### Message format
+
+|               | Field 1                                  | Field 2                                  | Field 3                                  |
+|---------------|------------------------------------------|------------------------------------------|------------------------------------------|
+|**Description**| Size of the message payload              | Message ID                               | Payload data                             |
+|**Size**       | 32-bit unsigned integer (little endian)  | 8-bit unsigned integer                   | `n` bytes                                |
+
+#### Messages
+
+- `FRAME_TILE` - This message transmits incremental screen updates from the Web Viewer to the target device.
+
+| ID: 1 | Field 1 | Field 2 | Field 3 |
+| :--- | :--- | :--- | :--- |
+| **Name** | X Offset | Y Offset | JPEG data |
+| **Description** | Horizontal coordinate (X) of the bounding box's top-left corner. | Vertical coordinate (Y) of the bounding box's top-left corner. | Compressed JPEG image data of the updated screen region. |
+| **Size** | 16-bit unsigned integer (little endian) | 16-bit unsigned integer (little endian) | `n` bytes (total payload size - 4 bytes) |
+
+### Command-Line arguments
+
+- `--url`  
+  The URL to load. Supports `http://`, `https://` or `file://` protocols.
+
+- `--width`  
+  Width of the rendering surface (in pixels).
+
+- `--height`  
+  Height of the rendering surface (in pixels).
+
+- `--orientation`  
+  Rendering surface orientation. Supported values: `0`, `90`, `180`, `270` degrees.
+
+- `--web_data_path`  
+  Absolute path used for storing Chromium engine cache and local storage data.
+
+- `--rendering_mode`  
+  Display mode:
+  - `0` - Window
+  - `1` - Frameless window
+  - `2` - Offscreen
+
+- `--device_descriptor`  
+  Descriptor of the serial port (required for offscreen rendering mode), e.g., `/dev/ttyACM0`.
+
+- `--baudrate`  
+  Serial port communication speed. Not applicable for USB CDC.
+
+- `--refresh_rate`  
+  Screen refresh rate (FPS). Applicable only for offscreen mode.
+
+- `--quality`  
+  Image (JPEG) compression quality for offscreen mode (`1`-`100`%).
+
+- `--frame_queue_size`  
+  Maximum size of the buffer queue for rendered frames (a smaller queue size results in lower latency but may affect smoothness).
+
+- `--threads`  
+  Number of threads allocated for bounding box calculations.

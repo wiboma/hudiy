@@ -1,0 +1,14 @@
+[Unit]
+Description=External Display for /dev/ttyACM0
+Requires=widget-http.service
+After=widget-http.service
+
+[Service]
+Environment="QT_QPA_PLATFORM=eglfs"
+Environment="QT_QPA_EGLFS_KMS_CONFIG=%h/.hudiy/share/eglfs_web_viewer_acm0_headless.json"
+ExecStart=%h/.hudiy/share/web_viewer --url "http://127.0.0.1:12345/dis.html" --device_descriptor /dev/ttyACM0 --rendering_mode 2 --width 320 --height 480
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

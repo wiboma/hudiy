@@ -51,8 +51,6 @@ def main():
     finally:
         client.disconnect()
 
-    client.disconnect()
-
 
 if __name__ == "__main__":
     main()

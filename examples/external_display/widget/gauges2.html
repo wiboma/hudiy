@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel="preload" href="Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin>
+    <title>OBD-II gauges</title>
+    <style>
+        @font-face {
+            font-family: 'Roboto';
+            src: url('Roboto-Regular.ttf') format('truetype');
+            font-weight: 300;
+        }
+
+        @font-face {
+            font-family: 'Roboto-Bold';
+            src: url('Roboto-Bold.ttf') format('truetype');
+            font-weight: 700;
+        }
+
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            background: #000000;
+            font-family: 'Roboto', sans-serif;
+            box-sizing: border-box;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+        }
+
+        .gauge-container {
+            position: relative;
+            width: 100vmin;
+            height: 100vmin;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-out, visibility 0.3s;
+        }
+
+        canvas.active {
+            opacity: 1;
+            visibility: visible;
+            z-index: 10;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="gauge-container">
+        <canvas id="gauge0" width="800" height="800" class="active"></canvas>
+        <canvas id="gauge1" width="800" height="800"></canvas>
+        <canvas id="gauge2" width="800" height="800"></canvas>
+        <canvas id="gauge3" width="800" height="800"></canvas>
+        <canvas id="gauge4" width="800" height="800"></canvas>
+        <canvas id="gauge5" width="800" height="800"></canvas>
+    </div>
+
+    <script src="common/protobuf.min.js"></script>
+    <script>
+        hudiy = { api: {} };
+
+        const gauges = [
+            { label: 'LOAD', min: 0, max: 100, unit: '%', pid: '0104', parse: b => (b[2] * 100) / 255, precision: 0 },
+            { label: 'COOLANT', min: -40, max: 150, unit: '°C', pid: '0105', parse: b => b[2] - 40, precision: 0 },
+            { label: 'RPM', min: 0, max: 8000, unit: '1/min', pid: '010C', parse: b => ((b[2] * 256 + b[3]) / 4), precision: 0 },
+            { label: 'SPEED', min: 0, max: 260, unit: 'km/h', pid: '010D', parse: b => b[2], precision: 0 },
+            { label: 'INTAKE', min: -40, max: 100, unit: '°C', pid: '010F', parse: b => b[2] - 40, precision: 0 },
+            { label: 'THROTTLE', min: 0, max: 100, unit: '%', pid: '0111', parse: b => (b[2] * 100) / 255, precision: 0 }
+        ];
+
+        let currentGaugeIndex = 0;
+
+        function showGauge(index) {
+            gauges.forEach((_, i) => {
+                const canvas = document.getElementById(`gauge${i}`);
+                if (i === index) {
+                    canvas.classList.add('active');
+                } else {
+                    canvas.classList.remove('active');
+                }
+            });
+        }
+
+        function toggleGauge() {
+            currentGaugeIndex = (currentGaugeIndex + 1) % gauges.length;
+            showGauge(currentGaugeIndex);
+        }
+
+        document.body.addEventListener('click', toggleGauge);
+
+        function drawGauge(canvas, value, gaugeConfig) {
+            const ctx = canvas.getContext('2d');
+            const { label, min, max, precision, unit } = gaugeConfig;
+
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            if (canvas.width !== rect.width * dpr || canvas.height !== rect.height * dpr) {
+                canvas.width = rect.width * dpr;
+                canvas.height = rect.height * dpr;
+            }
+
+            const size = canvas.width;
+            ctx.save();
+            ctx.scale(dpr, dpr);
+
+            const logicalSize = size / dpr;
+            const center = logicalSize / 2;
+
+            const radius = center * 0.98;
+
+            ctx.clearRect(0, 0, logicalSize, logicalSize);
+            ctx.translate(center, center);
+            ctx.lineCap = 'butt';
+            ctx.imageSmoothingEnabled = true;
+
+            const startAngle = 0.75 * Math.PI;
+            const endAngle = 2.25 * Math.PI;
+            const angleRange = endAngle - startAngle;
+
+            const totalTicks = 60;
+            const clampedValue = Math.min(Math.max(value, min), max);
+            const progress = (clampedValue - min) / (max - min);
+            const activeTicks = Math.round(progress * totalTicks);
+
+            for (let i = 0; i <= totalTicks; i++) {
+                const angle = startAngle + (i / totalTicks) * angleRange;
+                const isActive = i <= activeTicks;
+                const isMajor = i % 10 === 0;
+
+                let rOuter = radius;
+                let rInner = isActive ? radius * 0.85 : radius * 0.92;
+
+                if (isMajor && !isActive) {
+                    rInner = radius * 0.88;
+                }
+
+                const x1 = Math.cos(angle) * rInner;
+                const y1 = Math.sin(angle) * rInner;
+                const x2 = Math.cos(angle) * rOuter;
+                const y2 = Math.sin(angle) * rOuter;
+
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+
+                if (isActive) {
+                    const hue = 220 - ((i / totalTicks) * 220);
+                    ctx.strokeStyle = `hsl(${hue}, 100%, 55%)`;
+                    ctx.lineWidth = 6;
+                } else {
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+                    ctx.lineWidth = 4;
+                }
+                ctx.stroke();
+            }
+
+            const valueStr = clampedValue.toFixed(precision);
+
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'alphabetic';
+
+            const fontSizeMain = logicalSize * 0.22;
+
+            ctx.font = `600 ${fontSizeMain}px 'Roboto-Bold', 'Roboto', sans-serif`;
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText(valueStr, 0, logicalSize * 0.12);
+
+            ctx.font = `600 ${logicalSize * 0.08}px 'Roboto', sans-serif`;
+            ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+            ctx.letterSpacing = "4px";
+            ctx.fillText(label, 0, -logicalSize * 0.17);
+
+            ctx.font = `300 ${logicalSize * 0.10}px 'Roboto', sans-serif`;
+            ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+            ctx.letterSpacing = "2px";
+            ctx.fillText(unit, 0, logicalSize * 0.32);
+
+            ctx.restore();
+        }
+
+        function updateGauges() {
+            gauges.forEach((g, i) => {
+                const canvas = document.getElementById(`gauge${i}`);
+                drawGauge(canvas, g.value ?? g.min, g);
+            });
+        }
+
+        function sendQueryObdDeviceRequest(command, code) {
+            if (!hudiy.api.QueryObdDeviceRequest) return;
+            const msg = hudiy.api.QueryObdDeviceRequest.create({
+                commands: [command],
+                requestCode: code
+            });
+            const payload = hudiy.api.QueryObdDeviceRequest.encode(msg).finish();
+            hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_QUERY_OBD_DEVICE_REQUEST, 0, payload);
+        }
+
+        hudiy.api.onConnected = function () {
+            gauges.forEach((gauge, i) => {
+                sendQueryObdDeviceRequest(gauge.pid, i);
+            });
+        }
+
+        window.addEventListener('load', updateGauges);
+        window.addEventListener('resize', updateGauges);
+    </script>
+
+    <script type="module">
+        import { HudiyClient } from "./common/hudiy_client.js";
+
+        function loadProto() {
+            return new Promise((resolve, reject) => {
+                if (typeof protobuf === 'undefined') {
+                    return resolve(null);
+                }
+                protobuf.load("common/Api.proto", (err, root) => {
+                    if (err) reject(err);
+                    else resolve(root);
+                });
+            });
+        }
+
+        const protoRoot = await loadProto();
+
+        if (protoRoot) {
+            hudiy.api.protoRoot = protoRoot;
+            hudiy.api.HelloRequest = hudiy.api.protoRoot.lookupType("hudiy.app.api.HelloRequest");
+            hudiy.api.HelloResponse = hudiy.api.protoRoot.lookupType("hudiy.app.api.HelloResponse");
+            hudiy.api.Version = hudiy.api.protoRoot.lookupType("hudiy.app.api.Version");
+            hudiy.api.QueryObdDeviceRequest = hudiy.api.protoRoot.lookupType("hudiy.app.api.QueryObdDeviceRequest");
+            hudiy.api.QueryObdDeviceResponse = hudiy.api.protoRoot.lookupType("hudiy.app.api.QueryObdDeviceResponse");
+            hudiy.api.MessageType = hudiy.api.protoRoot.lookup("hudiy.app.api.MessageType").values;
+
+            hudiy.api.RegisterActionRequest = hudiy.api.protoRoot.lookupType("hudiy.app.api.RegisterActionRequest");
+            hudiy.api.DispatchAction = hudiy.api.protoRoot.lookupType("hudiy.app.api.DispatchAction");
+
+            hudiy.api.client = new HudiyClient("ws://localhost:44406");
+
+            function registerSwitchAction() {
+                const msg = hudiy.api.RegisterActionRequest.create({
+                    action: "switch_gauge"
+                });
+                const payload = hudiy.api.RegisterActionRequest.encode(msg).finish();
+                hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_REGISTER_ACTION_REQUEST, 0, payload);
+            }
+
+            hudiy.api.client.onOpen = () => {
+                const versionObj = hudiy.api.Version.create({ major: 1, minor: 0 });
+                const hello = hudiy.api.HelloRequest.create({
+                    name: "Obd Digital Dash",
+                    apiVersion: versionObj
+                });
+
+                const payload = hudiy.api.HelloRequest.encode(hello).finish();
+                hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_HELLO_REQUEST, 0, payload);
+                hudiy.api.onConnected();
+            };
+
+            hudiy.api.client.onMessage = ({ id, flags, payload }) => {
+                if (id === hudiy.api.MessageType.MESSAGE_HELLO_RESPONSE) {
+                    registerSwitchAction();
+                } else if (id === hudiy.api.MessageType.MESSAGE_PING) {
+                    hudiy.api.client.sendMessage(hudiy.api.MessageType.MESSAGE_PONG, 0, new Uint8Array(0));
+                } else if (id === hudiy.api.MessageType.MESSAGE_QUERY_OBD_DEVICE_RESPONSE) {
+                    const msg = hudiy.api.QueryObdDeviceResponse.decode(payload);
+                    if (gauges[msg.requestCode]) {
+                        const bytes = msg.result ? msg.data[0]?.match(/.{1,2}/g)?.map(h => parseInt(h, 16)) : null;
+                        gauges[msg.requestCode].value = bytes ? gauges[msg.requestCode].parse(bytes) : gauges[msg.requestCode].min;
+
+                        updateGauges();
+                        setTimeout(() => {
+                            sendQueryObdDeviceRequest(gauges[msg.requestCode].pid, msg.requestCode);
+                        }, 50);
+                    }
+                } else if (id === hudiy.api.MessageType.MESSAGE_DISPATCH_ACTION) {
+                    const msg = hudiy.api.DispatchAction.decode(payload);
+                    if (msg.action === "switch_gauge") {
+                        toggleGauge();
+                    }
+                }
+            };
+
+            hudiy.api.client.connect();
+        } else {
+            setInterval(() => {
+                gauges.forEach(g => {
+                    const target = (g.value || g.min) + (Math.random() - 0.45) * (g.max - g.min) * 0.15;
+                    g.value = Math.max(g.min, Math.min(g.max, target));
+                });
+                updateGauges();
+            }, 50);
+        }
+    </script>
+</body>
+
+</html>
