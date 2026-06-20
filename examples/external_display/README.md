@@ -71,7 +71,7 @@ The firmware project is compatible with the [Raspberry Pi Pico VS Code extension
 
 ### Supported displays
 
-This example adapts four display drivers developed by Waveshare. The SPI clock speed for the 480x320 display has been boosted to 37.5 MHz in the driver.
+This example adapts several display drivers developed by Waveshare. The SPI clock speed for the 480x320 display has been boosted to 37.5 MHz in the driver.
 
 <img src="images/displays.jpg" width="400" />
 
@@ -79,6 +79,7 @@ This example adapts four display drivers developed by Waveshare. The SPI clock s
 - [Waveshare 320x240](http://www.waveshare.com/wiki/Pico-LCD-2)
 - [Waveshare 240x240](https://www.waveshare.com/wiki/1.28inch_Touch_LCD)
 - [Waveshare 128x160](https://www.waveshare.com/wiki/Pico-LCD-1.8)
+- [Waveshare 172x320](https://www.waveshare.com/wiki/1.47inch_LCD_Module)
 
 If you plan to add support for a custom display, ensure that it is capable of incremental screen updates to achieve optimal smoothness.
 

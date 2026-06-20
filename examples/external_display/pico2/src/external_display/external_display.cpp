@@ -23,6 +23,8 @@ extern "C"
 #include "3rdparty/lcd_240x240/LCD_Driver.h"
 #elif defined(LCD_128x160)
 #include "3rdparty/lcd_128x160/LCD_Driver.h"
+#elif defined(LCD_172x320)
+#include "3rdparty/lcd_172x320/LCD_Driver.h"
 #else
 #error "Unknown LCD variant."
 #endif

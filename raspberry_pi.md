@@ -10,7 +10,7 @@
 
 ## Introduction
 
-Early versions of Hudiy were designed for the Raspberry Pi 4 and Raspberry Pi 5. Thanks to optimizations introduced in version 2.8, Hudiy now also runs on older variants, such as the Pi 3B+, Pi 3B, and Pi Zero 2.
+Early versions of Hudiy were designed for the Raspberry Pi 4 and Raspberry Pi 5. Thanks to optimizations introduced in version 2.8, Hudiy now also runs on older variants, such as the Pi 3B+, Pi 3A+, Pi 3B and Pi Zero 2.
 
 Across all Raspberry Pi models, Hudiy utilizes hardware acceleration for rendering, ensuring a smooth user experience.
 
@@ -34,15 +34,15 @@ Related variants, such as the Compute Module 4, are based on the same SoC (BCM27
 
 The supported operating systems for the Raspberry Pi 4 are Raspberry Pi OS Trixie 64-bit Desktop and Raspberry Pi OS Bookworm 64-bit Desktop.
 
-### Raspberry Pi 3B+
+### Raspberry Pi 3B+/3A+
 
-Starting with version 2.8, Hudiy also supports the Raspberry Pi 3B+ variant. The supported operating system for the Raspberry Pi 3B+ is Raspberry Pi OS Trixie 64-bit Desktop.
+Starting with version 2.8, Hudiy also supports the Raspberry Pi 3B+ and 3A+ variants. The supported operating system for the Raspberry Pi 3B+ and 3A+ is Raspberry Pi OS Trixie 64-bit Desktop.
 
 Due to the less powerful CPU (in comparison to Pi 4B and Pi 5), the equalizer module is disabled by default.
 
-Due to limited GPU hardware (in comparison to Pi 4B and Pi 5), Hudiy launches in EGL mode after installation. This means the desktop environment is disabled to save GPU resources. Since EGL mode supports a maximum of one application window and one screen, the splash application (used for displaying a custom logo before Hudiy starts) is disabled. You can still enable the desktop using the raspi-config tool but running Hudiy in a desktop environment is not recommended. We also recommend using lower screen resolutions (e.g., 800x480 or 1024x600).
+Due to limited GPU hardware (in comparison to Pi 4B and Pi 5), Hudiy launches in EGL mode after installation. This means the desktop environment is disabled to save GPU resources. Since EGL mode supports a maximum of one application window and one screen, the splash application (used for displaying a custom logo before Hudiy starts) is disabled. You can still enable the desktop using the raspi-config tool but running Hudiy in a desktop environment is not recommended.
 
-Hudiy utilizes hardware acceleration, but due to I/O limitations, we recommend using projection (Android Auto and CarPlay) at 30FPS and lower resolutions.
+Due to the limited amount of RAM (512MB) on the Raspberry Pi 3A+, we recommend exercising caution when adding custom extensions (overlays, widgets, applications) to avoid exhausting available system memory.
 
 ### Raspberry Pi 3B
 
@@ -68,9 +68,9 @@ Starting with version 2.8, Hudiy also supports the Raspberry Pi Zero 2 variant. 
 
 Due to the less powerful CPU (in comparison to Pi 4B and Pi 5), the equalizer module is disabled by default.
 
-Due to limited GPU hardware (in comparison to Pi 4B and Pi 5), Hudiy launches in EGL mode after installation. This means the desktop environment is disabled to save GPU resources. Since EGL mode supports a maximum of one application window and one screen, the splash application (used for displaying a custom logo before Hudiy starts) is disabled. You can still enable the desktop using the raspi-config tool but running Hudiy in a desktop environment is not recommended. We also recommend using lower screen resolutions (e.g., 800x480).
+Due to limited GPU hardware (in comparison to Pi 4B and Pi 5), Hudiy launches in EGL mode after installation. This means the desktop environment is disabled to save GPU resources. Since EGL mode supports a maximum of one application window and one screen, the splash application (used for displaying a custom logo before Hudiy starts) is disabled. You can still enable the desktop using the raspi-config tool but running Hudiy in a desktop environment is not recommended.
 
-The Raspberry Pi Zero 2 is limited to 2.4GHz Wi-Fi (hardware limitation), which significantly restricts bandwidth (theoretically maxing out at 54Mbps). The combination of these Wi-Fi speeds and the Pi's I/O limitations means it is recommended to run projection (both Android Auto and CarPlay) at 30FPS and use lower screen resolutions. For better performance of Android Auto, you can use an external USB Wi-Fi module with 5GHz support or stick to a wired connection. Also you can consider configuring 40MHz channel width in [Main Configuration](main_configuration.md#hotspot). It will increase throughput but may also increase sensitivity to interference.
+The built-in Raspberry Pi Zero 2 Wi-Fi chip is limited to 2.4GHz (a hardware limitation), which significantly restricts bandwidth (theoretically maxing out at 54Mbps). For better wireless Android Auto performance, you can use an external USB Wi-Fi module with 5GHz support or stick to a wired connection. You can also consider configuring a 40MHz channel width in the [Main Configuration](main_configuration.md#hotspot) for the built-in 2.4GHz Wi-Fi. This will increase throughput but may also increase sensitivity to interference.
 
 ```json
 {
@@ -89,7 +89,7 @@ Due to the limited amount of RAM (512MB), we recommend exercising caution when a
 **Mandatory:**
 
 - Supported Raspberry Pi variant
-- Clean, unmodified installation of the official Raspberry Pi OS Trixie Desktop 64 bit (for Pi 5, Pi 4, Pi 3B+, Pi 3B, Pi Zero 2) or Raspberry Pi OS Bookworm Desktop 64 bit (for Pi 5, Pi 4)
+- Clean, unmodified installation of the official Raspberry Pi OS Trixie Desktop 64 bit (for Pi 5, Pi 4, Pi 3B+, 3A+, Pi 3B, Pi Zero 2) or Raspberry Pi OS Bookworm Desktop 64 bit (for Pi 5, Pi 4)
 - 8GB of free storage space
 - Display with resolution up to 1920x1080
 
@@ -102,7 +102,7 @@ Due to the limited amount of RAM (512MB), we recommend exercising caution when a
 
 ## Desktop vs Console
 
-To save GPU resources on Pi Zero 2, Pi 3B and Pi 3B+, Hudiy launches in console (EGL) mode. This means the desktop environment is disabled for these variants after installation. You can still enable the desktop using the raspi-config tool, but running Hudiy in a desktop environment on the Pi Zero 2, Pi 3B, and Pi 3B+ is not recommended.
+To save GPU resources on Pi Zero 2, Pi 3B, Pi 3A+ and Pi 3B+, Hudiy launches in console (EGL) mode. This means the desktop environment is disabled for these variants after installation. You can still enable the desktop using the raspi-config tool, but running Hudiy in a desktop environment on the Pi Zero 2, Pi 3B, Pi 3A+ and Pi 3B+ is not recommended.
 
 Since console mode supports a maximum of one application window and one screen, the splash application (used for displaying a custom logo before Hudiy starts) is disabled in this mode.
 
@@ -124,4 +124,4 @@ If you experience random disconnections during phone calls or see `hci0: hardwar
 
 The Raspberry Pi 3B and Pi Zero 2 route SCO audio traffic via PCM. Hudiy provides a `hcisco.service` systemd unit to reconfigure the Bluetooth controller (via hcitool) to use SCO over HCI instead. The service runs automatically for these Raspberry Pi variants.
 
-SCO over HCI seems to be default mode for Raspberry Pi 3B+, Raspberry Pi 4 and Raspberry Pi 5.
+SCO over HCI seems to be default mode for Raspberry Pi 3B+, Raspberry Pi 3A+, Raspberry Pi 4 and Raspberry Pi 5.
