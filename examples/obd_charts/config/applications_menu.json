@@ -183,6 +183,24 @@
         },
         {
             "categories": [
+                "Hudiy"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "speed",
+            "action": "obd_gauges",
+            "label": "Gauges"
+        },
+        {
+            "categories": [
+                "Hudiy"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "speed",
+            "action": "obd_gauges2",
+            "label": "Gauges 2"
+        },
+        {
+            "categories": [
                 "Android Auto"
             ],
             "iconFontFamily": "Material Symbols Rounded",

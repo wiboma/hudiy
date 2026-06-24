@@ -191,6 +191,76 @@
                     "url": "http://127.0.0.1:44411/blocks/throttle_position"
                 }
             ]
+        },
+        {
+            "action": "obd_gauges",
+            "widgets": [
+                {
+                    "type": "web",
+                    "size": "large_narrow",
+                    "url": "http://127.0.0.1:44411/gauges/engine_temp"
+                },
+                {
+                    "type": "web_static",
+                    "size": "large_narrow",
+                    "url": "http://127.0.0.1:44411/gauges/speed"
+                },
+                {
+                    "type": "web_static",
+                    "size": "large_narrow",
+                    "url": "http://127.0.0.1:44411/gauges/rpm"
+                },
+                {
+                    "type": "web_static",
+                    "size": "large_narrow",
+                    "url": "http://127.0.0.1:44411/gauges/throttle_position"
+                },
+                {
+                    "type": "web_static",
+                    "size": "large_narrow",
+                    "url": "http://127.0.0.1:44411/gauges/engine_load"
+                },
+                {
+                    "type": "web_static",
+                    "size": "large_narrow",
+                    "url": "http://127.0.0.1:44411/gauges/intake_temp"
+                }
+            ]
+        },
+        {
+            "action": "obd_gauges2",
+            "widgets": [
+                {
+                    "type": "web",
+                    "size": "large_narrow",
+                    "url": "http://127.0.0.1:44411/gauges2/engine_temp"
+                },
+                {
+                    "type": "web_static",
+                    "size": "large_narrow",
+                    "url": "http://127.0.0.1:44411/gauges2/speed"
+                },
+                {
+                    "type": "web_static",
+                    "size": "large_narrow",
+                    "url": "http://127.0.0.1:44411/gauges2/rpm"
+                },
+                {
+                    "type": "web_static",
+                    "size": "large_narrow",
+                    "url": "http://127.0.0.1:44411/gauges2/throttle_position"
+                },
+                {
+                    "type": "web_static",
+                    "size": "large_narrow",
+                    "url": "http://127.0.0.1:44411/gauges2/engine_load"
+                },
+                {
+                    "type": "web_static",
+                    "size": "large_narrow",
+                    "url": "http://127.0.0.1:44411/gauges2/intake_temp"
+                }
+            ]
         }
     ]
 }

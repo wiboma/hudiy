@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel="preload" href="/static/Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin>
+    <title>OBD-II Gauge</title>
+    <style>
+        @font-face {
+            font-family: 'Roboto';
+            src: url('/static/Roboto-Regular.ttf') format('truetype');
+            font-weight: 300;
+        }
+
+        @font-face {
+            font-family: 'Roboto-Bold';
+            src: url('/static/Roboto-Bold.ttf') format('truetype');
+            font-weight: 700;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            background: transparent;
+            font-family: 'Roboto', sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        .gauge-container {
+            position: relative;
+            width: 95vmin;
+            height: 95vmin;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="gauge-container">
+        <canvas id="gaugeCanvas"></canvas>
+    </div>
+
+    <script>
+        const CONFIG = {
+            apiUrl: "http://127.0.0.1:44411",
+            interval: 1000
+        };
+
+        const GAUGE_CONFIG = {
+            pid: '010d',
+            label: 'SPEED',
+            min: 0,
+            max: 260,
+            unit: 'km/h',
+            precision: 0,
+            parse: b => b[2]
+        };
+
+        const hudiy = {
+            colorScheme: { darkThemeEnabled: true, onSurface: "#c4c6d0" },
+            onColorSchemeChanged: updateColors,
+            onAttached: updateColors
+        };
+
+        let currentValue = GAUGE_CONFIG.min;
+        const canvas = document.getElementById('gaugeCanvas');
+
+        function updateColors() {
+            drawGauge();
+        }
+
+        function drawGauge() {
+            const ctx = canvas.getContext('2d');
+            const { label, min, max, precision, unit } = GAUGE_CONFIG;
+
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+
+            if (canvas.width !== Math.floor(rect.width * dpr) || canvas.height !== Math.floor(rect.height * dpr)) {
+                canvas.width = Math.floor(rect.width * dpr);
+                canvas.height = Math.floor(rect.height * dpr);
+            }
+
+            const size = canvas.width;
+            ctx.save();
+            ctx.scale(dpr, dpr);
+
+            const logicalSize = size / dpr;
+            const center = logicalSize / 2;
+            const radius = center * 0.98;
+            const yOffset = radius * 0.1465;
+
+            ctx.clearRect(0, 0, logicalSize, logicalSize);
+
+            ctx.translate(center, center + yOffset);
+
+            ctx.lineCap = 'butt';
+            ctx.imageSmoothingEnabled = true;
+
+            const startAngle = 0.75 * Math.PI;
+            const endAngle = 2.25 * Math.PI;
+            const angleRange = endAngle - startAngle;
+
+            const totalTicks = 60;
+            const clampedValue = Math.min(Math.max(currentValue, min), max);
+            const progress = (clampedValue - min) / (max - min);
+            const activeTicks = Math.round(progress * totalTicks);
+
+            for (let i = 0; i <= totalTicks; i++) {
+                const angle = startAngle + (i / totalTicks) * angleRange;
+                const isActive = i <= activeTicks;
+                const isMajor = i % 10 === 0;
+
+                let rOuter = radius;
+                let rInner = isActive ? radius * 0.85 : radius * 0.92;
+
+                if (isMajor && !isActive) {
+                    rInner = radius * 0.88;
+                }
+
+                const x1 = Math.cos(angle) * rInner;
+                const y1 = Math.sin(angle) * rInner;
+                const x2 = Math.cos(angle) * rOuter;
+                const y2 = Math.sin(angle) * rOuter;
+
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+
+                if (isActive) {
+                    const hue = 220 - ((i / totalTicks) * 220);
+                    ctx.strokeStyle = `hsl(${hue}, 100%, 55%)`;
+                    ctx.lineWidth = logicalSize * 0.015;
+                } else {
+                    ctx.strokeStyle = hudiy.colorScheme.onSurface;
+                    ctx.lineWidth = logicalSize * 0.01;
+                }
+                ctx.stroke();
+            }
+
+            const valueStr = clampedValue.toFixed(precision);
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'alphabetic';
+
+            ctx.font = `600 ${logicalSize * 0.22}px 'Roboto-Bold', 'Roboto', sans-serif`;
+            ctx.fillStyle = hudiy.colorScheme.onSurface;
+            ctx.fillText(valueStr, 0, logicalSize * 0.12);
+
+            ctx.font = `600 ${logicalSize * 0.08}px 'Roboto', sans-serif`;
+            ctx.fillStyle = hudiy.colorScheme.onSurface;
+            ctx.letterSpacing = "4px";
+            ctx.fillText(label, 0, -logicalSize * 0.17);
+
+            ctx.font = `300 ${logicalSize * 0.10}px 'Roboto', sans-serif`;
+            ctx.fillStyle = hudiy.colorScheme.onSurface;
+            ctx.letterSpacing = "2px";
+            ctx.fillText(unit, 0, logicalSize * 0.32);
+
+            ctx.restore();
+        }
+
+        function parsePidValue(data) {
+            const bytes = data.match(/.{1,2}/g)?.map(h => parseInt(h, 16));
+            if (!bytes || bytes.length < 3) return GAUGE_CONFIG.min;
+            return GAUGE_CONFIG.parse(bytes);
+        }
+
+        async function fetchAndUpdate() {
+            try {
+                const res = await fetch(`${CONFIG.apiUrl}/value?pid=${GAUGE_CONFIG.pid}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.value) {
+                        currentValue = parsePidValue(data.value);
+                    }
+                }
+            } catch (e) {
+            }
+            drawGauge();
+        }
+
+        function init() {
+            drawGauge();
+            fetchAndUpdate();
+            setInterval(fetchAndUpdate, CONFIG.interval);
+        }
+
+        window.addEventListener('resize', drawGauge);
+        window.addEventListener('load', init);
+    </script>
+</body>
+
+</html>

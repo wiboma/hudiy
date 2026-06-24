@@ -37,6 +37,10 @@ OBD Charts consist of two components:
 
 ![Screenshot](../../images/screenshot46.png)
 
+![Screenshot](../../images/screenshot49.png)
+
+![Screenshot](../../images/screenshot50.png)
+
 ## HTML/JavaScript
 
 The widgets communicate with the Python backend via a simple REST API. The API allows for retrieving the measurement history for a specific PID stored in the backend, as well as querying for the current value of a given PID.
@@ -52,6 +56,10 @@ Through the REST API, widgets can retrieve measurement history via the GET /hist
 The Hudiy API is used to fetch PID data from the ELM327 device.
 
 The measurement history size (capacity) is configurable directly within the source code.
+
+### Mock
+
+[charts_mock.py](charts_mock.py) contains an example that does not use ELM327 and the Hudiy API, but instead generates random values compliant with the ELM327 format. You can use it for your own implementation using a data source other than ELM327 (e.g., raw CAN Bus) while retaining the original ELM327 data format. This ensures that all widgets from the example will work out of the box.
 
 ## Dependecies
 

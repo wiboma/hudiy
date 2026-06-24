@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel="preload" href="/static/Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin>
+    <title>OBD-II Gauge</title>
+    <style>
+        @font-face {
+            font-family: 'Roboto';
+            src: url('/static/Roboto-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            background: transparent;
+            font-family: 'Roboto', sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        .gauge-container {
+            position: relative;
+            width: 95vmin;
+            height: 95vmin;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="gauge-container">
+        <canvas id="gaugeCanvas"></canvas>
+    </div>
+
+    <script>
+        const CONFIG = {
+            apiUrl: "http://127.0.0.1:44411",
+            interval: 1000
+        };
+
+        const hudiy = {
+            colorScheme: { darkThemeEnabled: true, primaryContainer: "#2a4678", onPrimaryContainer: "#d7e2ff", onSurface: "#c4c6d0" },
+            onColorSchemeChanged: updateColors,
+            onAttached: updateColors
+        };
+
+        let currentValue = GAUGE_CONFIG.min;
+        const canvas = document.getElementById('gaugeCanvas');
+
+        function updateColors() {
+            drawGauge();
+        }
+
+        function drawGauge() {
+            const ctx = canvas.getContext('2d');
+            const { label, min, max, precision } = GAUGE_CONFIG;
+
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+
+            if (canvas.width !== Math.floor(rect.width * dpr) || canvas.height !== Math.floor(rect.height * dpr)) {
+                canvas.width = Math.floor(rect.width * dpr);
+                canvas.height = Math.floor(rect.height * dpr);
+            }
+
+            const size = canvas.width;
+            ctx.save();
+            ctx.scale(dpr, dpr);
+
+            const logicalSize = size / dpr;
+            const radius = logicalSize / 2;
+
+            const yOffset = radius * 0.1465;
+
+            ctx.clearRect(0, 0, logicalSize, logicalSize);
+
+            ctx.translate(radius, radius + yOffset);
+
+            const startAngle = 0.75 * Math.PI;
+            const angleRange = 1.5 * Math.PI;
+            const endAngle = startAngle + angleRange;
+
+            const clampedValue = Math.min(Math.max(currentValue, min), max);
+            const normalizedValue = (clampedValue - min) / (max - min);
+            const valueAngle = startAngle + normalizedValue * angleRange;
+
+            ctx.imageSmoothingEnabled = true;
+
+            const arcRadius = radius * 0.9;
+
+            ctx.beginPath();
+            ctx.arc(0, 0, arcRadius, startAngle, endAngle, false);
+            ctx.strokeStyle = hudiy.colorScheme.darkThemeEnabled ? hudiy.colorScheme.onPrimaryContainer : hudiy.colorScheme.primaryContainer;
+            ctx.lineWidth = logicalSize * 0.046;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(0, 0, arcRadius, startAngle, valueAngle, false);
+            ctx.strokeStyle = hudiy.colorScheme.darkThemeEnabled ? hudiy.colorScheme.primaryContainer : hudiy.colorScheme.onPrimaryContainer;
+            ctx.lineWidth = logicalSize * 0.053;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            ctx.font = `bold ${logicalSize * 0.13}px Roboto`;
+            ctx.fillStyle = hudiy.colorScheme.onSurface;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'alphabetic';
+            ctx.fillText(`${clampedValue.toFixed(precision)}`, 0, -logicalSize * 0.05);
+
+            ctx.font = `${logicalSize * 0.09}px Roboto`;
+            ctx.fillText(label, 0, logicalSize * 0.12);
+
+            const labelRadius = radius * 0.72;
+            ctx.font = `bold ${logicalSize * 0.09}px Roboto`;
+
+            ctx.fillText(`${min}`, Math.cos(startAngle) * labelRadius, Math.sin(startAngle) * labelRadius);
+
+            const xOffset = logicalSize * 0.05;
+            ctx.fillText(`${max}`, (Math.cos(endAngle) * labelRadius) - xOffset, Math.sin(endAngle) * labelRadius);
+
+            ctx.restore();
+        }
+
+        function parsePidValue(data) {
+            const bytes = data.match(/.{1,2}/g)?.map(h => parseInt(h, 16));
+            if (!bytes || bytes.length < 3) return GAUGE_CONFIG.min;
+            return GAUGE_CONFIG.parse(bytes);
+        }
+
+        async function fetchAndUpdate() {
+            try {
+                const res = await fetch(`${CONFIG.apiUrl}/value?pid=${GAUGE_CONFIG.pid}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.value) {
+                        currentValue = parsePidValue(data.value);
+                    }
+                }
+            } catch (e) {
+            }
+            drawGauge();
+        }
+
+        function init() {
+            drawGauge();
+            fetchAndUpdate();
+            setInterval(fetchAndUpdate, CONFIG.interval);
+        }
+
+        window.addEventListener('resize', drawGauge);
+        window.addEventListener('load', init);
+    </script>
+</body>
+
+</html>
