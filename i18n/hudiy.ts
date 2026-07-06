@@ -361,6 +361,22 @@
         <source>Storage music autoplay</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Bass Boost level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bass Boost frequency</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Treble Boost level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Treble Boost frequency</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StorageMusicPlayer</name>

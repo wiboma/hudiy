@@ -5,7 +5,7 @@ package hudiy.app.api;
 enum Constants {
     // option allow_alias = true;
     API_MAJOR_VERSION = 1;
-    API_MINOR_VERSION = 2;
+    API_MINOR_VERSION = 3;
 }
 
 enum MessageType {
@@ -61,6 +61,8 @@ enum MessageType {
     MESSAGE_BYEBYE = 49;
     MESSAGE_SET_ANDROID_AUTO_DAY_NIGHT_MODE = 50;
     MESSAGE_SET_AUTOBOX_DAY_NIGHT_MODE = 51;
+    MESSAGE_CURRENT_MENU_ACTION = 52;
+    MESSAGE_SET_BASS_TREBLE_BOOST = 53;
 }
 
 message Version {
@@ -113,6 +115,7 @@ message SetStatusSubscriptions {
         OBD = 4;
         PHONE = 5;
         COVERARTS = 6;
+        CURRENT_MENU_ACTION = 7;
     }
 
     // List of desired subscriptions
@@ -823,4 +826,30 @@ message SetAutoboxDayNightMode {
 
     // Desired mode
     required DayNightMode mode = 1;
+}
+
+// Id: MESSAGE_CURRENT_MENU_ACTION
+// Receiver: Client
+// Description:
+//     Updates the name of the last dispatched menu action.
+//     The message will be sent only if Subscription::CURRENT_MENU_ACTION is present.
+message CurrentMenuAction {
+    required string action_name = 1;
+}
+
+// Id: MESSAGE_SET_BASS_TREBLE_BOOST
+// Receiver: Hudiy
+// Description: Sets the value [dB] and frequency [Hz] of the bass and treble boost effects.
+message SetBassTrebleBoost {
+    // value of bass gain [dB]
+    optional int32 bass_gain = 1;
+
+    // value of bass shelf frequency [Hz]
+    optional int32 bass_frequency = 2;
+
+    // value of treble gain [dB]
+    optional int32 treble_gain = 3;
+
+    // value of treble shelf frequency [Hz]
+    optional int32 treble_frequency = 4;
 }

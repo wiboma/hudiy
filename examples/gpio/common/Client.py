@@ -82,6 +82,9 @@ class ClientEventHandler:
     def on_coverart_request(self, client, message):
         pass
 
+    def on_current_menu_action(self, client, message):
+        pass
+
 
 class Client:
 
@@ -292,5 +295,9 @@ class Client:
                 resp = hudiy_api.CoverartRequest()
                 resp.ParseFromString(message.payload)
                 self._event_handler.on_coverart_request(self, resp)
+            elif message.id == hudiy_api.MESSAGE_CURRENT_MENU_ACTION:
+                resp = hudiy_api.CurrentMenuAction()
+                resp.ParseFromString(message.payload)
+                self._event_handler.on_current_menu_action(self, resp)
 
         return can_continue

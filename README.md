@@ -983,6 +983,31 @@ Array of objects that define the widgets displayed on the dashboard. The widgets
 
 Overlays are interface elements that appear on top of all other content. They can, for example, provide data display and quick-access controls.
 
+Custom overlays can be created in HTML/JavaScript and displayed in web views.
+
+Each overlay can have a custom width, height, and screen position (x, y). It can be repositioned using drag-and-drop gestures, the Left, Right, Up, and Down key strokes. To prevent interference with HTML content, drag-and-drop for custom overlays is activated after a long press.
+
+The overlay size (width, height) and position (x, y) can be set by providing an absolute value in pixels or a relative value.
+
+For relative sizing and positioning, you can use the following string values:
+
+- `vw` (Viewport Width): This represents a percentage of the Hudiy window's total width. `1vw` is equal to 1% of the Hudiy window's width. For example, `"50vw"` means the element will take up exactly half of the Hudiy window's width.
+
+  - Example: `"23vw"`
+
+- `vh` (Viewport Height): This represents a percentage of the Hudiy window's total height. `1vh` is equal to 1% of the Hudiy window's height. For example, `"100vh"` means the element will take up the full height of the Hudiy window.
+
+  - Example: `"32vh"`
+
+For absolute positioning, you can use:
+
+- `pixels (px)`:  
+This represents an exact, fixed size or position within the Hudiy window. You can provide a plain numeric value or include the `"px"` unit. For example, `100` or `"100px"`.
+
+Hudiy includes two built-in overlays: volume controls and navigation.
+
+Overlays can be also used to create split-screen layouts, where, for example, the native UI is shown on one side (e.g., the left) and the overlay is shown on the other side (e.g., the right), displaying additional information or controls.
+
 Overlays have four visibility modes:
 
 - NONE  
@@ -996,14 +1021,6 @@ Overlays have four visibility modes:
 
 - ALWAYS  
 *The overlay is displayed on both the native UI and projection.*
-
-Custom overlays can be created in HTML/JavaScript and displayed in web views.
-
-Each overlay can have a custom width, height, and screen position (x, y). It can be repositioned using drag-and-drop gestures, the Left, Right, Up, and Down key strokes. To prevent interference with HTML content, drag-and-drop for custom overlays is activated after a long press.
-
-Hudiy includes two built-in overlays: volume controls and navigation.
-
-Overlays can be also used to create split-screen layouts, where, for example, the native UI is shown on one side (e.g., the left) and the overlay is shown on the other side (e.g., the right), displaying additional information or controls.
 
 Toggling input focus between overlays, projection, and native UI is triggered by the `t` key or the `KEY_TYPE_TOGGLE_INPUT_FOCUS` key event from the API.
 
@@ -1029,16 +1046,16 @@ It contains `overlays` array with objects of following structure:
 Identifier of the overlay. Each overlay must have a unique identifier. It is used to control the visibility.
 
 - `width`  
-Width of the overlay.
+Width of the overlay. Values can be either absolute (e. g. `100` or `"100px"`) or relative (e. g. `"20vw"` or `"20vh"`).
 
 - `height`  
-Height of the overlay.
+Height of the overlay. Values can be either absolute (e. g. `100` or `"100px"`) or relative (e. g. `"20vw"` or `"20vh"`).
 
 - `x`  
-X position of the overlay within the application window. Position of the overlay can also be changed using drag-and-drop gestures or the Left, Right, Up, and Down keystrokes.
+X position of the overlay within the application window. Values can be either absolute (e. g. `100` or `"100px"`) or relative (e. g. `"20vw"` or `"20vh"`). Position of the overlay can also be changed using drag-and-drop gestures or the Left, Right, Up, and Down keystrokes.
 
 - `y`  
-Y position of the overlay within the application window. Position of the overlay can also be changed using drag-and-drop gestures or the Left, Right, Up, and Down keystrokes.
+Y position of the overlay within the application window. Values can be either absolute (e. g. `100` or `"100px"`) or relative (e. g. `"20vw"` or `"20vh"`). Position of the overlay can also be changed using drag-and-drop gestures or the Left, Right, Up, and Down keystrokes.
 
 - `visibility`  
 One of the following visibilities:
@@ -1157,9 +1174,15 @@ The equalizer features 15 adjustable frequency bands, allowing precise control o
 
 Equalizer presets are defined in the configuration file. Unlimited equalizer presets can be defined.
 
+Additionally, the equalizer features Bass and Treble boost controls using adjustable low-shelf and high-shelf filters, enabling fine-tuning of both the target frequency [Hz] and the gain [dB]. These controls can be used to recreate the Loudness effect.
+
 ![Main screen](images/screenshot20.png)
 <br><br>
 ![Main screen](images/screenshot21.png)
+<br><br>
+![Main screen](images/screenshot51.png)
+<br><br>
+![Main screen](images/screenshot52.png)
 
 ### Players
 
