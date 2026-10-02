@@ -160,6 +160,21 @@ The configuration is stored in JSON format.
 - `bottomBarHeight`:  
     Height of the bottom bar [%].
 
+- `r`:  
+    Red color channel multiplier [%]. A value of 100 applies no change.
+
+- `g`:  
+    Green color channel multiplier [%]. A value of 100 applies no change.
+
+- `b`:  
+    Blue color channel multiplier [%]. A value of 100 applies no change.
+
+- `gamma`:  
+    Gamma correction [%]. A value of 100 is neutral. Values above 100 lighten the midtones; values below 100 darken them.
+
+- `contrast`:  
+    Contrast level [%]. Values above 100 increase the contrast; values below 100 make the colors flatter.
+
 ## theme
 
 - `darkThemeEnabled`:  
@@ -468,6 +483,15 @@ The configuration is stored in JSON format.
     Possible values:
     - "NONE" - Does not forward GPS data.
     - "GPSD" - Forwards GPSD data (if available).
+
+- `useFlatVideoBuffering`:  
+    Limit non-DRM video decoder buffering to decrease video latency. This only applies when `useRpiDrm` is false. The DRM video decoder has zero buffering and minimal latency by default.
+
+    *Note: **This is an experimental setting available only on the Raspberry Pi platform.** The VA-API video decoder has zero buffering and minimal latency by default.*
+
+    Possible values:
+    - true – Use flat video buffering.
+    - false – Use standard video buffering and allow the decoder to control buffer depth.
 
 ## hotspot
 
@@ -802,6 +826,9 @@ Each preset includes a name and values for each frequency band:
 
 - `maneuverMininalDisplayTimeMs`:  
     Minimum validity time of a reported maneuver. All maneuvers reported faster than this interval will be queued.
+
+- `mediaDelay`:  
+    Audio stream delay [ms] set on the dongle. A lower value reduces latency (audio buffer) but may cause audio glitches. A higher value increases latency (audio buffer) but stabilizes audio playback.
 
 ## obd
 

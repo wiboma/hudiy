@@ -83,6 +83,26 @@
         <source>Bottom bar height</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Red color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Green color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Blue color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gamma</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ApplicationSettings</name>
@@ -465,6 +485,26 @@
     </message>
 </context>
 <context>
+    <name>hudiy::app::bluetooth::PhoneConnectionManager</name>
+    <message>
+        <source>Bluetooth connected</source>
+        <comment>Phone bluetooth connection</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bluetooth</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connected to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disconnected from %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>hudiy::app::bluetooth::PhoneNotificationsManager</name>
     <message>
         <source>Listening for phone notifications</source>
@@ -538,23 +578,6 @@
     </message>
     <message>
         <source>Phone battery is almost full</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Bluetooth connected</source>
-        <comment>Phone bluetooth connection</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Bluetooth</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Connected to %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Disconnected from %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

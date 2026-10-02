@@ -5,7 +5,7 @@ package hudiy.app.api;
 enum Constants {
     // option allow_alias = true;
     API_MAJOR_VERSION = 1;
-    API_MINOR_VERSION = 3;
+    API_MINOR_VERSION = 4;
 }
 
 enum MessageType {
@@ -63,6 +63,7 @@ enum MessageType {
     MESSAGE_SET_AUTOBOX_DAY_NIGHT_MODE = 51;
     MESSAGE_CURRENT_MENU_ACTION = 52;
     MESSAGE_SET_BASS_TREBLE_BOOST = 53;
+    MESSAGE_SET_THEME_COLORS = 54;
 }
 
 message Version {
@@ -852,4 +853,15 @@ message SetBassTrebleBoost {
 
     // value of treble shelf frequency [Hz]
     optional int32 treble_frequency = 4;
+}
+
+// Id: MESSAGE_SET_THEME_COLORS
+// Receiver: Hudiy
+// Description: Sets the color for dark and light themes.
+message SetThemeColors {
+    // Hex RGB value of the dark theme color, e.g. #000000
+    optional string dark_theme_color = 1;
+
+    // Hex RGB value of the light theme color, e.g. #ffffff
+    optional string light_theme_color = 2;
 }
