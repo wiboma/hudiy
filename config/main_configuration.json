@@ -26,7 +26,12 @@
         "fonts" : [
 
         ],
-        "bottomBarHeight" : 100
+        "bottomBarHeight" : 100,
+        "r" : 100,
+        "g" : 100,
+        "b" : 100,
+        "gamma" : 100,
+        "contrast" : 100
     },
     "theme" : {
         "darkThemeEnabled" : true,
@@ -85,7 +90,7 @@
         "balance" : 0,
         "storageMusicAutoplay" : false,
         "fmRadioAutoplay" : false,
-        "subwooferBalanceAsVolume" : false,
+        "subwooferBalanceAsVolume" : true,
         "ringtoneFile" : "",
         "defaultMediaPath" : ""
     },
@@ -241,7 +246,12 @@
         "inputVolumeToast" : true,
         "nowPlaying" : true,
         "notificationDuration" : 8000,
-        "toastDuration" : 2000
+        "toastDuration" : 2000,
+        "phoneNotifications" : true,
+        "iOSIgnoredAppIds" : [
+            "com.apple.mobilephone",
+            "com.apple.facetime"
+        ]
     },
     "fmRadio" : {
         "bandwidth" : "EU",
@@ -283,7 +293,8 @@
         "captureAudioOutput" : true,
         "dayNightMode" : "COMMON",
         "navigationUnits" : "METRIC",
-        "maneuverMininalDisplayTimeMs" : 500
+        "maneuverMininalDisplayTimeMs" : 500,
+        "mediaDelay" : 300
     },
     "obd" : {
         "deviceType" : "NONE",
@@ -315,6 +326,12 @@
     "bluetooth" : {
         "adapterHardwareAddress" : "",
         "registerDummyHfpProfile" : false,
-        "registerDummyA2DPProfile" : false
+        "registerDummyA2DPProfile" : false,
+        "useIOSTimeSynchronizer" : false
+    },
+    "aux" : {
+        "auxSourceName" : "",
+        "auxCardPortName" : "",
+        "microphoneCardPortName" : ""
     }
 }

@@ -5,7 +5,7 @@ package hudiy.app.api;
 enum Constants {
     // option allow_alias = true;
     API_MAJOR_VERSION = 1;
-    API_MINOR_VERSION = 4;
+    API_MINOR_VERSION = 5;
 }
 
 enum MessageType {
@@ -64,6 +64,8 @@ enum MessageType {
     MESSAGE_CURRENT_MENU_ACTION = 52;
     MESSAGE_SET_BASS_TREBLE_BOOST = 53;
     MESSAGE_SET_THEME_COLORS = 54;
+    MESSAGE_SET_AUX_METADATA = 55;
+    MESSAGE_AUX_PLAYBACK_EVENT = 56;
 }
 
 message Version {
@@ -117,6 +119,7 @@ message SetStatusSubscriptions {
         PHONE = 5;
         COVERARTS = 6;
         CURRENT_MENU_ACTION = 7;
+        AUX = 8;
     }
 
     // List of desired subscriptions
@@ -148,6 +151,7 @@ enum MediaSource {
     MEDIA_SOURCE_STORAGE = 4;
     MEDIA_SOURCE_FM_RADIO = 5;
     MEDIA_SOURCE_WEB = 6;
+    MEDIA_SOURCE_AUX = 7;
 }
 
 // Id: MESSAGE_MEDIA_STATUS
@@ -864,4 +868,32 @@ message SetThemeColors {
 
     // Hex RGB value of the light theme color, e.g. #ffffff
     optional string light_theme_color = 2;
+}
+
+// Id: MESSAGE_SET_AUX_METADATA
+// Receiver: Hudiy
+// Description:
+//     Sets metadata for the AUX player that will be displayed on the interface.
+//     Cover art is handled via MESSAGE_COVERART_REQUEST and MESSAGE_COVERART_RESPONSE.
+message SetAuxMetadata {
+    optional string title = 1;
+    optional string artist = 2;
+    optional string album = 3;
+}
+
+// Id: MESSAGE_AUX_PLAYBACK_EVENT
+// Receiver: Client
+// Description:
+//     Notification about AUX playback events.
+//     Can be used to control the device connected to the line-in port.
+//     The message will be sent only if Subscription::AUX is present.
+message AuxPlaybackEvent {
+    enum PlaybackEventType {
+        PLAYBACK_EVENT_TYPE_PLAY = 1;
+        PLAYBACK_EVENT_TYPE_PAUSE = 2;
+        PLAYBACK_EVENT_TYPE_NEXT = 3;
+        PLAYBACK_EVENT_TYPE_PREVIOUS = 4;
+    }
+
+    required PlaybackEventType event_type = 1;
 }

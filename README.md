@@ -3,48 +3,79 @@
 ## Table of Contents
 
 - [Introduction](#introduction)
+  - [Features](#features)
+  - [Customizations](#customizations)
 - [Supported platforms](#supported-platforms)
 - [Requirements](#requirements)
+- [Configuration](#configuration)
 - [Interface](#interface)
 - [Theming](#theming)
+  - [Icons](#icons)
+  - [Colors](#colors)
+  - [Calibration](#calibration)
 - [Actions](#actions)
+  - [Defining an action](#defining-an-action)
+  - [List of predefined actions](#list-of-predefined-actions)
+  - [Backgrounds](#backgrounds)
 - [API](#api)
+  - [Frame format](#frame-format)
+  - [Features](#features-1)
 - [Menu](#menu)
+  - [Configuration](#applications-menu-configuration)
 - [Shortcuts](#shortcuts)
+  - [Configuration](#shortcuts-configuration)
 - [Web view](#web-view)
+  - [Input events](#input-events)
+    - [Input focus](#input-focus)
+  - [`hudiy` Object](#hudiy-object)
+  - [`hudiy.colorScheme` Object](#hudiycolorscheme-object)
+  - [Available color definitions](#available-color-definitions)
 - [Applications](#applications)
+  - [Configuration](#applications-configuration)
 - [Dashboards](#dashboards)
+  - [Widgets](#widgets)
+  - [Configuration](#dashboards-configuration)
 - [Overlays](#overlays)
+  - [Configuration](#overlays-configuration)
+    - [Built-in overlays configuration](#built-in-overlays-configuration)
+    - [Positioning configuration](#positioning-configuration)
 - [Bluetooth](#bluetooth)
+  - [Phone notifications](#phone-notifications)
+  - [Time synchronization](#time-synchronization)
 - [Audio](#audio)
-- [Reverse Camera](#reverse-camera)
-- [Android Auto](#android-auto)
-- [CarPlay](#carplay)
+  - [Audio focus](#audio-focus)
+  - [Equalizer](#equalizer)
+  - [Players](#players)
+    - [Audio files](#audio-files)
+    - [FM Radio](#fm-radio)
+    - [AUX](#aux)
+    - [A2DP (Bluetooth)](#a2dp-bluetooth)
+    - [CarPlay](#carplay)
+    - [Android Auto](#android-auto)
+    - [Web](#web)
+- [Android Auto projection](#android-auto-projection)
+  - [Multi-touch](#multi-touch)
+- [CarPlay projection](#carplay-projection)
+- [Reverse camera](#reverse-camera)
 - [Updating](#updating)
 - [Multiple screens](#multiple-screens)
 - [Companion app](#companion-app)
+  - [Permissions](#permissions)
 - [Splash](#splash)
 - [Web Viewer](#web-viewer)
+  - [Window](#window)
+  - [Frameless window](#frameless-window)
+  - [Offscreen](#offscreen)
+    - [Message format](#message-format)
+    - [Messages](#messages)
+  - [Command-Line arguments](#command-line-arguments)
+- [OBD-II](#obd-ii)
 
 ## Introduction
 
 To get Hudiy, visit our website at [hudiy.eu](https://hudiy.eu)
 
-Hudiy is an advanced software designed to help you build and expand your own custom infotainment system.
-It provides core functionalities such as communication via the OBD-II interface, hands-free calling, multimedia playback, Android Auto, CarPlay, and much more.
-
-Hudiy supports extensive customization including:
-
-- customizing the appearance of the UI  
-- creating your own menus  
-- adding shortcuts to frequently used functions  
-- creating custom applications written in HTML/JavaScript that can be fully integrated with Hudiy  
-- creating custom dashboards and integrate your own widgets written in HTML/JavaScript  
-- creating custom overlays written in HTML/JavaScript  
-
-Hudiy exposes an API for external systems to retrieve data, perform actions, and integrate with application features. It also provides a special JavaScript object, `hudiy`, to user-created HTML/JavaScript elements to enable even deeper integration with the application.
-
-The Hudiy application is designed to work on **Raspberry Pi** and **x86_64** hardware. Thanks to the extensive Raspberry Pi/Linux ecosystem, you can choose hardware such as audio devices, screens, or controllers that perfectly match your needs.
+Hudiy is advanced software designed to help you build and expand your own custom infotainment system. It runs on **Raspberry Pi** and **x86_64** hardware. Thanks to the extensive Raspberry Pi/Linux ecosystem, you can choose hardware such as audio devices, screens, or controllers that perfectly match your needs.
 
 <table style="width:100%">
   <tr>
@@ -67,6 +98,59 @@ The Hudiy application is designed to work on **Raspberry Pi** and **x86_64** har
   </tr>
 </table>
 
+### Features
+
+- Multiplatform
+  - Raspberry Pi Zero 2, 3A+, 3B, 3B+, 4B, 5 and appropriate compute module variants
+  - x86_64
+  - Latest Raspberry Pi OS Trixie or Debian Trixie
+- Android Auto wired and wireless
+- CarPlay wired and wireless via Carlinkit CPC200-CCPA or CPC200-Autokit dongles
+- Bluetooth
+  - Hands-free calling
+  - Phonebook and call history
+  - A2DP music
+  - Phone notifications
+  - Time synchronization
+- Audio
+  - Equalizer
+  - Bass and treble boost
+  - Stereo, 2.1, 4.0 and 4.1 speaker setup with balance, fader and subwoofer controls
+- Multimedia
+  - Audio file player
+  - FM Radio with RDS via RTL-SDR
+  - AUX
+  - CarPlay
+  - Android Auto
+  - Bluetooth music
+- Vehicle Data
+  - Navigation maneuvers
+  - Media metadata
+  - OBD-II via ELM327
+- Rendering HTML/JavaScript to external displays
+- Touchscreen and button control support
+- Reverse camera
+- Multi-screen
+- Flexible and scalable UI
+- Material 3 Design with Dark/Light modes and custom color palettes
+- Hardware acceleration (VPU, GPU)
+- Built-in updater
+- API
+
+### Customizations
+
+Hudiy supports extensive customization including:
+
+- Customizing the appearance of the UI
+- Customizing the splash screen
+- Creating your own menus
+- Adding shortcuts to frequently used functions
+- Creating custom applications written in HTML/JavaScript that can be fully integrated with Hudiy
+- Creating custom dashboards and integrating your own widgets written in HTML/JavaScript
+- Creating custom overlays written in HTML/JavaScript
+- Exposing the `hudiy` JavaScript object to user-created HTML/JavaScript elements to enable even deeper integration with the application
+- Providing an API for external systems to retrieve data, perform actions, and integrate with application features
+
 ## Supported platforms
 
 Currently, Hudiy supports the **x86_64** platform and **selected Raspberry Pi models**. For each of these platforms, we have prepared detailed descriptions in dedicated documents:
@@ -80,6 +164,20 @@ Detailed requirements are provided in the document dedicated to a specific platf
 
 - [x86_64](x86_64.md)
 - [Raspberry Pi](raspberry_pi.md)
+
+## Configuration
+
+The Hudiy configuration documentation is divided into several sections.
+
+The main configuration documentation is located in the [Main Configuration](main_configuration.md) document.
+
+The configuration for applications menu, applications, shortcuts, dashboards and overlays can be found in separate chapters of this document:
+
+- [Applications menu configuration](#applications-menu-configuration)
+- [Applications onfiguration](#applications-configuration)
+- [Shortcuts configuration](#shortcuts-configuration)
+- [Dashboards configuration](#dashboards-configuration)
+- [Overlays configuration](#overlays-configuration)
 
 ## Interface
 
@@ -186,6 +284,15 @@ For both dark and light themes, you can define a source color and set the contra
 ![Main screen](images/screenshot5.png)
 
 See the [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/) for a live preview of colors based on the selected source color.
+
+Individual colors can be overridden in the [Main Configuration – Theme](main_configuration.md#theme).
+
+### Calibration
+
+Hudiy provides global color calibration (RGB, gamma, contrast) for all rendering surfaces to improve display color accuracy. 
+
+![Main screen](images/screenshot59.png)
+![Main screen](images/screenshot60.png)
 
 ## Actions
 
@@ -310,6 +417,9 @@ Hudiy includes the following predefined actions:
 - **a2dp_music_player**:  
   Display the A2DP (Bluetooth) music player menu
 
+- **aux_player**:  
+  Display the AUX music player menu
+
 - **status_icon_details**:  
   Display a menu with descriptions of status icons visible on the bottom bar
 
@@ -429,7 +539,7 @@ Both endpoints use [Protocol Buffers](https://protobuf.dev/) for communication p
 - Switching equalizer presets
 - Querying ELM327 OBD-II device
 
-For more details about protocol please check [Api](api/Api.proto) definition.
+For more details about the protocol, please check the [Api](api/Api.proto) definition.
 
 Configuration options for the Api are described in [Main Configuration - Api](main_configuration.md#api) documentation.
 
@@ -707,115 +817,117 @@ The input focus remains on the current input scope even after switching to touch
 **Description:**  
 *Indicates the color contrast level for the dark theme, in the range [-1.0, 1.0].*
 
-### Available color definitions. Each property stores a color value in hexadecimal format
+### Available color definitions
 
-#### `hudiy.colorScheme.primaryPaletteKeyColor`
+Each property stores a color value in hexadecimal format.
 
-#### `hudiy.colorScheme.secondaryPaletteKeyColor`
+- `hudiy.colorScheme.primaryPaletteKeyColor`
 
-#### `hudiy.colorScheme.tertiaryPaletteKeyColor`
+- `hudiy.colorScheme.secondaryPaletteKeyColor`
 
-#### `hudiy.colorScheme.neutralPaletteKeyColor`
+- `hudiy.colorScheme.tertiaryPaletteKeyColor`
 
-#### `hudiy.colorScheme.neutralVariantPaletteKeyColor`
+- `hudiy.colorScheme.neutralPaletteKeyColor`
 
-#### `hudiy.colorScheme.background`
+- `hudiy.colorScheme.neutralVariantPaletteKeyColor`
 
-#### `hudiy.colorScheme.onBackground`
+- `hudiy.colorScheme.background`
 
-#### `hudiy.colorScheme.surface`
+- `hudiy.colorScheme.onBackground`
 
-#### `hudiy.colorScheme.surfaceDim`
+- `hudiy.colorScheme.surface`
 
-#### `hudiy.colorScheme.surfaceBright`
+- `hudiy.colorScheme.surfaceDim`
 
-#### `hudiy.colorScheme.surfaceContainerLowest`
+- `hudiy.colorScheme.surfaceBright`
 
-#### `hudiy.colorScheme.surfaceContainerLow`
+- `hudiy.colorScheme.surfaceContainerLowest`
 
-#### `hudiy.colorScheme.surfaceContainer`
+- `hudiy.colorScheme.surfaceContainerLow`
 
-#### `hudiy.colorScheme.surfaceContainerHigh`
+- `hudiy.colorScheme.surfaceContainer`
 
-#### `hudiy.colorScheme.surfaceContainerHighest`
+- `hudiy.colorScheme.surfaceContainerHigh`
 
-#### `hudiy.colorScheme.onSurface`
+- `hudiy.colorScheme.surfaceContainerHighest`
 
-#### `hudiy.colorScheme.surfaceVariant`
+- `hudiy.colorScheme.onSurface`
 
-#### `hudiy.colorScheme.onSurfaceVariant`
+- `hudiy.colorScheme.surfaceVariant`
 
-#### `hudiy.colorScheme.inverseSurface`
+- `hudiy.colorScheme.onSurfaceVariant`
 
-#### `hudiy.colorScheme.inverseOnSurface`
+- `hudiy.colorScheme.inverseSurface`
 
-#### `hudiy.colorScheme.outline`
+- `hudiy.colorScheme.inverseOnSurface`
 
-#### `hudiy.colorScheme.outlineVariant`
+- `hudiy.colorScheme.outline`
 
-#### `hudiy.colorScheme.shadow`
+- `hudiy.colorScheme.outlineVariant`
 
-#### `hudiy.colorScheme.scrim`
+- `hudiy.colorScheme.shadow`
 
-#### `hudiy.colorScheme.surfaceTint`
+- `hudiy.colorScheme.scrim`
 
-#### `hudiy.colorScheme.primary`
+- `hudiy.colorScheme.surfaceTint`
 
-#### `hudiy.colorScheme.onPrimary`
+- `hudiy.colorScheme.primary`
 
-#### `hudiy.colorScheme.primaryContainer`
+- `hudiy.colorScheme.onPrimary`
 
-#### `hudiy.colorScheme.onPrimaryContainer`
+- `hudiy.colorScheme.primaryContainer`
 
-#### `hudiy.colorScheme.inversePrimary`
+- `hudiy.colorScheme.onPrimaryContainer`
 
-#### `hudiy.colorScheme.secondary`
+- `hudiy.colorScheme.inversePrimary`
 
-#### `hudiy.colorScheme.onSecondary`
+- `hudiy.colorScheme.secondary`
 
-#### `hudiy.colorScheme.secondaryContainer`
+- `hudiy.colorScheme.onSecondary`
 
-#### `hudiy.colorScheme.onSecondaryContainer`
+- `hudiy.colorScheme.secondaryContainer`
 
-#### `hudiy.colorScheme.tertiary`
+- `hudiy.colorScheme.onSecondaryContainer`
 
-#### `hudiy.colorScheme.onTertiary`
+- `hudiy.colorScheme.tertiary`
 
-#### `hudiy.colorScheme.tertiaryContainer`
+- `hudiy.colorScheme.onTertiary`
 
-#### `hudiy.colorScheme.onTertiaryContainer`
+- `hudiy.colorScheme.tertiaryContainer`
 
-#### `hudiy.colorScheme.error`
+- `hudiy.colorScheme.onTertiaryContainer`
 
-#### `hudiy.colorScheme.onError`
+- `hudiy.colorScheme.error`
 
-#### `hudiy.colorScheme.errorContainer`
+- `hudiy.colorScheme.onError`
 
-#### `hudiy.colorScheme.onErrorContainer`
+- `hudiy.colorScheme.errorContainer`
 
-#### `hudiy.colorScheme.primaryFixed`
+- `hudiy.colorScheme.onErrorContainer`
 
-#### `hudiy.colorScheme.primaryFixedDim`
+- `hudiy.colorScheme.primaryFixed`
 
-#### `hudiy.colorScheme.onPrimaryFixed`
+- `hudiy.colorScheme.primaryFixedDim`
 
-#### `hudiy.colorScheme.onPrimaryFixedVariant`
+- `hudiy.colorScheme.onPrimaryFixed`
 
-#### `hudiy.colorScheme.secondaryFixed`
+- `hudiy.colorScheme.onPrimaryFixedVariant`
 
-#### `hudiy.colorScheme.secondaryFixedDim`
+- `hudiy.colorScheme.secondaryFixed`
 
-#### `hudiy.colorScheme.onSecondaryFixed`
+- `hudiy.colorScheme.secondaryFixedDim`
 
-#### `hudiy.colorScheme.onSecondaryFixedVariant`
+- `hudiy.colorScheme.onSecondaryFixed`
 
-#### `hudiy.colorScheme.tertiaryFixed`
+- `hudiy.colorScheme.onSecondaryFixedVariant`
 
-#### `hudiy.colorScheme.tertiaryFixedDim`
+- `hudiy.colorScheme.tertiaryFixed`
 
-#### `hudiy.colorScheme.onTertiaryFixed`
+- `hudiy.colorScheme.tertiaryFixedDim`
 
-#### `hudiy.colorScheme.onTertiaryFixedVariant`
+- `hudiy.colorScheme.onTertiaryFixed`
+
+- `hudiy.colorScheme.onTertiaryFixedVariant`
 
 ## Applications
 
@@ -834,8 +946,6 @@ Custom applications can be used, for example:
 
 You can also load a link to any web page, such as YouTube Music, and use it as a player for your favorite music.
 
-![YouTube Music](images/screenshot12.png)
-<br><br>
 ![Maps](images/screenshot15.png)
 <br><br>
 ![YouTube](images/screenshot16.png)
@@ -869,6 +979,16 @@ Type of audio played from the loaded HTML content. The audio type determines how
 
 - `zoomFactor`
 Zoom factor for the web view. Accepted values are within the range from 0.25 to 5.0. The default factor is 1.0 (no zoom). This can be useful to enlarge interface elements on the displayed page.
+
+## Dashboards
+
+Dashboards are customizable screens for arranging and displaying widgets. Each dashboard can present different types of information or controls, such as real-time data, system status, media playback, or sensor readings. Multiple dashboards can be created, modified, and switched between for different use cases.
+
+Hudiy includes predefined widgets, but users can also create their own using HTML/JavaScript, and add them to the dashboard as web views.
+
+Every dashboard must have a unique action name across the entire application that serves as its identifier, allowing it to be displayed—for example, from the applications menu or via shortcuts.
+
+Dashboard count is unlimited.
 
 ### Widgets
 
@@ -915,16 +1035,6 @@ Widgets visible on the dashboard have two width options (narrow and wide) and th
 
 ![large wide](images/large_wide1.png)
 
-## Dashboards
-
-Dashboards are customizable screens for arranging and displaying widgets. Each dashboard can present different types of information or controls, such as real-time data, system status, media playback, or sensor readings. Multiple dashboards can be created, modified, and switched between for different use cases.
-
-Hudiy includes predefined widgets, but users can also create their own using HTML/JavaScript, and add them to the dashboard as web views.
-
-Every dashboard must have a unique action name across the entire application that serves as its identifier, allowing it to be displayed—for example, from the applications menu or via shortcuts.
-
-Dashboard count is unlimited.
-
 ### Dashboards configuration
 
 The configuration of the dashboards is stored in $HOME/.hudiy/share/config/dashboards.json.
@@ -948,7 +1058,7 @@ Array of objects that define the widgets displayed on the dashboard. The widgets
 
   - `type`  
   Type of the widget. It can be one of the following:
-    - `"PLACEHOLDER"` - An empty space that can be useful for custom arrangement of widgets. It can't receive input focus.
+    - `"PLACEHOLDER"` - An empty space that can be useful for custom arrangement of widgets. It cannot receive input focus.
     - `"WEB"` - Web view that loads the given URL and can receive input focus.
     - `"WEB_STATIC"` - Web view that loads the given URL and can't receive input focus.
     - `"DATE_TIME"` - Built-in widget that displays the date and time.
@@ -1032,8 +1142,6 @@ Toggling input focus between overlays, projection, and native UI is triggered by
 <br><br>
 ![Main screen](images/screenshot25.png)
 <br><br>
-![Main screen](images/screenshot19.png)
-<br><br>
 ![Main screen](images/screenshot32.png)
 
 ### Overlays Configuration
@@ -1116,16 +1224,31 @@ Bluetooth audio, including A2DP for high-quality media playback and HFP for hand
 
 You can pair and unpair Bluetooth devices directly in Hudiy. It is recommended to disable other Bluetooth agents to avoid potential conflicts.
 
-### Cover art
+### Phone notifications
 
-Starting from **Raspberry Pi OS/Debian Trixie**, the Bluetooth stack includes experimental support for fetching track cover art.
-To enable this functionality, experimental features must be activated in the BlueZ system configuration.
+Hudiy supports receiving phone app notifications and displaying them on the interface.
 
-The Bluetooth configuration is stored in the **/etc/bluetooth/main.conf** file. Enabling experimental Bluetooth stack features is done by setting the **Experimental = true** parameter in the **[General]** section of this file.
+iPhone notifications are handled via the Notification Service, which requires Bluetooth Low Energy support. The vast majority of modern Bluetooth chips support the Low Energy standard by default. **To use Notification Service on an iPhone, Bluetooth pairing with Hudiy should be initiated from the phone side. Permission to access notifications is also required.**
 
-Additionally, Android phones must have the AVRCP protocol version set to 1.6. The AVRCP version can be selected in the Developer settings (a reconnect may be required after change).
+Android notifications are handled via the [companion app](#companion-app).
 
-*Note: Not all media players support sending cover art or proper metadata at all.*
+![Main screen](images/screenshot30.png)
+
+![Main screen](images/screenshot31.png)
+
+![Main screen](images/screenshot57.png)
+
+![Main screen](images/screenshot58.png)
+
+### Time synchronization
+
+Hudiy supports time synchronization via Bluetooth if the hardware is not equipped with a Real-Time Clock (RTC).
+
+Time synchronization with iPhone is handled via the Time Service, which requires Bluetooth Low Energy support. The vast majority of modern Bluetooth chips support the Low Energy standard by default. **To use Time Service on an iPhone, Bluetooth pairing with Hudiy should be initiated from the phone side**
+
+Time synchronization with Android is handled via the [companion app](#companion-app).
+
+Time synchronization with an iPhone can be enabled in [Main Configuration – Bluetooth](main_configuration.md#bluetooth).
 
 ## Audio
 
@@ -1137,6 +1260,9 @@ Based on the PipeWire configuration, Hudiy can detect the following speaker setu
 
 - Stereo  
 *FRONT_LEFT, FRONT_RIGHT*
+
+- 2.1  
+*FRONT_LEFT, FRONT_RIGHT, SUBWOOFER*
 
 - 4.0  
 *FRONT_LEFT, FRONT_RIGHT, REAR_LEFT, REAR_RIGHT*
@@ -1189,30 +1315,77 @@ Additionally, the equalizer features Bass and Treble boost controls using adjust
 Hudiy supports playback from multiple audio sources, including:
 
 - Audio files
-- Android Auto
-- CarPlay
 - FM Radio
+- AUX
 - A2DP (Bluetooth)
+- CarPlay
+- Android Auto
+- Web
 
-For each audio source, Hudiy attempts to retrieve metadata such as artist, album, title, duration, and cover art. In the case of FM Radio, it can also decode RDS data, including Programme Service and Radio Text.
+For each audio source, Hudiy attempts to retrieve metadata such as artist, album, title, duration and cover art. The metadata of the currently playing track is also transmitted via the API, allowing for integration with external components.
 
 If cover art is not available from the source metadata, Hudiy can request it from a client connected via the API, using the artist, album, and title as search parameters.
 
-RDS decoding can be enabled or disabled through the configuration.
+### Audio files
+
+Hudiy supports many popular audio formats such as MP3, FLAC, WAV, AAC, OGG and WMA, as well as M3U and PLS playlist formats. The player features a built-in file browser, allowing you to select files and folders for playback.
+
+![Main screen](images/screenshot53.png)
+
+### FM Radio
+
+FM radio reception is handled by an RTL-SDR dongle. Hudiy can also decode RDS data, including Programme Service and Radio Text.
+
+See [Main Configuration – FM Radio](main_configuration.md#fmradio) for configuration details.
 
 ![Main screen](images/screenshot22.png)
 
-## Reverse camera
+### AUX
 
-Hudiy displays the camera feed on the screen using GStreamer. The camera feed takes precedence and, when active, is shown above all other visible elements.
+Hudiy supports playback from the sound card's line-in/AUX port if available. Playback is integrated with the audio focus mechanism. Additionally, metadata can be transmitted via the API to be displayed on the AUX player. Hudiy also emits events such as play, pause, next and previous through the API, which can be integrated with the audio source device.
 
-The width, height, and position (x, y) of the render surface can be configured in the [Main Configuration - Reverse Camera](main_configuration.md#reversecamera), along with the GStreamer pipeline used to retrieve the stream from the camera.
+Some sound cards feature separate microphone and line-in inputs, but expose only one source. In this case, switching between line-in and the microphone is handled via ports. The list of available ports for a given source can be viewed using the `pactl list sources` command. Hudiy will automatically switch to the specified port depending on the playback status.
 
-The visibility of the camera feed surface can be controlled through corresponding actions or the API.
+See [Main Configuration – AUX](main_configuration.md#aux) for configuration details.
 
-Camera feeds can alternatively be displayed using web views and the [MediaDevices](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices) API.
+![Main screen](images/screenshot54.png)
 
-## Android Auto
+### A2DP (Bluetooth)
+
+A2DP audio for high-quality media playback is managed by PipeWire, which handles audio routing, synchronization, and system audio integration.
+
+Playback control (play, pause, next, previous) is handled via the AVRCP protocol.
+
+Starting from **Raspberry Pi OS/Debian Trixie**, the Bluetooth stack includes experimental support for fetching track cover art.
+To enable this functionality, experimental features must be activated in the BlueZ system configuration.
+
+The Bluetooth configuration is stored in the **/etc/bluetooth/main.conf** file. Enabling experimental Bluetooth stack features is done by setting the **Experimental = true** parameter in the **[General]** section of this file. It might be necessary to redo the pairing after enabling experimental features in BlueZ to make the cover art work.
+
+Additionally, Android phones must have the AVRCP protocol version set to 1.6. The AVRCP version can be selected in the Developer settings (a reconnect may be required after change).
+
+*Note: Not all media players support sending cover art or proper metadata at all.*
+
+![Main screen](images/screenshot55.png)
+
+### CarPlay
+
+Metadata of the currently playing track in CarPlay is also displayed on the Hudiy interface and playback can be controlled directly from the Hudiy UI.
+
+![Main screen](images/screenshot56.png)
+
+### Android Auto
+
+Metadata of the currently playing track in Android Auto is also displayed on the Hudiy interface and playback can be controlled directly from the Hudiy UI.
+
+![Main screen](images/screenshot19.png)
+
+### Web
+
+Web playback is handled via a [Web View](#web-view). This allows you to display players such as YouTube or YouTube Music and Hudiy will automatically integrate with them. Integration is handled via the [Media Session API](https://developer.mozilla.org/en-US/docs/Web/API/MediaSession) to control audio focus and playback, and to obtain media metadata.
+
+![YouTube Music](images/screenshot12.png)
+
+## Android Auto projection
 
 Hudiy supports emulation of an Android Auto-capable head unit. Android Auto can be connected via both USB and Wi-Fi.
 
@@ -1226,17 +1399,31 @@ Hudiy can retrieve media metadata and navigation information from Android Auto, 
 
 ![Main screen](images/screenshot11.png)
 
-## CarPlay
+### Multi-touch
 
-CarPlay projection is served via CarlinKit CPC200-CCPA dongle. CarlinKit CPC200-CCPA supports both USB and Wi-Fi connections.
+To use multi-touch in Android Auto on Raspberry Pi OS Desktop, mouse emulation in labwc must be disabled. This can be done in the Raspberry Pi OS Control Centre (Screen section) or directly in the `$HOME/.config/labwc/rc.xml` file.
+
+## CarPlay projection
+
+CarPlay projection is served via a CarlinKit CPC200-CCPA or CPC200-Autokit dongle. Both models support USB and Wi-Fi connections.
 
 The width, height, and position (x, y) of the render surface can be configured in the [Main Configuration - Autobox](main_configuration.md#autobox).
 
-Hudiy can retrieve media metadata from CarlinKit CPC200-CCPA, and exposes this data through the API.
+Hudiy can retrieve media metadata and navigation information from CarlinKit CPC200-CCPA/CPC200-Autokit and exposes this data through the API.
 
 ![Main screen](images/screenshot23.png)
 
 ![Main screen](images/screenshot24.png)
+
+## Reverse camera
+
+Hudiy displays the camera feed on the screen using GStreamer. The camera feed takes precedence and, when active, is shown above all other visible elements.
+
+The width, height, and position (x, y) of the render surface can be configured in the [Main Configuration - Reverse Camera](main_configuration.md#reversecamera), along with the GStreamer pipeline used to retrieve the stream from the camera.
+
+The visibility of the camera feed surface can be controlled through corresponding actions or the API.
+
+Camera feeds can alternatively be displayed using web views and the [MediaDevices](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices) API.
 
 ## Updating
 
@@ -1270,6 +1457,8 @@ It also provides time synchronization, which is especially useful on systems wit
 
 The companion app does not collect, store, or transmit any personal data.
 
+You can install the companion app from the [Google Play Store](https://play.google.com/store/apps/details?id=eu.hudiy.companion).
+
 ### Permissions
 
 - **QUERY_ALL_PACKAGES**  
@@ -1283,10 +1472,6 @@ Permission is required to monitor Bluetooth device connections and automatically
 <br><br>
 
 ![Companion app](images/companion_app.png)
-
-![Main screen](images/screenshot30.png)
-
-![Main screen](images/screenshot31.png)
 
 ## Splash
 
@@ -1385,3 +1570,16 @@ The communication protocol for offscreen mode is described below:
 
 - `--threads`  
   Number of threads allocated for bounding box calculations.
+
+## OBD-II
+
+OBD-II is supported via an ELM327 device. Both Bluetooth and USB ELM327 devices are supported.
+
+Hudiy handles the connection to the device and its initialization. You can communicate directly with the ELM327 through Hudiy via the API. This allows you to create your own widgets, overlays and applications to display OBD-II data in any desired way.
+
+Examples of widgets displaying OBD-II data can be found in the examples directory:
+
+- [OBD-II Charts](examples/obd_charts/README.md)
+- [OBD-II Query](examples/api/python/ObdQuery.py)
+
+See [Main Configuration – OBD](main_configuration.md#obd) for configuration details.

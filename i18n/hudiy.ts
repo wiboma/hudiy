@@ -129,10 +129,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>About device</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Day/Night</source>
         <translation type="unfinished"></translation>
     </message>
@@ -146,6 +142,10 @@
     </message>
     <message>
         <source>Night</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>About device</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -249,6 +249,10 @@
 </context>
 <context>
     <name>NotificationSettings</name>
+    <message>
+        <source>Phone notifications</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <source>Output volume level</source>
         <translation type="unfinished"></translation>
@@ -370,7 +374,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Subwoofer Balance</source>
+        <source>Subwoofer volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subwoofer balance</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -382,19 +390,19 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Bass Boost level</source>
+        <source>Bass boost level</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Bass Boost frequency</source>
+        <source>Bass boost frequency</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Treble Boost level</source>
+        <source>Treble boost level</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Treble Boost frequency</source>
+        <source>Treble boost frequency</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -553,7 +561,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cellular signal level is excelent</source>
+        <source>Cellular signal level is excellent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

@@ -85,6 +85,9 @@ class ClientEventHandler:
     def on_current_menu_action(self, client, message):
         pass
 
+    def on_aux_playback_event(self, client, message):
+        pass
+
 
 class Client:
 
@@ -299,5 +302,9 @@ class Client:
                 resp = hudiy_api.CurrentMenuAction()
                 resp.ParseFromString(message.payload)
                 self._event_handler.on_current_menu_action(self, resp)
+            elif message.id == hudiy_api.MESSAGE_AUX_PLAYBACK_EVENT:
+                resp = hudiy_api.AuxPlaybackEvent()
+                resp.ParseFromString(message.payload)
+                self._event_handler.on_aux_playback_event(self, resp)
 
         return can_continue

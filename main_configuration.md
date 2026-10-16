@@ -17,6 +17,7 @@
 - [api](#api)
 - [reverseCamera](#reversecamera)
 - [bluetooth](#bluetooth)
+- [aux](#aux)
 
 ## Introduction
 
@@ -662,6 +663,18 @@ Each preset includes a name and values for each frequency band:
 - `toastDuration`:  
     Duration (in seconds) for which toasts are displayed.
 
+- `phoneNotifications`:  
+    Enables or disables the display of phone notifications.
+
+    Possible values:
+    - true – phone notifications will be displayed  
+    - false – phone notifications will not be displayed
+
+    ***Note:*** *Notifications will still be received from the phone and will be visible in the phone notifications menu.*
+
+- `iOSIgnoredAppIds`:  
+    A list of iOS application identifiers (Bundle IDs, e. g. `com.apple.mobilephone`) whose notifications will be ignored.
+
 ## fmRadio
 
 - `bandwidth`:  
@@ -910,3 +923,17 @@ Each preset includes a name and values for each frequency band:
     Enables or disables registering a dummy A2DP Bluetooth profile by Hudiy. This allows you to route audio from the phone to a separate Bluetooth device (e.g., a factory head unit) without losing Android Auto functionality on Hudiy.
 
     Note: Please ensure that A2DP Bluetooth profile registration is disabled in the OS (e.g., via PipeWire) to prevent collisions with the dummy profile.
+
+- `useIOSTimeSynchronizer`:  
+    Enable or disable time synchronization with an iPhone over the Time Service.
+
+## aux
+
+- `auxSourceName`:  
+    The source name (e. g. from `pactl list sources` command) from which Hudiy will play audio.
+
+- `auxCardPortName`:  
+    Some sound cards feature separate microphone and line-in inputs, but expose only one source. In this case, switching between line-in and the microphone is handled via ports. The list of available ports for a given source can be viewed using the `pactl list sources` command. Hudiy will automatically switch to the specified port when playback from AUX **is active**.
+
+- `microphoneCardPortName`:  
+    Some sound cards feature separate microphone and line-in inputs, but expose only one source. In this case, switching between line-in and the microphone is handled via ports. The list of available ports for a given source can be viewed using the `pactl list sources` command. Hudiy will automatically switch to the specified port when playback from AUX **is not active**.

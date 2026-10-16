@@ -129,6 +129,15 @@
         },
         {
             "categories": [
+                "Music"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "settings_input_component",
+            "action": "aux_player",
+            "label": "AUX"
+        },
+        {
+            "categories": [
                 "Hudiy"
             ],
             "iconFontFamily": "Material Symbols Rounded",

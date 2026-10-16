@@ -106,13 +106,11 @@ To save GPU resources on Pi Zero 2, Pi 3B, Pi 3A+ and Pi 3B+, Hudiy launches in 
 
 Since console mode supports a maximum of one application window and one screen, the splash application (used for displaying a custom logo before Hudiy starts) is disabled in this mode.
 
-In console mode, screen configuration (such as resolution and refresh rate) must be performed directly in the [/boot/firmware/cmdline.txt](https://www.raspberrypi.com/documentation/computers/configuration.html#set-the-kms-display-mode) file.
-
 In console mode, Hudiy is launched via the `hudiy.service` systemd unit. In desktop mode, startup is handled by the labwc autostart file ($HOME/.config/labwc/autostart).
 
 ### Raspberry Pi 4 and Raspberry Pi 5
 
-Raspberry Pi 4 and Raspberry Pi 5 have more powerful GPUs and can easily handle Hudiy in desktop mode. This is the recommended configuration for these models.
+Raspberry Pi 4 and Raspberry Pi 5 have more powerful GPUs and can easily handle Hudiy in desktop mode. This is the recommended configuration for these models. However, you can still disable the desktop using the raspi-config tool.
 
 Based on our observations, there is no noticeable difference in boot times between desktop and console modes. Furthermore, using and configuring the system in desktop mode is significantly more user-friendly. Desktop mode can also handle multiple windows simultaneously and supports multiple screens.
 
