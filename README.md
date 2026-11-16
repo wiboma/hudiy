@@ -48,11 +48,13 @@
   - [Players](#players)
     - [Audio files](#audio-files)
     - [FM Radio](#fm-radio)
+    - [DAB Radio](#dab-radio)
     - [AUX](#aux)
     - [A2DP (Bluetooth)](#a2dp-bluetooth)
     - [CarPlay](#carplay)
     - [Android Auto](#android-auto)
     - [Web](#web)
+    - [Audio CD](#audio-cd)
 - [Android Auto projection](#android-auto-projection)
   - [Multi-touch](#multi-touch)
 - [CarPlay projection](#carplay-projection)
@@ -75,7 +77,7 @@
 
 To get Hudiy, visit our website at [hudiy.eu](https://hudiy.eu)
 
-Hudiy is advanced software designed to help you build and expand your own custom infotainment system. It runs on **Raspberry Pi** and **x86_64** hardware. Thanks to the extensive Raspberry Pi/Linux ecosystem, you can choose hardware such as audio devices, screens, or controllers that perfectly match your needs.
+Hudiy is advanced software designed to help you build and expand your own custom infotainment system. It runs on **Raspberry Pi**, **Radxa**, **Orange Pi** and **x86_64** hardware. Thanks to the extensive Linux ecosystem, you can choose hardware such as audio devices, screens, or controllers that perfectly match your needs.
 
 <table style="width:100%">
   <tr>
@@ -103,6 +105,8 @@ Hudiy is advanced software designed to help you build and expand your own custom
 - Multiplatform
   - Raspberry Pi Zero 2, 3A+, 3B, 3B+, 4B, 5 and appropriate compute module variants
   - x86_64
+  - Radxa
+  - Orange Pi
   - Latest Raspberry Pi OS Trixie or Debian Trixie
 - Android Auto wired and wireless
 - CarPlay wired and wireless via Carlinkit CPC200-CCPA or CPC200-Autokit dongles
@@ -119,6 +123,7 @@ Hudiy is advanced software designed to help you build and expand your own custom
 - Multimedia
   - Audio file player
   - FM Radio with RDS via RTL-SDR
+  - DAB Radio
   - AUX
   - CarPlay
   - Android Auto
@@ -153,10 +158,12 @@ Hudiy supports extensive customization including:
 
 ## Supported platforms
 
-Currently, Hudiy supports the **x86_64** platform and **selected Raspberry Pi models**. For each of these platforms, we have prepared detailed descriptions in dedicated documents:
+Currently, Hudiy supports the **x86_64** platform and selected **Raspberry Pi**, **Radxa**, and **Orange Pi** models. For each of these platforms, we have prepared detailed descriptions in dedicated documents:
 
 - [x86_64](x86_64.md)
 - [Raspberry Pi](raspberry_pi.md)
+- [Radxa](radxa.md)
+- [Orange Pi](orange_pi.md)
 
 ## Requirements
 
@@ -164,6 +171,8 @@ Detailed requirements are provided in the document dedicated to a specific platf
 
 - [x86_64](x86_64.md)
 - [Raspberry Pi](raspberry_pi.md)
+- [Radxa](radxa.md)
+- [Orange Pi](orange_pi.md)
 
 ## Configuration
 
@@ -413,6 +422,24 @@ Hudiy includes the following predefined actions:
 
 - **fm_radio_presets**:  
   Display the FM radio presets menu
+
+- **dab_radio_player**:  
+  Display the DAB radio player menu
+
+- **dab_radio_stations**:  
+  Display the radio stations (services) of current ensemble
+
+- **dab_radio_ensembles**:  
+  Display the ensembles (multiplexes)
+
+- **dab_radio_presets**:  
+  Display the DAB radio presets menu
+
+- **cd_audio_player**:  
+  Display the CD Audio player menu
+
+- **cd_audio_playlist**:  
+  Display the CD Audio playlist menu
 
 - **a2dp_music_player**:  
   Display the A2DP (Bluetooth) music player menu
@@ -1256,6 +1283,8 @@ Hudiy exposes configuration options for two types of sinks: the volume sink and 
 
 This separation allows greater flexibility — for example, users can route audio through a virtual sink provided by a PipeWire plugin (such as the equalizer or other audio effects), while controlling volume on a different sink directly associated with a physical audio device.
 
+The initial audio setup is configured in `$HOME/.hudiy/share/hudiy_startup.sh`. You can modify it to route audio to/from the desired hardware (audio inputs and outputs) and load/unload audio modules as needed. By default, WirePlumber automatically selects input and output audio devices.
+
 Based on the PipeWire configuration, Hudiy can detect the following speaker setups:
 
 - Stereo  
@@ -1316,11 +1345,13 @@ Hudiy supports playback from multiple audio sources, including:
 
 - Audio files
 - FM Radio
+- DAB Radio
 - AUX
 - A2DP (Bluetooth)
 - CarPlay
 - Android Auto
 - Web
+- Audio CD
 
 For each audio source, Hudiy attempts to retrieve metadata such as artist, album, title, duration and cover art. The metadata of the currently playing track is also transmitted via the API, allowing for integration with external components.
 
@@ -1328,7 +1359,7 @@ If cover art is not available from the source metadata, Hudiy can request it fro
 
 ### Audio files
 
-Hudiy supports many popular audio formats such as MP3, FLAC, WAV, AAC, OGG and WMA, as well as M3U and PLS playlist formats. The player features a built-in file browser, allowing you to select files and folders for playback.
+Hudiy supports many popular audio formats such as MP3, FLAC, WAV, AAC, OGG, M4A and WMA, as well as M3U and PLS playlist formats. The player features a built-in file browser, allowing you to select files and folders for playback.
 
 ![Main screen](images/screenshot53.png)
 
@@ -1339,6 +1370,14 @@ FM radio reception is handled by an RTL-SDR dongle. Hudiy can also decode RDS da
 See [Main Configuration – FM Radio](main_configuration.md#fmradio) for configuration details.
 
 ![Main screen](images/screenshot22.png)
+
+### DAB Radio
+
+DAB radio reception is handled by an RTL-SDR dongle. Hudiy performs full ensemble (multiplex) discovery and exposes a list of available stations (services) in the selected ensemble. It also decodes station logos and other metadata.
+
+See [Main Configuration – DAB Radio](main_configuration.md#dabradio) for configuration details.
+
+![Main screen](images/screenshot61.png)
 
 ### AUX
 
@@ -1384,6 +1423,12 @@ Metadata of the currently playing track in Android Auto is also displayed on the
 Web playback is handled via a [Web View](#web-view). This allows you to display players such as YouTube or YouTube Music and Hudiy will automatically integrate with them. Integration is handled via the [Media Session API](https://developer.mozilla.org/en-US/docs/Web/API/MediaSession) to control audio focus and playback, and to obtain media metadata.
 
 ![YouTube Music](images/screenshot12.png)
+
+### Audio CD
+
+Hudiy supports Audio CD playback and CD-Text. Optical drives (such as USB optical drives) are detected automatically.
+
+![Main screen](images/screenshot62.png)
 
 ## Android Auto projection
 

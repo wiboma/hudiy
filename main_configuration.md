@@ -18,6 +18,7 @@
 - [reverseCamera](#reversecamera)
 - [bluetooth](#bluetooth)
 - [aux](#aux)
+- [dabRadio](#dabradio)
 
 ## Introduction
 
@@ -376,6 +377,22 @@ The configuration is stored in JSON format.
     - true – start playback of FM radio after Hudiy startup (only if the last audio source was FM radio)  
     - false – do not start playback of FM radio after Hudiy startup
 
+- `dabRadioAutoplay`:  
+    Enables or disables automatic playback of DAB radio after Hudiy startup  
+    (only if the last audio source was DAB radio).
+
+    Possible values:
+    - true – start playback of DAB radio after Hudiy startup (only if the last audio source was DAB radio)  
+    - false – do not start playback of DAB radio after Hudiy startup
+
+- `cdAudioAutoplay`:  
+    Enables or disables automatic playback of Audio CD radio after Hudiy startup  
+    (only if the last audio source was Audio CD radio).
+
+    Possible values:
+    - true – start playback of Audio CD radio after Hudiy startup (only if the last audio source was Audio CD radio)  
+    - false – do not start playback of Audio CD radio after Hudiy startup
+
 - `ringtoneFile`:  
     The absolute path to the **.wav** file that will be played during an incoming call.
 
@@ -405,8 +422,8 @@ The configuration is stored in JSON format.
     - "480p"
     - "720p"
     - "1080p"
-    - "2k" - **Experimental. Available only when `useRpiDrm` or `useX86Drm` is set to true.**
-    - "4k" - **Experimental. Available only when `useRpiDrm` or `useX86Drm` is set to true.**
+    - "2k" - **Experimental. Available only when `useDrm` is set to true.**
+    - "4k" - **Experimental. Available only when `useDrm` is set to true.**
 
 - `bluetoothAddress`:  
     The address of the Bluetooth adapter that will be sent to the Bluetooth endpoint as the head unit's address.  
@@ -452,19 +469,11 @@ The configuration is stored in JSON format.
     - "30"
     - "60"
 
-- `useRpiDrm`:  
+- `useDrm`:  
     Enable/disable the use of the Android Auto codec that supports rendering via DRM (Direct Rendering Manager).
 
-    *Note: Available only on Raspberry Pi 4 and 5.*
+    *Note: Not available on Raspberry Pi Zero 2, 3A+, 3B and 3B+.*
 
-    Possible values:
-    - true – force to use the codec compatible with DRM
-    - false – use the codec preferred by the phone.
-
-- `useX86Drm`:  
-    Enable/disable the use of the Android Auto codec that supports rendering via DRM (Direct Rendering Manager).
-
-    *Note: Available only on x86_64.*
 
     Possible values:
     - true – force to use the codec compatible with DRM
@@ -486,9 +495,9 @@ The configuration is stored in JSON format.
     - "GPSD" - Forwards GPSD data (if available).
 
 - `useFlatVideoBuffering`:  
-    Limit non-DRM video decoder buffering to decrease video latency. This only applies when `useRpiDrm` is false. The DRM video decoder has zero buffering and minimal latency by default.
+    Limit non-DRM video decoder buffering to decrease video latency. This only applies when `useDrm` is false. The DRM video decoder has zero buffering and minimal latency by default.
 
-    *Note: **This is an experimental setting available only on the Raspberry Pi platform.** The VA-API video decoder has zero buffering and minimal latency by default.*
+    *Note: **This is an experimental setting available only on the Raspberry Pi platform and direct renderer.** Decoders on other platforms have zero buffering and minimal latency by default.*
 
     Possible values:
     - true – Use flat video buffering.
@@ -729,22 +738,16 @@ Each preset includes a name and values for each frequency band:
 - `gain`:  
     The gain level of the device.
 
+- `stereoThreshold`:  
+    The minimum signal strength (RMS) threshold required for stereo mode. A value of 0 forces mono mode.
+
 - `presets`:  
     An array of objects with favorite radio stations.
     - `name`:  
         Name of the preset visible in favorites menu.
 
     - `frequency`:  
-        Frequency of the radio station.
-
-- `wideband`:  
-    Enables/disables wideband mode.
-
-- `compensation`:  
-    Size of the FIR filter.
-
-- `volumeMultiplier`:  
-    Multiply volume level of decoded audio stream. Result value will be clipped within 16-bit audio limits.
+        Frequency of the radio station [Hz].
 
 ## autobox
 
@@ -937,3 +940,52 @@ Each preset includes a name and values for each frequency band:
 
 - `microphoneCardPortName`:  
     Some sound cards feature separate microphone and line-in inputs, but expose only one source. In this case, switching between line-in and the microphone is handled via ports. The list of available ports for a given source can be viewed using the `pactl list sources` command. Hudiy will automatically switch to the specified port when playback from AUX **is not active**.
+
+## dabRadio
+
+- `playbackControlMode`:  
+    Specifies whether playback controls (next/previous) navigate through all available stations or saved presets.
+
+    Possible values:  
+
+    - "STATIONS" - next and previous actions cycle through all available stations in the current ensemble.
+    - "PRESETS" - next and previous actions cycle through favorite stations (presets).
+
+- `followService`:  
+    Enables or disables automatic tuning to the same station on alternative frequencies when the signal is lost.
+
+    Possible values:
+
+    - true - following is enabled.
+    - false - following is disabled.
+
+- `autoGain`:  
+    Allows the device to automatically select the gain level.
+
+    Possible values:  
+    - true – the device will automatically select the gain level; the `gain` value is ignored  
+    - false – the device will use the gain value specified by the `gain` parameter
+
+- `gain`:  
+    The gain level of the device.
+
+- `presets`:  
+    An array of objects with favorite radio stations.
+
+    - `name`:  
+        Name of the preset visible in favorites menu.
+
+    - `frequency`:  
+        Frequency of the ensemble [Hz].
+
+    - `serviceId`:  
+        Service ID of the radio station in an ensemble.
+
+- `ensembles`:  
+    An array of objects with favorite radio stations.
+
+    - `name`:  
+        Name of the ensemble visible in the menu.
+
+    - `frequency`:  
+        Frequency of the ensemble [Hz].

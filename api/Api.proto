@@ -5,7 +5,7 @@ package hudiy.app.api;
 enum Constants {
     // option allow_alias = true;
     API_MAJOR_VERSION = 1;
-    API_MINOR_VERSION = 5;
+    API_MINOR_VERSION = 6;
 }
 
 enum MessageType {
@@ -152,6 +152,8 @@ enum MediaSource {
     MEDIA_SOURCE_FM_RADIO = 5;
     MEDIA_SOURCE_WEB = 6;
     MEDIA_SOURCE_AUX = 7;
+    MEDIA_SOURCE_CD_AUDIO = 8;
+    MEDIA_SOURCE_DAB = 9;
 }
 
 // Id: MESSAGE_MEDIA_STATUS

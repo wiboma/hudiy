@@ -19,10 +19,11 @@ Hudiy provides a set of environment variables to control specific functionalitie
 
 ### HUDIY_RENDERER
 
-Specifies the type of renderer used. Possible values:  
+Specifies the type of renderer used. All renderers support hardware acceleration and zero-copy if supported by the hardware. Possible values:  
 
-- `direct` - Renderer optimized for Android Auto and CarPlay video streams. Default for Raspberry Pi in both Desktop and Console modes. It supports VAAPI and can also be used on x86_64.
-- `composition` - Universal renderer (works only in **Desktop mode**). Default for x86_64 due to hardware diversity (GPU, VPU) on this platform.
+- `direct` - Renderer optimized for Android Auto and CarPlay video streams. Default for Raspberry Pi in both **Desktop** and **Console** modes. It supports VAAPI and can also be used on x86_64.
+- `composition` - Universal renderer (works only in **Desktop** mode). Default for x86_64 due to hardware diversity (GPU, VPU) on this platform.
+- `static_composition` - Universal renderer with texture recycling (for both **Console** and **Desktop** modes). Default for Rockchip and Allwinner SoCs.
 
 ### HUDIY_USE_AUTO_GL_SURFACE_FORMAT
 
@@ -47,9 +48,9 @@ Controls bandwidth of the hotspot module. This variable overrides the `hotspot.b
 
 ### HUDIY_DISABLE_ANDROID_AUTO_DRM
 
-Controls Android Auto DRM mode  usage. Overrides `androidAuto.useRpiDrm` and `androidAuto.useX86Drm` config parameters. Possible values:
+Controls Android Auto DRM mode usage. Overrides `androidAuto.useDrm` config parameter. Possible values:
 
-- `0` - Sets the DRM mode based on the `androidAuto.useRpiDrm` and `androidAuto.useX86Drm` config parameters. (default)
+- `0` - Sets the DRM mode based on the `androidAuto.useDrm` config parameter. (default)
 - `1` - Disables DRM mode.
 
 ### HUDIY_RENDERING_DEVICE_NAME

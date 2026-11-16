@@ -105,6 +105,15 @@
                 "Music"
             ],
             "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "sensors",
+            "action": "dab_radio_player",
+            "label": "DAB Radio"
+        },
+        {
+            "categories": [
+                "Music"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
             "iconName": "media_bluetooth_on",
             "action": "a2dp_music_player",
             "label": "A2DP"
@@ -135,6 +144,15 @@
             "iconName": "settings_input_component",
             "action": "aux_player",
             "label": "AUX"
+        },
+        {
+            "categories": [
+                "Music"
+            ],
+            "iconFontFamily": "Material Symbols Rounded",
+            "iconName": "album",
+            "action": "cd_audio_player",
+            "label": "Audio CD"
         },
         {
             "categories": [

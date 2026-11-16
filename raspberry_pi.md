@@ -6,7 +6,7 @@
 - [Supported Raspberry Pi variants](#supported-raspberry-pi-variants)
 - [Requirements](#requirements)
 - [Desktop vs Console](#desktop-vs-console)
-- [Hands-free Bluetooth profile](#hands-free-bluetooth-profile)
+- [Hands-free Bluetooth](#hands-free-bluetooth)
 
 ## Introduction
 
@@ -24,7 +24,7 @@ Hudiy supports all Raspberry Pi 5 variants (1GB, 2GB, 4GB, 8GB, and 16GB).
 
 Related variants, such as the Compute Module 5, are based on the same SoC (BCM2712). From Hudiy's perspective, there is no functional difference between running on a Raspberry Pi 5 or on a CM5.
 
-The supported operating systems for the Raspberry Pi 5 are Raspberry Pi OS Trixie 64-bit Desktop and Raspberry Pi OS Bookworm 64-bit Desktop.
+The supported operating system for the Raspberry Pi 4 is Raspberry Pi OS Trixie 64-bit Desktop.
 
 ### Raspberry Pi 4
 
@@ -32,11 +32,11 @@ Hudiy supports all Raspberry Pi 4B variants (1GB, 2GB, 4GB and 8GB).
 
 Related variants, such as the Compute Module 4, are based on the same SoC (BCM2711). From Hudiy's perspective, there is no functional difference between running on a Raspberry Pi 4B or on a CM4.
 
-The supported operating systems for the Raspberry Pi 4 are Raspberry Pi OS Trixie 64-bit Desktop and Raspberry Pi OS Bookworm 64-bit Desktop.
+The supported operating system for the Raspberry Pi 4 is Raspberry Pi OS Trixie 64-bit Desktop.
 
 ### Raspberry Pi 3B+/3A+
 
-Starting with version 2.8, Hudiy also supports the Raspberry Pi 3B+ and 3A+ variants. The supported operating system for the Raspberry Pi 3B+ and 3A+ is Raspberry Pi OS Trixie 64-bit Desktop.
+The supported operating system for the Raspberry Pi 3B+ and 3A+ is Raspberry Pi OS Trixie 64-bit Desktop.
 
 Due to the less powerful CPU (in comparison to Pi 4B and Pi 5), the equalizer module is disabled by default.
 
@@ -46,7 +46,7 @@ Due to the limited amount of RAM (512MB) on the Raspberry Pi 3A+, we recommend e
 
 ### Raspberry Pi 3B
 
-Starting with version 2.8, Hudiy also supports the Raspberry Pi 3B variant. The supported operating system for the Raspberry Pi 3B is Raspberry Pi OS Trixie 64-bit Desktop.
+The supported operating system for the Raspberry Pi 3B is Raspberry Pi OS Trixie 64-bit Desktop.
 
 Due to the less powerful CPU (in comparison to Pi 4B and Pi 5), the equalizer module is disabled by default.
 
@@ -64,7 +64,7 @@ The Raspberry Pi 3B is limited to 2.4GHz Wi-Fi (hardware limitation), which sign
 
 ### Raspberry Pi Zero 2
 
-Starting with version 2.8, Hudiy also supports the Raspberry Pi Zero 2 variant. The supported operating system for the Raspberry Pi Zero 2 is Raspberry Pi OS Trixie 64-bit Desktop.
+The supported operating system for the Raspberry Pi Zero 2 is Raspberry Pi OS Trixie 64-bit Desktop.
 
 Due to the less powerful CPU (in comparison to Pi 4B and Pi 5), the equalizer module is disabled by default.
 
@@ -89,13 +89,13 @@ Due to the limited amount of RAM (512MB), we recommend exercising caution when a
 **Mandatory:**
 
 - Supported Raspberry Pi variant
-- Clean, unmodified installation of the official Raspberry Pi OS Trixie Desktop 64 bit (for Pi 5, Pi 4, Pi 3B+, 3A+, Pi 3B, Pi Zero 2) or Raspberry Pi OS Bookworm Desktop 64 bit (for Pi 5, Pi 4)
+- Clean, unmodified installation of the official Raspberry Pi OS Trixie Desktop 64 bit
 - 8GB of free storage space
 - Display with resolution up to 1920x1080
 
 **Optional:**
 
-- RTL-SDR dongle for FM Radio
+- RTL-SDR dongle for FM Radio and DAB Radio
 - CarlinKit CPC-200 CCPA or Autokit dongle for CarPlay
 - Microphone for Hands-Free calling and voice assistants
 - USB or Bluetooth ELM327 adapter for OBD-II communication

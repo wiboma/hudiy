@@ -150,6 +150,13 @@
     </message>
 </context>
 <context>
+    <name>AuxPlayer</name>
+    <message>
+        <source>AUX</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AvailableColors</name>
     <message>
         <source>Color</source>
@@ -167,6 +174,13 @@
     <name>CallsHistory</name>
     <message>
         <source>Refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CdAudioPlayer</name>
+    <message>
+        <source>Audio CD</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -198,6 +212,13 @@
     </message>
     <message>
         <source>UI</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DabRadioPlayer</name>
+    <message>
+        <source>DAB Radio</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -405,6 +426,14 @@
         <source>Treble boost frequency</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>DAB Radio autoplay</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Audio CD autoplay</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StorageMusicPlayer</name>
@@ -459,6 +488,20 @@
     </message>
     <message>
         <source>Microphone level: %1%</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>hudiy::app::audio::AuxManager</name>
+    <message>
+        <source>Port volume: %1%</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>hudiy::app::audio::DabRadioManager</name>
+    <message>
+        <source>DAB Radio</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -90,6 +90,8 @@
         "balance" : 0,
         "storageMusicAutoplay" : false,
         "fmRadioAutoplay" : false,
+        "dabRadioAutoplay" : false,
+        "cdAudioAutoplay" : false,
         "subwooferBalanceAsVolume" : true,
         "ringtoneFile" : "",
         "defaultMediaPath" : ""
@@ -109,7 +111,7 @@
         "x" : 0,
         "y" : 0,
         "gpsDataSource" : "GPSD",
-        "useRpiDrm" : false,
+        "useDrm" : false,
         "dayNightMode" : "COMMON"
     },
     "hotspot" : {
@@ -122,7 +124,6 @@
         "channelConfigurationType" : "AUTO",
         "channelBandwidth" : "40MHz",
         "channel" : 36
-
     },
     "equalizer" : {
         "enabled" : true,
@@ -255,14 +256,12 @@
     },
     "fmRadio" : {
         "bandwidth" : "EU",
-        "squelchLevel" : 350,
+        "squelchLevel" : 140,
         "squelchLimit" : 10,
         "rdsEnabled" : true,
         "autoGain" : true,
         "gain" : 0,
-        "compensation" : 0,
-        "wideband" : false,
-        "volumeMultiplier" : 3,
+        "stereoThreshold" : 0,
         "presets" : [
 
         ]
@@ -333,5 +332,168 @@
         "auxSourceName" : "",
         "auxCardPortName" : "",
         "microphoneCardPortName" : ""
+    },
+    "dabRadio" : {
+        "presets" : [
+
+        ],
+        "ensembles" : [
+            {
+                "frequency" : 174928000,
+                "name" : "5A"
+            },
+            {
+                "frequency" : 176640000,
+                "name" : "5B"
+            },
+            {
+                "frequency" : 178352000,
+                "name" : "5C"
+            },
+            {
+                "frequency" : 180064000,
+                "name" : "5D"
+            },
+            {
+                "frequency" : 181936000,
+                "name" : "6A"
+            },
+            {
+                "frequency" : 183648000,
+                "name" : "6B"
+            },
+            {
+                "frequency" : 185360000,
+                "name" : "6C"
+            },
+            {
+                "frequency" : 187072000,
+                "name" : "6D"
+            },
+            {
+                "frequency" : 188928000,
+                "name" : "7A"
+            },
+            {
+                "frequency" : 190640000,
+                "name" : "7B"
+            },
+            {
+                "frequency" : 192352000,
+                "name" : "7C"
+            },
+            {
+                "frequency" : 194064000,
+                "name" : "7D"
+            },
+            {
+                "frequency" : 195936000,
+                "name" : "8A"
+            },
+            {
+                "frequency" : 197648000,
+                "name" : "8B"
+            },
+            {
+                "frequency" : 199360000,
+                "name" : "8C"
+            },
+            {
+                "frequency" : 201072000,
+                "name" : "8D"
+            },
+            {
+                "frequency" : 202928000,
+                "name" : "9A"
+            },
+            {
+                "frequency" : 204640000,
+                "name" : "9B"
+            },
+            {
+                "frequency" : 206352000,
+                "name" : "9C"
+            },
+            {
+                "frequency" : 208064000,
+                "name" : "9D"
+            },
+            {
+                "frequency" : 209936000,
+                "name" : "10A"
+            },
+            {
+                "frequency" : 211648000,
+                "name" : "10B"
+            },
+            {
+                "frequency" : 213360000,
+                "name" : "10C"
+            },
+            {
+                "frequency" : 215072000,
+                "name" : "10D"
+            },
+            {
+                "frequency" : 216928000,
+                "name" : "11A"
+            },
+            {
+                "frequency" : 218640000,
+                "name" : "11B"
+            },
+            {
+                "frequency" : 220352000,
+                "name" : "11C"
+            },
+            {
+                "frequency" : 222064000,
+                "name" : "11D"
+            },
+            {
+                "frequency" : 223936000,
+                "name" : "12A"
+            },
+            {
+                "frequency" : 225648000,
+                "name" : "12B"
+            },
+            {
+                "frequency" : 227360000,
+                "name" : "12C"
+            },
+            {
+                "frequency" : 229072000,
+                "name" : "12D"
+            },
+            {
+                "frequency" : 230784000,
+                "name" : "13A"
+            },
+            {
+                "frequency" : 232496000,
+                "name" : "13B"
+            },
+            {
+                "frequency" : 234208000,
+                "name" : "13C"
+            },
+            {
+                "frequency" : 235776000,
+                "name" : "13D"
+            },
+            {
+                "frequency" : 237488000,
+                "name" : "13E"
+            },
+            {
+                "frequency" : 239200000,
+                "name" : "13F"
+            }
+        ],
+        "playbackControlMode" : "STATIONS",
+        "followService" : true,
+        "autoGain" : true,
+        "gain" : 0
     }
 }
